@@ -1,7 +1,7 @@
 # cs261_cswk
 Financial Trader Chatbot
 
-## helpfull commands
+## helpful commands
 
 When using the manage.py script, make sure it's running on python 3. Using just 'python'
 can work, but if it doesn't use 'python3' to specify your version.
