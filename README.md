@@ -4,7 +4,7 @@ Financial Trader Chatbot
 ## helpfull commands
 
 When using the manage.py script, make sure it's running on python 3. Using just 'python'
-can work, but if it doesn't use 'python3' to secify your version.
+can work, but if it doesn't use 'python3' to specify your version.
 
 To start the server so you can view the website
 ```
