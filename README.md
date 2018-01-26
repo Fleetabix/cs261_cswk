@@ -1,7 +1,7 @@
 # cs261_cswk
 Financial Trader Chatbot
 
-# Project Structure
+## project structure
 
  - website/ (the base website code, we do not need to edit this, just add the chatbot app in the settings)
  - chatbot/ (this is where most, if not all of our code will be
