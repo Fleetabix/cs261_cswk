@@ -1,17 +1,54 @@
-{% extends 'website/base.html'  %}
+{% extends 'website/base.html' %} 
+
+{% load static %}
 
 {% block head %}
 <title>FLORIN</title>
-{% endblock head %}
+<link rel="stylesheet" type="text/css" href="{% static 'chatbot/css/index.css' %}" />
+{% endblock head %} 
+
+
 
 {% block header %}
-<div class="row">
-    <div id="mobile-dropdown" class="col-sm-2 col-md-0"><h1>O</h1></div>
-    <div class="col-sm-9 col-md-10"><h1>FLORIN</h1></div>
-    <div id="user-options" class="col-sm-2"><h2>user_name</h2></div>
+<div id="header" class="row justify-content-between">
+    <div id="menu-box" class="col-2">
+        <button id="desktop-portfolio-btn" class="portfolio-btn">
+            <span id="desktop-chevron" class="fa fa-chevron-right"></span>
+        </button>
+        <button id="mobile-portfolio-btn" class="portfolio-btn">
+            <span id="mobile-chevron" class="fa fa-chevron-down"></span>
+        </button>
+    </div>
+    <div id="title" class="col-5">
+        <h1>FLORIN</h1>
+    </div>
+    <div id="user-dropdown" class="col-5">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                User Name 
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Sign Out</a>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock header %}
+{% endblock header %} 
 
 {% block content %}
-<h1>This is the content!</h1>
+<div id="main-content" class="row">
+    <div id="portfolio-tab" class="col-md-3 collapse">
+        <div id="portfolios">
+            <h1>Favourites Tab</h1>
+        </div>
+    </div>
+    <div class="col">
+        <h1>This is the content!</h1>
+    </div>
+</div>
 {% endblock content %}
+
+{% block scripts %}
+    <script src="{% static 'chatbot/js/portfolio_dropdown.js' %}"></script>
+{% endblock scripts %}
