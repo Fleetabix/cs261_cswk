@@ -1,0 +1,96 @@
+/*
+    set the colours for the colour scheme
+*/
+:root {
+    --header-bg-color:  #17252A;
+    --header-fg-color: #FEFFFF;
+    --body-bg-color: #3AAfA9;
+    --body-fg-color: #DEF2F1;
+    --accent-colour: #2B7A78;
+}
+
+/*
+    make sure the page streches to the bottom of the window
+    and set the body colour to black (this is so the javascript
+    code can identify what device it is being viewed on
+*/
+html, body {
+    height: 100%;
+    background-color: #000000;
+}
+
+/*
+    if the device is being viewed on a small screen (aka mobile)
+    slightly change the background colour
+*/
+@media only screen and (max-width: 768px){
+    html {
+         background-color: #111111; 
+    }
+}
+
+/*CSS Rules for the header*/
+
+#header {
+    background-color: var(--header-bg-color);
+    color: var(--header-fg-color);
+    padding: 10px;
+}
+
+.portfolio-btn {
+    background-color: var(--header-bg-color);
+    color: var(--header-fg-color);
+    border: none;
+    font-size: 2em;
+}
+
+/*
+    hide the desktop button if being viewed on a mobile device
+*/
+@media only screen and (max-width: 768px){
+    #desktop-portfolio-btn {
+        display: none;
+    }
+}
+
+/*
+    hide the mobile button if being viewed on a mobile device
+*/
+@media only screen and (min-width: 768px){
+    #mobile-portfolio-btn {
+        display: none;
+    }
+}
+
+#user-dropdown {
+    text-align: right;
+    padding-right: 40px;
+    padding-top: 8px;
+    padding-left: 0;
+    width: 80%;
+}
+
+/*CSS Rules for the Body*/
+
+.content {
+    height: 100%;
+}
+
+#portfolio-tab {
+    background-color: var(--accent-colour);
+    height: 100%;
+}
+
+#portfolios {
+    height: 100%;
+}
+
+#main-content {
+    background-color: var(--body-bg-color);
+    color: var(--body-fg-color);
+    height: 100%;
+}
+
+#main-content > div {
+    border: 1px solid var(--header-bg-color);
+}
