@@ -86,18 +86,25 @@ html, body {
 #portfolio-tab {
     background-color: var(--accent-colour);
     height: 100%;
-    display: none;
+    display: none; /*set this so that the portfolio is closed by default*/
     position: absolute;
     float: top;
     width: 100%;
+    padding: 10px;
 }
 
 
+/*
+    On a desktop type screen, the portfolio tab should open from the
+    side and not take up all the width - so the height, width, and
+    position are changed.
+*/
 @media only screen and (min-width: 768px) {
     #portfolio-tab {
         height: 100%;
         width: 30%;
         position: relative;
+        border-right: 2px solid var(--header-bg-color);
         float: left; /* needed otherwise message board does funky things on slide */
         display: inline-block;
     }
@@ -115,6 +122,10 @@ html, body {
     padding: 10px;
 }
 
+/*
+    If on a desktop, change the width to 68% so that the message
+    board can be inline with the open portfolio tab.
+*/
 @media only screen and (min-width: 768px) {
     #message-board {
         width: 68%;
