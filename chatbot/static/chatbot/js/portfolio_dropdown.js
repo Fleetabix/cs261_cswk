@@ -25,7 +25,6 @@ $(document).ready(function () {
         if (mobile) {
             $("#portfolio-tab").animate({height: "toggle"}, fastSpeed);
         } else {
-            $("#portfolios").toggle("display");
             if (open) {
                 $("#portfolio-tab").animate({width: "toggle"}, fastSpeed);
                 $("#message-board").animate({width: nextWidth}, slowSpeed);
