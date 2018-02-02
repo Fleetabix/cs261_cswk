@@ -14,16 +14,33 @@ $(document).ready(function () {
         close_chevron = "fa-chevron-left"
     }
 
-    var open = false;
+    // if the device is mobile, the tab is closed by default
+    var open = !mobile;
+    var nextWidth = "100%";
+    var fastSpeed = 600, slowSpeed = 800;
     // the function that opens or closes the portfolio tab when 
     // the portfolio-btn is clicked (also handles the change of
     // the button symbol)
     $(".portfolio-btn").click(function () {
-        if (open) {
-            togglePortfolio(mobile, close_chevron, open_chevron);
+        if (mobile) {
+            $("#portfolio-tab").animate({height: "toggle"}, fastSpeed);
         } else {
-            togglePortfolio(mobile, open_chevron, close_chevron);
+            $("#portfolios").toggle("display");
+            if (open) {
+                $("#portfolio-tab").animate({width: "toggle"}, fastSpeed);
+                $("#message-board").animate({width: nextWidth}, slowSpeed);
+                toggleButton(mobile, close_chevron, open_chevron);
+            } else {
+                $("#message-board").animate({width: nextWidth}, fastSpeed);
+                $("#portfolio-tab")
+                    .delay(100)
+                    .animate({width: "toggle"}, slowSpeed);
+                toggleButton(mobile, open_chevron, close_chevron);
+            }
         }
+        // change the button icon
+        // toggle properties for next click
+        nextWidth = (nextWidth == "100%") ? "65%" : "100%";
         open = (open) ? false : true;
     });
 
@@ -38,12 +55,10 @@ $(document).ready(function () {
     });
 })
 
-// given the viewing mode, the type of chevron the button is now
-// and the type you want it to be, it toggles the display of the
-// portfolio tab and switches the icon.
-function togglePortfolio(mobile, class_to_remove, class_to_add) {
+// switched the button icon given the viewing mode, the type of 
+// chevron the button is now and the type you want it to be.
+function toggleButton(mobile, class_to_remove, class_to_add) {
     var device = (mobile) ? "mobile" : "desktop";
-    $("#portfolio-tab").toggle("slide");
     $("#"+device+"-portfolio-btn").find($("svg"))
         .removeClass(class_to_remove)
         .addClass(class_to_add);

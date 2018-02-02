@@ -13,7 +13,7 @@
 <div id="header" class="row justify-content-between">
     <div id="menu-box" class="col-2">
         <button id="desktop-portfolio-btn" class="portfolio-btn">
-            <span id="desktop-chevron" class="fa fa-chevron-right"></span>
+            <span id="desktop-chevron" class="fa fa-chevron-left"></span>
         </button>
         <button id="mobile-portfolio-btn" class="portfolio-btn">
             <span id="mobile-chevron" class="fa fa-chevron-down"></span>
@@ -37,15 +37,13 @@
 {% endblock header %} 
 
 {% block content %}
-<div id="main-content" class="row">
-    <div id="portfolio-tab" class="col-md-3 collapse">
-        <div id="portfolios">
-            <h1>Favourites Tab</h1>
-        </div>
+<div id="portfolio-tab" class="pane">
+    <div id="portfolios">
+        <h1>Favourites Tab</h1>
     </div>
-    <div class="col">
-        <h1>This is the content!</h1>
-    </div>
+</div>
+<div id="message-board" class="pane">
+    <h1>This is the content!</h1>
 </div>
 {% endblock content %}
 
