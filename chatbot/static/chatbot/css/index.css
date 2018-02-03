@@ -1,0 +1,187 @@
+/*
+    set the colours for the colour scheme
+*/
+:root {
+    --header-bg-color:  #17252A;
+    --header-fg-color: #FEFFFF;
+    --body-bg-color: #3AAfA9;
+    --body-fg-color: #DEF2F1;
+    --accent-colour: #2B7A78;
+}
+
+/*
+    make sure the page streches to the bottom of the window
+    and set the body colour to black (this is so the javascript
+    code can identify what device it is being viewed on
+*/
+html, body {
+    height: 100%;
+    background-color: #000000;
+}
+
+/*
+    if the device is being viewed on a small screen (aka mobile)
+    slightly change the background colour
+*/
+@media only screen and (max-width: 768px){
+    html {
+         background-color: #111111; 
+    }
+}
+
+/*CSS Rules for the header*/
+
+#header {
+    background-color: var(--header-bg-color);
+    color: var(--header-fg-color);
+    margin: 0;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+    height: 5em;
+}
+
+.portfolio-btn {
+    background-color: var(--header-bg-color);
+    color: var(--header-fg-color);
+    border: none;
+    font-size: 2em;
+}
+
+/*
+    hide the desktop button if being viewed on a mobile device
+*/
+@media only screen and (max-width: 768px){
+    #desktop-portfolio-btn {
+        display: none;
+    }
+}
+
+/*
+    hide the mobile button if being viewed on a mobile device
+*/
+@media only screen and (min-width: 768px){
+    #mobile-portfolio-btn {
+        display: none;
+    }
+}
+
+#user-dropdown {
+    text-align: right;
+    padding-top: 8px;
+    padding-left: 0;
+    width: inherit;
+}
+
+/*CSS Rules for the Body*/
+
+.content {
+    background-color: var(--body-bg-color);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    padding-top: 5em;
+}
+
+.pane {
+    display: inline-block;
+}
+
+#portfolio-tab {
+    background-color: var(--accent-colour);
+    height: 100%;
+    display: none; /*set this so that the portfolio is closed by default*/
+    position: absolute;
+    z-index: 10;
+    float: top;
+    width: 100%;
+    padding: 10px;
+}
+
+
+/*
+    On a desktop type screen, the portfolio tab should open from the
+    side and not take up all the width - so the height, width, and
+    position are changed.
+*/
+@media only screen and (min-width: 768px) {
+    #portfolio-tab {
+        height: 100%;
+        width: 30%;
+        position: relative;
+        border-right: 2px solid var(--header-bg-color);
+        float: left; /* needed otherwise message board does funky things on slide */
+        display: inline-block;
+    }
+}
+
+#portfolios {
+    height: 100%;
+}
+
+#message-board {
+    background-color: var(--body-bg-color);
+    color: var(--body-fg-color);
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+}
+
+/*
+    If on a desktop, change the width to 68% so that the message
+    board can be inline with the open portfolio tab.
+*/
+@media only screen and (min-width: 768px) {
+    #message-board {
+        width: 68%;
+    }
+}
+
+/*CSS For the Message Board*/
+
+#messages {
+    height: 85%;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+#message-input {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: inherit;
+    text-align: right;
+    font-size: 1em;
+    padding: 0.5em;
+    padding-right: 2%;
+    border-radius: .25em;
+    border-top: 1px dashed vaar(var(--accent-colour));
+    height: 4em;
+}
+
+#message-form > * {
+    padding: 0.2em;
+}
+
+#message-txt {
+    width: 85%;
+    border-radius: .25em;
+    border: none;
+}
+
+#submit-btn {
+    margin-left: 2%;
+    background-color: var(--body-bg-color);
+    color: var(--header-bg-color);
+}
+
+/*CSS For the Messages*/
+.message {
+    width: inherit;
+    margin: 1em;
+    border-bottom: 1px solid var(--accent-colour);
+    font-size: 1em;
+    text-align: left;
+}
