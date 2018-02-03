@@ -39,7 +39,7 @@ $(document).ready(function () {
         }
         // change the button icon
         // toggle properties for next click
-        nextWidth = (nextWidth == "100%") ? "65%" : "100%";
+        nextWidth = (nextWidth == "100%") ? "69%" : "100%";
         open = (open) ? false : true;
     });
 
