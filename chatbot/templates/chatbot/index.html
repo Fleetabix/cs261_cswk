@@ -46,10 +46,21 @@
     </div>
 </div>
 <div id="message-board" class="pane">
-    <h1>This is the content!</h1>
+    <div id="messages">
+
+    </div>
+    <div id="message-input">
+        <form id="message-form" action="" method="post">
+            <input type="text" id="message-txt" name="message" placeholder="Hi there! What would you like to know?">
+            <button id="submit-btn" type="submit" class="btn">
+                    <i class="fa fa-arrow-circle-up fa-lg"></i>
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock content %}
 
 {% block scripts %}
     <script src="{% static 'chatbot/js/portfolio_dropdown.js' %}"></script>
+    <script src="{% static 'chatbot/js/message_handler.js' %}"></script>
 {% endblock scripts %}
