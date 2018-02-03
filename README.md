@@ -24,6 +24,8 @@ $ python manage.py makemigrations
 $ python manage.py migrate
 ```
 
+Once the server is running, visit the chatbot by going to _localhost:8000/chatbot_
+
 ## project structure
 
 - website/ (the base website code, we do not need to edit this, just add the chatbot app in the settings)
