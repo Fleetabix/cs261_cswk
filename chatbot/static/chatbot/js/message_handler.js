@@ -3,7 +3,7 @@ $(document).ready(function() {
         e.preventDefault();
         var $form = $(this);
         var data = {
-            query: $form.find("input[name='message']").val()
+            query: $form.find("input[name='query']").val()
         }
         outputData({response: data.query});
         $.ajax({

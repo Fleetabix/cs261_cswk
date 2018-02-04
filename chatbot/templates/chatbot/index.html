@@ -48,9 +48,9 @@
 
     </div>
     <div id="message-input">
-        <form id="message-form" action="" method="post">
+        <form id="message-form" action="ask_chatbot/" method="post">
             {% csrf_token %}
-            <input type="text" id="message-txt" name="message" placeholder="Hi there! What would you like to know?">
+            <input type="text" id="message-txt" name="query" placeholder="Hi there! What would you like to know?">
             <button id="submit-btn" type="submit" class="btn">
                     <i class="fa fa-arrow-circle-up fa-lg"></i>
             </button>
