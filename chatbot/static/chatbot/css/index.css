@@ -49,6 +49,8 @@ html, body {
 
 #menu-box > h1 {
     display: inline-block;
+    position: relative;
+    top: 4px;
     margin-left: 10px;
     margin-bottom: 0;
 }
@@ -57,7 +59,7 @@ html, body {
     background-color: var(--header-bg-color);
     color: var(--header-fg-color);
     border: none;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 /*
