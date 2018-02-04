@@ -43,6 +43,11 @@ html, body {
     height: 5em;
 }
 
+#menu-box > h1 {
+    display: inline-block;
+    margin-left: 10px;
+}
+
 .portfolio-btn {
     background-color: var(--header-bg-color);
     color: var(--header-fg-color);
