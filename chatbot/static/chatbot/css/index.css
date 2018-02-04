@@ -19,6 +19,10 @@ html, body {
     background-color: #000000;
 }
 
+* {
+    font-family: 'Overpass', sans-serif;
+}
+
 /*
     if the device is being viewed on a small screen (aka mobile)
     slightly change the background colour
@@ -46,6 +50,7 @@ html, body {
 #menu-box > h1 {
     display: inline-block;
     margin-left: 10px;
+    margin-bottom: 0;
 }
 
 .portfolio-btn {
