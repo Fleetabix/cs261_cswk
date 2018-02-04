@@ -3,16 +3,26 @@ $(document).ready(function() {
         e.preventDefault();
         var $form = $(this);
         var data = {
-            message: $form.find("input[name='message']").val()
+            query: $form.find("input[name='query']").val()
         }
-        //just a placeholder for now
-        outputData(data);
+        outputData({response: data.query});
+        $.ajax({
+            url: 'ask_chatbot/',
+            data: data,
+            dataType: "json",
+            method: "post"
+        }).done(function(response) {
+            outputData(response);
+        }).fail(function(response) {
+            console.log("-----Fail-------");
+            console.log(response);
+        });
     });
 });
 
 function outputData(data) {
     var messageBox = "<div class='message'>";
-    messageBox += "<p>"+data.message+"</p>";
+    messageBox += "<p>"+data.response+"</p>";
     messageBox += "</div>";
     $("#messages").append(messageBox);
     $("#messages").scrollTop($("#messages").prop("scrollHeight"));
