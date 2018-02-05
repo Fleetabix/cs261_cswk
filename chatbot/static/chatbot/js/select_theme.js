@@ -25,9 +25,9 @@ function setTheme(theme) {
             break;
         case "theme-2":
             document.documentElement.style.setProperty('--header-bg-colour', "#FFF");
-            document.documentElement.style.setProperty('--header-fg-colour', "#000");
-            document.documentElement.style.setProperty('--body-bg-colour', "#DDD");
-            document.documentElement.style.setProperty('--body-fg-colour', "#333");
-            document.documentElement.style.setProperty('--accent-colour', "#3AF");
+            document.documentElement.style.setProperty('--header-fg-colour', "#4A4A4A");
+            document.documentElement.style.setProperty('--body-bg-colour', "#CFC5DD");
+            document.documentElement.style.setProperty('--body-fg-colour', "#000");
+            document.documentElement.style.setProperty('--accent-colour', "#E0DFFF");
     }
 }
