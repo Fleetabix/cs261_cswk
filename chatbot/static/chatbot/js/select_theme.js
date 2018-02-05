@@ -24,7 +24,7 @@ function setTheme(theme) {
             document.documentElement.style.setProperty('--accent-colour', "#2B7A78");
             break;
         case "theme-2":
-            document.documentElement.style.setProperty('--header-bg-colour', "#fff");
+            document.documentElement.style.setProperty('--header-bg-colour', "#FFF");
             document.documentElement.style.setProperty('--header-fg-colour', "#000");
             document.documentElement.style.setProperty('--body-bg-colour', "#DDD");
             document.documentElement.style.setProperty('--body-fg-colour', "#333");
