@@ -2,10 +2,10 @@
     set the colours for the colour scheme
 */
 :root {
-    --header-bg-color:  #17252A;
-    --header-fg-color: #FEFFFF;
-    --body-bg-color: #3AAfA9;
-    --body-fg-color: #DEF2F1;
+    --header-bg-colour:  #17252A;
+    --header-fg-colour: #FEFFFF;
+    --body-bg-colour: #3AAfA9;
+    --body-fg-colour: #DEF2F1;
     --accent-colour: #2B7A78;
 }
 
@@ -36,8 +36,8 @@ html, body {
 /*CSS Rules for the header*/
 
 #header {
-    background-color: var(--header-bg-color);
-    color: var(--header-fg-color);
+    background-color: var(--header-bg-colour);
+    color: var(--header-fg-colour);
     margin: 0;
     padding: 10px;
     position: fixed;
@@ -56,8 +56,8 @@ html, body {
 }
 
 .portfolio-btn {
-    background-color: var(--header-bg-color);
-    color: var(--header-fg-color);
+    background-color: var(--header-bg-colour);
+    color: var(--header-fg-colour);
     border: none;
     font-size: 1.5em;
 }
@@ -89,8 +89,8 @@ html, body {
 }
 
 #drp-btn {
-    background-color: var(--header-bg-color);
-    color: var(--header-fg-color);
+    background-color: var(--header-bg-colour);
+    color: var(--header-fg-colour);
 }
 
 #drp-btn:focus, #drp-btn:active{
@@ -101,7 +101,7 @@ html, body {
 /*CSS Rules for the Body*/
 
 .content {
-    background-color: var(--body-bg-color);
+    background-color: var(--body-bg-colour);
     height: 100%;
     margin: 0;
     padding: 0;
@@ -134,7 +134,7 @@ html, body {
         height: 100%;
         width: 30%;
         position: relative;
-        border-right: 2px solid var(--header-bg-color);
+        border-right: 2px solid var(--header-bg-colour);
         float: left; /* needed otherwise message board does funky things on slide */
         display: inline-block;
     }
@@ -145,8 +145,8 @@ html, body {
 }
 
 #message-board {
-    background-color: var(--body-bg-color);
-    color: var(--body-fg-color);
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour);
     height: 100%;
     width: 100%;
     padding: 10px;
@@ -196,8 +196,8 @@ html, body {
 
 #submit-btn {
     margin-left: 2%;
-    background-color: var(--body-bg-color);
-    color: var(--header-bg-color);
+    background-color: var(--body-bg-colour);
+    color: var(--header-bg-colour);
 }
 
 /*CSS For the Messages*/
