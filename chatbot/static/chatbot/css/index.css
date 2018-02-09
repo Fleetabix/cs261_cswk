@@ -213,6 +213,10 @@ html, body {
     text-align: left;
 }
 
+.user-message {
+    text-align: right;
+}
+
 .news-holder {
     padding-bottom: 10px;
 }
@@ -223,7 +227,6 @@ html, body {
     margin: 5px;
     height: auto;
 }
-
 
 /*
     if on a desktop give the collumns a side border
