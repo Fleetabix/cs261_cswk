@@ -152,6 +152,10 @@ html, body {
     padding: 10px;
 }
 
+#messages::-webkit-scrollbar { 
+    display: none; 
+}
+
 /*
     If on a desktop, change the width to 68% so that the message
     board can be inline with the open portfolio tab.
