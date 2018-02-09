@@ -25,11 +25,12 @@ def ask_chatbot(request):
 def getTextData(query):
     """ 
         test for text response
-        """
+    """
     return  {
                 "name": "FLORIN",
                 "type": "text",
-                "body": "FLORIN: you said '" + query + "'?"
+                "body": "The current spot price of '" + query.split(" ")[0].upper() + "' is",
+                "caption" : "£1,000,000"
             }
     
 def getNewsData():
