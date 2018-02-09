@@ -7,7 +7,7 @@ $(document).ready(function () {
         }
         //make sure the message isn't empty
         if (data.query != "") {
-            outputData({ name: "USER", type: "text", body: data.query });
+            outputQuery(data.query);
             $.ajax({
                 url: 'ask_chatbot/',
                 data: data,
@@ -32,7 +32,7 @@ function outputData(data) {
             if (data.body)
                 messageBox += "<p>" + data.body + "</p>";
             if (data.caption)
-                messageBox += "<caption>" + data.caption + "</caption>";
+                messageBox += "<h4>" + data.caption + "</h4>";
             break;
         case "chart":
             chartId = getNextChartID();
@@ -113,4 +113,14 @@ function getRandomColor() {
         color += letters[Math.floor(Math.random() * 13)];
     }
     return color;
-  }
+}
+
+function outputQuery(query) {
+    var messageBox = "<div class='message user-message'>";
+    messageBox += "<h3>USER</h3>";
+    messageBox += "<p>"+query+"</p>";
+    messageBox += "</div>";
+    $("#messages").append(messageBox);
+    $("#messages").scrollTop($("#messages").prop("scrollHeight"));
+    $("#message-txt").val("");
+}
