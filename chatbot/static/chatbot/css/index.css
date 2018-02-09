@@ -23,6 +23,10 @@ html, body {
     font-family: 'Overpass', sans-serif;
 }
 
+a {
+    color: var(--body-fg-colour) !important;
+}
+
 /*
     if the device is being viewed on a small screen (aka mobile)
     slightly change the background colour
@@ -236,11 +240,11 @@ html, body {
 */
 @media only screen and (min-width: 768px) {
     .news-desc {
-        border-left: 1px solid var(--accent-colour);
+        border-left: 1px solid var(--body-bg-colour);
     }
 
     .chart-holder {
-        border-right: 1px solid var(--accent-colour);
+        border-right: 1px solid var(--body-bg-colour);
         margin-bottom: 20px;
     }
 }
