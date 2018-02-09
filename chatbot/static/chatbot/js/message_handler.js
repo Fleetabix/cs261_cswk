@@ -73,6 +73,9 @@ function outputData(data) {
     }
 }
 
+/*
+    has a static variable which is incremented each time a chart is added
+*/
 function getNextChartID() {
     if (typeof getNextChartID.id == 'undefined') {
         getNextChartID.id = 0;
@@ -80,12 +83,16 @@ function getNextChartID() {
     return getNextChartID.id++;
 }
 
+/*
+    Creates a chart given the chart object and the chart id
+*/
 function createChart(chartId, chartObject) {
     var ctx = document.getElementById(chartId).getContext('2d');
     var dataSets = chartObject.data.datasets;
     for (key in dataSets) {
         var dataset = dataSets[key];
         var colour = getRandomColor();
+        //add the following properties to the dataset
         dataset["backgroundColor"] = colour;
         dataset["borderColor"] = colour;
         dataset["fill"] = "none";
@@ -93,6 +100,9 @@ function createChart(chartId, chartObject) {
     new Chart(ctx, chartObject);
 }
 
+/* 
+    Generates a random colour (can't do black though, black is yucky)
+*/
 function getRandomColor() {
     var letters = '3456789ABCDEF';
     var color = '#';
