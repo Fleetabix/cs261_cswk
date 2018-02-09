@@ -5,18 +5,21 @@ $(document).ready(function () {
         var data = {
             query: $form.find("input[name='query']").val()
         }
-        outputData({ name: "USER", type: "text", body: data.query });
-        $.ajax({
-            url: 'ask_chatbot/',
-            data: data,
-            dataType: "json",
-            method: "post"
-        }).done(function (response) {
-            outputData(response);
-        }).fail(function (response) {
-            console.log("-----Fail-------");
-            console.log(response);
-        });
+        //make sure the message isn't empty
+        if (data.query != "") {
+            outputData({ name: "USER", type: "text", body: data.query });
+            $.ajax({
+                url: 'ask_chatbot/',
+                data: data,
+                dataType: "json",
+                method: "post"
+            }).done(function (response) {
+                outputData(response);
+            }).fail(function (response) {
+                console.log("-----Fail-------");
+                console.log(response);
+            });
+        }
     });
 });
 
