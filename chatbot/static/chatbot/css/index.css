@@ -222,16 +222,32 @@ html, body {
 
 
 /*
-    if on a desktop,
+    if on a desktop give the collumns a side border
 */
 @media only screen and (min-width: 768px) {
     .news-desc {
         border-left: 1px solid var(--accent-colour);
+    }
+
+    .chart-holder {
+        border-right: 1px solid var(--accent-colour);
+        margin-bottom: 20px;
     }
 }
 
 @media only screen and (max-width: 768px) {
     .news-img-holder {
         text-align: center;
+    }
+}
+
+canvas {
+    background-color: var(--header-bg-colour);
+    border-radius: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    canvas {
+        margin-bottom: 20px;
     }
 }
