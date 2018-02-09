@@ -208,3 +208,30 @@ html, body {
     font-size: 1em;
     text-align: left;
 }
+
+.news-holder {
+    padding-bottom: 10px;
+}
+
+.news-img {
+    width: 128px;
+    max-width: 100%;
+    margin: 5px;
+    height: auto;
+}
+
+
+/*
+    if on a desktop,
+*/
+@media only screen and (min-width: 768px) {
+    .news-desc {
+        border-left: 1px solid var(--accent-colour);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .news-img-holder {
+        text-align: center;
+    }
+}
