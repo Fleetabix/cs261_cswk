@@ -1,21 +1,42 @@
 $(document).ready(function() {
     if(annyang) {
-        // if the user's browser support voice recognition, 
-        // add a mmicrophone button
-        $("#message-form").append
-            (
-                "<button id='speech-btn' class='btn msg-form-btn'>"
-                + "<i class='fas fa-microphone fa-lg'></i>"
-                + "</button>"
-            );
-
         var command = {
-            'ok flooring *query': function(query) {
+            '(ok) (hey) flooring *query': function(query) {
                 outputQuery(query);
             }
         }
         annyang.addCommands(command);
 
-        annyang.start({ autoRestart: false });
+        //get the user's preferences about having the microphone on
+        var microOn = Cookies.get("microphone");
+        if (microOn == undefined) {
+            Cookies.set("microphone", "false");
+        } else {
+            if (microOn == "true") {
+                setListening(true);
+            }
+        }
+    } else {
+        //if the browser does not support speech recognition
+        //turn it off
+        $("#speech-btn").css("display", "none");
     }
 });
+
+$("#speech-btn").click(function() {
+    var microOn = Cookies.get("microphone");
+    setListening(!(microOn == "true"));
+    Cookies.set("microphone", (microOn == "true") ? false : true);
+    console.log(Cookies.get("microphone"));
+});
+
+function setListening(on) {
+    console.log("setting speech " + ((on) ? "on" : "off"));
+    if (on) {
+        $("#speech-btn").css("color", "red");
+        annyang.start();
+    } else {
+        $("#speech-btn").css("color", "var(--header-bg-colour");
+        annyang.abort();
+    }
+}
