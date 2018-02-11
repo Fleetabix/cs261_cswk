@@ -117,7 +117,7 @@ function getRandomColor() {
 
 function outputQuery(query) {
     var messageBox = "<div class='message user-message'>";
-    messageBox += "<h3>USER</h3>";
+    messageBox += "<h3>"+username+"</h3>";
     messageBox += "<p>"+query+"</p>";
     messageBox += "</div>";
     $("#messages").append(messageBox);
