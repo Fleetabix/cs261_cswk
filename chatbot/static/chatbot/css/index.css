@@ -224,6 +224,10 @@ a {
     text-align: right;
 }
 
+#speech-box {
+    padding-right: 30px;
+}
+
 .news-holder {
     padding-bottom: 10px;
 }
