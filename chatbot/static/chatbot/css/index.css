@@ -265,3 +265,10 @@ canvas {
         margin-bottom: 20px;
     }
 }
+
+/*
+    this needs to ge here to override the link colouring from above
+*/
+#logout-lnk {
+    color: black !important;
+}
