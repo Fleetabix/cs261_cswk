@@ -2,26 +2,30 @@ $(document).ready(function () {
     $("#message-form").submit(function (e) {
         e.preventDefault();
         var $form = $(this);
-        var data = {
-            query: $form.find("input[name='query']").val()
-        }
-        //make sure the message isn't empty
-        if (data.query != "") {
-            outputQuery(data.query);
-            $.ajax({
-                url: 'ask_chatbot/',
-                data: data,
-                dataType: "json",
-                method: "post"
-            }).done(function (response) {
-                outputData(response);
-            }).fail(function (response) {
-                console.log("-----Fail-------");
-                console.log(response);
-            });
-        }
+        askChatbot($form.find("input[name='query']").val());
     });
 });
+
+function askChatbot(query) {
+    var data = {
+        query: query
+    }
+    //make sure the message isn't empty
+    if (data.query != "") {
+        outputQuery(data.query);
+        $.ajax({
+            url: 'ask_chatbot/',
+            data: data,
+            dataType: "json",
+            method: "post"
+        }).done(function (response) {
+            outputData(response);
+        }).fail(function (response) {
+            console.log("-----Fail-------");
+            console.log(response);
+        });
+    }
+}
 
 function outputData(data) {
     var chartId;
