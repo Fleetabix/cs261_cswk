@@ -119,3 +119,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/chatbot'
+
+# print any emails sent to the console
+# TODO remove this line if going into production!
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+

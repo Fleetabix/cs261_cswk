@@ -26,6 +26,15 @@ $ python manage.py migrate
 
 Once the server is running, visit the chatbot by going to _localhost:8000/chatbot_
 
+## creating users
+
+The website should now support users, but there isn't a sign up page yet. To create your own user,
+go to _localhost:8000/admin_ and sign in with
+- username: 'admin'
+- password: 'qwertyuiop'
+
+then simply add a user by pressing '+ Add' on the user link. Not sure if it will be important in the future, but when registering a user, add them to the 'Chatbot Users' group.
+
 ## project structure
 
 - website/ (the base website code, we do not need to edit this, just add the chatbot app in the settings)
