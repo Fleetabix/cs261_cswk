@@ -24,13 +24,13 @@
         <div class="dropdown">
             <button id="drp-btn" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                User Name 
+                {{ user.get_username }} 
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button id="theme-1" class="dropdown-item theme-btn" type="button">Theme 1</button>
                 <button id="theme-2" class="dropdown-item theme-btn" type="button">Theme 2</button>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Sign Out</a>
+                <a id='logout-lnk' class="dropdown-item" href="{% url 'logout' %}">Sign Out</a>
             </div>
         </div>
     </div>
