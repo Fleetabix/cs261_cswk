@@ -11,7 +11,7 @@
 
 {% block header %}
 <div id="header" class="row justify-content-between">
-    <div id="menu-box" class="col-6">
+    <div id="menu-box" class="col-8">
         <button id="desktop-portfolio-btn" class="portfolio-btn">
             <span id="desktop-chevron" class="fa fa-chevron-left"></span>
         </button>
@@ -20,11 +20,11 @@
         </button>
         <h1>FLORIN</h1>
     </div>
-    <div id="user-dropdown" class="col-6">
+    <div id="user-dropdown" class="col-4">
         <div class="dropdown">
             <button id="drp-btn" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                {{ user.get_username }} 
+                Options 
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button id="theme-1" class="dropdown-item theme-btn" type="button">Theme 1</button>
@@ -54,6 +54,9 @@
                 placeholder="Hi there! What would you like to know?">
             <button id="submit-btn" type="submit" class="btn msg-form-btn">
                     <i class="fa fa-arrow-circle-up fa-lg"></i>
+            </button>
+            <button id="speech-btn" class="btn msg-form-btn">
+                    <i class="fas fa-microphone fa-lg"></i>
             </button>
         </form>
     </div>
