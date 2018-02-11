@@ -124,4 +124,6 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/chatbot'
 
 # print any emails sent to the console
+# TODO remove this line if going into production!
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
