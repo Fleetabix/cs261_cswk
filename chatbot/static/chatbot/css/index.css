@@ -202,7 +202,8 @@ a {
     border: none;
 }
 
-#submit-btn {
+.msg-form-btn {
+    border: none;
     margin-left: 2%;
     background-color: var(--body-bg-colour);
     color: var(--header-bg-colour);
