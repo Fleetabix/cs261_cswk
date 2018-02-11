@@ -1,0 +1,51 @@
+{% extends 'website/base.html' %}
+
+{% block scripts %}
+<style>
+    :root {
+        --bg-colour:  #17252A;
+        --fg-colour: #FEFFFF;
+        --accent-colour: #3377FF;
+    }
+
+    html, body {
+        background-color: var(--bg-colour);
+        color: var(--fg-colour);
+        text-align: center;
+    }
+
+    .page-header {
+        border-bottom: 1px solid var(--accent-colour);
+        padding: 20px;
+        margin-bottom: 100px;
+        margin-top: 20px;
+    }
+
+    form input {
+        width: 50%; 
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .jumbotron {
+        background-color: var(--accent-colour);
+    }
+
+    input[type=submit] {
+        width: 30%;
+    }
+
+
+    @media only screen and (max-width: 768px){
+        form input {
+            width: 80%; 
+        }
+
+        input[type=submit] {
+            width: 50%;
+        }
+    }
+</style>
+{% endblock scripts %}
