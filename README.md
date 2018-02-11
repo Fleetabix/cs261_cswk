@@ -32,6 +32,7 @@ The website should now support users, but there isn't a sign up page yet. To cre
 go to _localhost:8000/admin_ and sign in with
 - username: 'admin'
 - password: 'qwertyuiop'
+
 then simply add a user by pressing '+ Add' on the user link. Not sure if it will be important in the future, but when registering a user, add them to the 'Chatbot Users' group.
 
 ## project structure
