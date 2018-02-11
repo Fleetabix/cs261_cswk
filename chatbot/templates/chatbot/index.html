@@ -64,6 +64,9 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script>
+        var username = "{{ user.get_username }}";
+    </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="{% static 'chatbot/js/portfolio_dropdown.js' %}"></script>
     <script src="{% static 'chatbot/js/ajax_setup.js' %}"></script>
