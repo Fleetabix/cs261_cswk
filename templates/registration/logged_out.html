@@ -1,16 +1,17 @@
-{% extends 'website/base.html' %}
+{% extends 'registration/registration_base.html' %}
 
 {% block head %}
 {% endblock head %}
 
 {% block content %}
 <div class="container">
-    <div class="jumbotron">
+    <div id="logout-msg" class="jumbotron">
         <p>Thank you for using</p>
         <h1>FLORIN</h1>
+        <h3> You are now logged out </h3>
+        <h2><i class="far fa-frown"></i></h2>
     </div>
-    <h3> You are now logged out </h3>
-    <h2><i class="far fa-frown"></i></h2>
+    <br>
     <a href="{% url 'login'%}"><h4>Click here to login again.</h4></a>
 </div>
 {% endblock content %}
