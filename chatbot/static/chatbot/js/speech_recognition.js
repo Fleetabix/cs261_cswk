@@ -53,10 +53,12 @@ function setListening(on) {
     if (on) {
         $("#speech-btn").css("color", "red");
         annyang.start({ autoRestart: true, continuous: false });
+        $("#message-txt").prop("placeholder", "Say (ok) FLORIN to start speech recognition");
     } else {
         $("#speech-btn").css("color", "var(--header-bg-colour");
         annyang.abort();
         $("#speech-box").remove();
+        $("#message-txt").prop("placeholder", "Hi there, what would you like to know?");
     }
 }
 
