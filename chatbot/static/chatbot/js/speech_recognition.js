@@ -1,13 +1,16 @@
 $(document).ready(function () {
     if (annyang) {
-        var command = {
+        //add the command to listen for (optionally 'ok') FLORIN
+        //it's written down flooring as it had trouble with just florin
+        annyang.addCommands({
             '(ok) flooring *query': function (query) {
                 askChatbot(query);
             }
-        }
-        annyang.addCommands(command);
+        });
+
+        //add a box to signify to the user that FLORIN is listening 
+        //to them to the message pane
         annyang.addCallback('soundstart', function () {
-            console.log("adding speech box");
             var speechBox = "<div id='speech-box' class='message user-message'>";
             speechBox += "<br><p>";
             speechBox += " <i class='fas fa-circle' id='speech-dot-0'></i> ";
@@ -20,8 +23,13 @@ $(document).ready(function () {
             $("#messages").scrollTop($("#messages").prop("scrollHeight"));
             animateDots();
         });
+
+        //when annyang gets a result, or the speech recognition ends, remove the 
+        //speech box from the message pane
         annyang.addCallback('result', function () {
-            console.log("removing speech box");
+            $("#speech-box").remove();
+        });
+        annyang.addCallback('end', function() {
             $("#speech-box").remove();
         });
 
@@ -41,15 +49,15 @@ $(document).ready(function () {
     }
 });
 
+//when the microphone button is licked, toggle the listening
+//mode and save the next state in the browser's cookies
 $("#speech-btn").click(function () {
     var microOn = Cookies.get("microphone");
     setListening(!(microOn == "true"));
     Cookies.set("microphone", (microOn == "true") ? false : true);
-    console.log(Cookies.get("microphone"));
 });
 
 function setListening(on) {
-    console.log("setting speech " + ((on) ? "on" : "off"));
     if (on) {
         $("#speech-btn").css("color", "red");
         annyang.start({ autoRestart: true, continuous: false });
@@ -62,6 +70,7 @@ function setListening(on) {
     }
 }
 
+//makes the three dots in the speech message box alternate in colour
 function animateDots() {
     if (animateDots.dot == undefined) {
         animateDots.dot = 0;
