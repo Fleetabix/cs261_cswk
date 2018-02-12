@@ -11,7 +11,7 @@
 
 {% block header %}
 <div id="header" class="row justify-content-between">
-    <div id="menu-box" class="col-8">
+    <div id="menu-box" class="col-9">
         <button id="desktop-portfolio-btn" class="portfolio-btn">
             <span id="desktop-chevron" class="fa fa-chevron-left"></span>
         </button>
@@ -20,15 +20,16 @@
         </button>
         <h1>FLORIN</h1>
     </div>
-    <div id="user-dropdown" class="col-4">
+    <div id="user-dropdown" class="col-3">
         <div class="dropdown">
             <button id="drp-btn" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
                 Options 
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <button id="theme-1" class="dropdown-item theme-btn" type="button">Theme 1</button>
-                <button id="theme-2" class="dropdown-item theme-btn" type="button">Theme 2</button>
+                <div id="themes">
+
+                </div>
                 <div class="dropdown-divider"></div>
                 <a id='logout-lnk' class="dropdown-item" href="{% url 'logout' %}">Sign Out</a>
             </div>
