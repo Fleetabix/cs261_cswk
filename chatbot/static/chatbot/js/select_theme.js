@@ -1,4 +1,31 @@
-$(document).ready(function() {
+var theme1 = {
+    'name': 'Default',
+    '--header-bg-colour': "#17252A",
+    '--header-fg-colour': "#FEFFFF",
+    '--body-bg-colour': "#3AAfA9",
+    '--body-fg-colour': "#DEF2F1",
+    '--accent-colour': "#2B7A78"
+}
+
+var theme2 = {
+    'name': 'Pink',
+    '--header-bg-colour': "#FFF",
+    '--header-fg-colour': "#4A4A4A",
+    '--body-bg-colour': "#CFC5DD",
+    '--body-fg-colour': "#000",
+    '--accent-colour': "#E0DFFF",
+}
+
+var theme3 = {
+    'name': 'Light',
+    '--header-bg-colour': "#FFF",
+    '--header-fg-colour': "#000",
+    '--body-bg-colour': "#FFF",
+    '--body-fg-colour': "#000",
+    '--accent-colour': "#44DDFF",
+}
+
+$(document).ready(function () {
     var themeCookie = Cookies.get("theme");
     if (themeCookie == null) {
         Cookies.set("theme", "theme-1");
@@ -8,7 +35,7 @@ $(document).ready(function() {
     }
 });
 
-$(".theme-btn").click(function() {
+$(".theme-btn").click(function () {
     var theme = $(this).attr("id");
     Cookies.set("theme", theme);
     setTheme(theme);
