@@ -11,7 +11,7 @@
 
 {% block header %}
 <div id="header" class="row justify-content-between">
-    <div id="menu-box" class="col-6">
+    <div id="menu-box" class="col-8">
         <button id="desktop-portfolio-btn" class="portfolio-btn">
             <span id="desktop-chevron" class="fa fa-chevron-left"></span>
         </button>
@@ -20,11 +20,11 @@
         </button>
         <h1>FLORIN</h1>
     </div>
-    <div id="user-dropdown" class="col-6">
+    <div id="user-dropdown" class="col-4">
         <div class="dropdown">
             <button id="drp-btn" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                {{ user.get_username }} 
+                Options 
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button id="theme-1" class="dropdown-item theme-btn" type="button">Theme 1</button>
@@ -52,8 +52,11 @@
             {% csrf_token %}
             <input type="text" id="message-txt" name="query" autocomplete="off" 
                 placeholder="Hi there! What would you like to know?">
-            <button id="submit-btn" type="submit" class="btn">
+            <button id="submit-btn" type="submit" class="btn msg-form-btn">
                     <i class="fa fa-arrow-circle-up fa-lg"></i>
+            </button>
+            <button id="speech-btn" class="btn msg-form-btn">
+                    <i class="fas fa-microphone fa-lg"></i>
             </button>
         </form>
     </div>
@@ -61,10 +64,15 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script>
+        var username = "{{ user.get_username }}";
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="{% static 'chatbot/js/portfolio_dropdown.js' %}"></script>
     <script src="{% static 'chatbot/js/ajax_setup.js' %}"></script>
     <script src="{% static 'chatbot/js/message_handler.js' %}"></script>
     <script src="{% static 'chatbot/js/select_theme.js' %}"></script>
+    <script src="{% static 'chatbot/js/speech_recognition.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js" 
         integrity="sha256-vyehT44mCOPZg7SbqfOZ0HNYXjPKgBCaqxBkW3lh6bg=" 
         crossorigin="anonymous">
