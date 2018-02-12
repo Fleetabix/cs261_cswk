@@ -7,6 +7,8 @@
     --body-bg-colour: #3AAfA9;
     --body-fg-colour: #DEF2F1;
     --accent-colour: #2B7A78;
+    --border-colour: #000000;
+    --btn-colour: #17252A;
 }
 
 /*
@@ -41,13 +43,14 @@ a {
 
 #header {
     background-color: var(--header-bg-colour);
+    border-bottom: 1px solid var(--border-colour);
     color: var(--header-fg-colour);
     margin: 0;
     padding: 10px;
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 2;
+    z-index: 20;
     height: 5em;
 }
 
@@ -138,7 +141,7 @@ a {
         height: 100%;
         width: 30%;
         position: relative;
-        border-right: 2px solid var(--header-bg-colour);
+        border-right: 1px solid var(--border-colour);
         float: left; /* needed otherwise message board does funky things on slide */
         display: inline-block;
     }
@@ -198,14 +201,14 @@ a {
 #message-txt {
     width: 78%;
     border-radius: .25em;
-    border: none;
+    border: 0.5px solid var(--border-colour);
 }
 
 .msg-form-btn {
     border: none;
     margin-left: 2%;
     background-color: var(--body-bg-colour);
-    color: var(--header-bg-colour);
+    color: var(--btn-colour);
 }
 
 /*CSS For the Messages*/
