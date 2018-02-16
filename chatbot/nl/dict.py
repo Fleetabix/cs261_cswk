@@ -1,6 +1,18 @@
 import os
 import json
 
+#A dictionary of saved dictionaries.
+dicts = {}
+
+def getDict(string):
+    #Check whether the string is already loaded
+    if string in dicts:
+        return dicts[string]
+    #If it's not found, try to read it.
+    d = read(string+".json")
+    dicts[string] = d
+    return d
+
 def read(dictName):
     #Dictionaries are stored in a subdirectory, so modify the path.
     path = os.path.join("dictionaries",dictName)
