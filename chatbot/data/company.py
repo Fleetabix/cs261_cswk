@@ -8,3 +8,8 @@ class Company:
 	def getSpotPrice(self):
 		print(StockHandler.getStockInformation(self.ticker).spot_price)
 
+	def getSpotPriceDifference(self):
+		print(StockHandler.getStockInformation(self.ticker).price_difference)
+
+	def getSpotPercentageDifference(self):
+		print(StockHandler.getStockInformation(self.ticker).percent_difference)
