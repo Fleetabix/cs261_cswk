@@ -6,5 +6,4 @@ class StockHandler:
 		self.fullname = name
 		self.ticker = ticker
 	
-	def 
 	
