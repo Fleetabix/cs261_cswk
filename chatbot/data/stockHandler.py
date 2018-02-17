@@ -1,7 +1,7 @@
 import feedparser
 
 class CompanyStock:
-	def __init__(self, spotprice, change, percentchange)
+	def __init__(self, spotprice, change, percentchange):
 		self.spot_price = spotprice
 		self.price_difference = change
 		self.percent_difference = percentchange
@@ -14,5 +14,5 @@ class StockHandler:
 		for i in range(1, len(feed)):
 			current_item = feed.entries[i].summary.split(',')
 			if (current_item[0] == ticker):
-				return CompanyStock.CompanyStock(current_item[4], current_item[5], current_item[6])
+				return CompanyStock(current_item[4], current_item[5], current_item[6])
 	
