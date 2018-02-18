@@ -12,4 +12,8 @@ class Company:
 		return StockHandler.getStockInformation(self.ticker).price_difference
 
 	def getSpotPercentageDifference(self):
-		return StockHandler.getStockInformation(self.ticker).percent_difference)
+		return StockHandler.getStockInformation(self.ticker).percent_difference
+
+	def getStockHistory(self, start, end):
+		return StockHandler.getHistoricalStockInformation(ticker, start, end)
+	
