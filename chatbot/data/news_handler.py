@@ -10,6 +10,6 @@ class NewsHandler:
 	def getNews(ticker):
 		news = []
 		f = feedparser.parse('https://finance.google.com/finance/company_news?q='+ticker+'&ei=OwiKWrHYB5CWUo31grgL&output=rss')
-		for news in f.entries:
-			news.append(NewsInformation(news.link, news.title))
+		for stories in f.entries:
+			news.append(NewsInformation(stories.link, stories.title))
 		return news
