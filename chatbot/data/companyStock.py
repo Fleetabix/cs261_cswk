@@ -1,6 +1,6 @@
 class CompanyStock:
-	def __init__(self, spotprice, change, percentchange, retrieve_datetime)
+	def __init__(self, spotprice, change, percentchange):
 		self.spot_price = spotprice
-		self.last_change = change
-		self.last_percent_change = percentchange
+		self.price_difference = change
+		self.percent_difference = percentchange
 		self.retrieved = retrieve_datetime
