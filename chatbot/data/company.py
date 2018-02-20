@@ -1,4 +1,4 @@
-from stockHandler import CompanyStock, StockHandler
+from stock_handler import CompanyStock, StockHandler
 from news_handler import NewsHandler
 class Company:
 	def __init__(self, comp_name, ticker_name):
@@ -19,4 +19,3 @@ class Company:
 
 	def getNews(self):		
 		return NewsHandler.getNews(self.ticker)
-
