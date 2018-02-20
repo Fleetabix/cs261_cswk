@@ -15,3 +15,6 @@ class Company:
 
 	def getStockHistory(self, start, end):
 		return StockHandler.getHistoricalStockInformation(self.ticker, start, end)
+
+	def getNews(self):
+		return NewsHandler.getNews(self.ticker)
