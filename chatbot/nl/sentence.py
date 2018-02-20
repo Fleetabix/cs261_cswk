@@ -3,33 +3,36 @@ import dict
 import string
 
 class Sentence:
-    __doc__="A class for natural language sentences"
+	__doc__="A class for natural language sentences"
 
-    def __init__(self, sentence):
-        self.sentence = sentence
-        self.tokens = nltk.word_tokenize(sentence)
+	def __init__(self, sentence):
+		self.sentence = sentence
+		self.tokens = nltk.word_tokenize(sentence)
 
-    def extract(self):
-        return self.findFromDictionary("qualities", self.tokens)
+	def extract(self):
+		self.qualities = self.findFromDictionary("qualities", self.tokens)
 
-    def findFromDictionary(self, dictName, tokens):
-        dictionary = dict.getDict(dictName)
-        length = len(tokens) #Start with the full string.
-        while length>0:
-            for i in range(0,len(tokens)-length+1): #Every group of length length.
-                name = tokensToSentence(tokens[i:i+length]) #Find the potential name
-                actualName = getID(name, dictionary)
-                if actualName != None: #If name is an alias:
-                    newList = tokens[:i] + tokens [i+length:]
-                    return [actualName] + self.findFromDictionary(dictName, newList) #Recursion
-            length-=1 #Now check shorter strings.
-        return []
+	def findFromDictionary(self, dictName, tokens):
+		dictionary = dict.getDict(dictName)
+		length = len(tokens) #Start with the full string.
+		while length>0:
+			for i in range(0,len(tokens)-length+1): #Every group of length length.
+				name = tokensToSentence(tokens[i:i+length]) #Find the potential name
+				actualName = getID(name, dictionary)
+				if actualName != None: #If name is an alias:
+					newList = tokens[:i] + tokens [i+length:]
+					return [{"id":actualName, "typed":name}] + self.findFromDictionary(dictName, newList) #Recursion
+			length-=1 #Now check shorter strings.
+		return []
+
+	def __repr__(self):
+		return "Qualities: " + self.qualities.__repr__()
 
 def getID(name, dictionary):
-    for entry in dictionary:
-        for alias in entry["alias"]:
-            if alias == name:
-                return entry["id"]
+	for entry in dictionary:
+		for alias in entry["alias"]:
+			if alias == name:
+				return entry["id"]
 
 #Takes a set of tokens and reassmbles them to make a normal sentence.
 def tokensToSentence(tokens):
