@@ -28,3 +28,10 @@ class Company(models.Model):
     def __str__(self):
             return self.name
 
+class PortfolioItem(models.Model):
+    """
+        A link table that defines the relationship between a user and the
+        multiple entities it can have in their portfolio
+    """
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    company_ticker = models.ForeignKey(Company, on_delete=models.CASCADE) 
