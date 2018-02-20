@@ -13,18 +13,6 @@ class Company(models.Model):
     name = models.CharField(max_length=40)
     industry = models.CharField(max_length=40)
 
-    def getStockPrice(self):
-        return None
-
-    def getPercentageDifference(self):
-        return None
-
-    def getPriceOverTime(self, time):
-        return None
-
-    def getNews(self):
-        return None
-
     def __str__(self):
             return self.name
 
