@@ -6,6 +6,17 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+class Industry(models.Model):
+    """
+        A model to store all various industries. The reason this
+        exists rather than just have it as a field in the company
+        model is so it's easier for whoever is mainting the db.
+    """
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+            return self.name
+
 class Company(models.Model):
     """
         The company model which will be stored in the database.
@@ -13,7 +24,7 @@ class Company(models.Model):
     """
     ticker = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=40)
-    industry = models.CharField(max_length=40)
+    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
 
     def __str__(self):
             return self.ticker + " - " + self.name
