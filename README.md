@@ -20,7 +20,7 @@ When modifying the chatbot database models, you might need to run the following 
 ```
 # to create migrations for the database
 $ python manage.py makemigrations
-# to pply the changes to the database
+# to apply the changes to the database
 $ python manage.py migrate
 ```
 
