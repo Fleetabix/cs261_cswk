@@ -7,7 +7,7 @@ class Sentence:
 
 	def __init__(self, sentence):
 		self.sentence = sentence
-		self.tokens = nltk.word_tokenize(sentence)
+		self.tokens = tokenise(sentence)
 
 	def extract(self):
 		self.keywords = self.findFromDictionaries(["qualities", "comparatives", "connectives", "companies"], self.tokens)
@@ -47,6 +47,16 @@ class Sentence:
 			listOfWords+=" "
 		#return "Keywords: " + self.keywords.__repr__() + "\n" + listOfWords
 		return listOfWords
+
+def tokenise(sentence):
+	tokens = nltk.word_tokenize(sentence)
+	tagged = nltk.pos_tag(tokens)
+	#Remove 's when it's a verb (Only need it as a possessive)
+	untagged = []
+	for tag in tagged:
+		if tag[0] != "'s" or tag[1] != "VBZ":
+			untagged.append(tag[0])
+	return untagged
 
 def getID(name, dictionary):
 	for entry in dictionary:
