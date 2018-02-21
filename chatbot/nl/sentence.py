@@ -11,6 +11,10 @@ class Sentence:
 
 	def extract(self):
 		self.keywords = self.findFromDictionaries(["qualities", "comparatives", "connectives", "companies"], self.tokens)
+		self.organiseKeywords()
+
+	def organiseKeywords(self):
+		pass
 
 	def findFromDictionaries(self, dictNames, tokens):
 		#Make an empty list of dictionaries
