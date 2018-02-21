@@ -1,0 +1,12 @@
+[
+  {
+    "id":"higher",
+    "showName":"higher",
+    "alias":["higher", "more", "more than", "greater", "greater than", "larger", "larger than"]
+  },
+  {
+    "id":"lower",
+    "showName":"lower",
+    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than"]
+  }
+]

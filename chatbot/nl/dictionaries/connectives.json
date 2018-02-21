@@ -1,0 +1,17 @@
+[
+  {
+    "id":"and",
+    "showName":"and",
+    "alias":["and", "+", "&", ","]
+  },
+  {
+    "id":"of",
+    "showName":"of",
+    "alias":["of"]
+  },
+  {
+    "id":"s",
+    "showName":"'s",
+    "alias":["'s", "'"]
+  }
+]
