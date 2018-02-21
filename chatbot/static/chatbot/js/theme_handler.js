@@ -25,6 +25,15 @@ var themes = {
         '--accent-colour': "#44BBDD",
         '--border-colour': "#000",
         '--btn-colour': "#44BBDD"
+    },
+    Lava: {
+        '--header-bg-colour': "#000",
+        '--header-fg-colour': "#FFF",
+        '--body-bg-colour': "#222",
+        '--body-fg-colour': "#FFF",
+        '--accent-colour': "#C31",
+        '--border-colour': "#C21",
+        '--btn-colour': "#C31"
     }
 };
 
