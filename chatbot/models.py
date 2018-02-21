@@ -21,8 +21,11 @@ class PortfolioItem(models.Model):
         A link table that defines the relationship between a user and the
         multiple entities it can have in their portfolio
     """
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    company_ticker = models.ForeignKey(Company, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE) 
+
+    def __str__(self):
+            return str(self.user) + " | " + str(self.company)
 
 class UserQueryData(models.Model):
     """
@@ -36,7 +39,12 @@ class UserQueryData(models.Model):
         ('i', 'Industry'),
         ('c', 'Company')
     )
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     entity_type = models.CharField(max_length=40, choices=TYPE_CHOICES)
     entity_identifier = models.CharField(max_length=40)
     hit_count = models.IntegerField()
+
+    def __str__(self):
+            return str(self.user) +  \
+            " | " + self.entity_identifier + \
+            " | " + str(self.hit_count)
