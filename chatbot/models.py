@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -16,35 +18,47 @@ class Company(models.Model):
     def __str__(self):
             return self.ticker + " - " + self.name
 
-class PortfolioItem(models.Model):
+
+class Trader(models.Model):
     """
-        A link table that defines the relationship between a user and the
-        multiple entities it can have in their portfolio
+        An extension to the user class so that we can store many
+        to many relationships with the Compamy model.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE) 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    portfolio = models.ManyToManyField(Company)
 
     def __str__(self):
-            return str(self.user) + " | " + str(self.company)
+        return str(self.user)
 
-class UserQueryData(models.Model):
+
+@receiver(post_save, sender=User)
+def create_trader(sender, instance, created, **kwargs):
     """
-        This will store how many times a user has queried a company
-        or industry.
-        WARNING with the current model there will be no constraints on
-        what you can put in here (as companies or industries will be able 
-        to be search and stored here)
+        If a user is created create the equivelent trader.
     """
-    TYPE_CHOICES = (
-        ('i', 'Industry'),
-        ('c', 'Company')
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    entity_type = models.CharField(max_length=40, choices=TYPE_CHOICES)
-    entity_identifier = models.CharField(max_length=40)
+    if created:
+        t = Trader(user=instance)
+        t.save()
+
+
+@receiver(post_save, sender=User)
+def save_trader(sender, instance, **kwargs):
+    """
+        If a user's is saved, save the information of 
+        the equivelent trader.
+    """
+    instance.trader.save()
+
+
+class CompanyHitCount(models.Model):
+    """
+        This will store how many times a user has queried a company.
+    """
+    trader = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
     hit_count = models.IntegerField()
 
     def __str__(self):
-            return str(self.user) +  \
-            " | " + self.entity_identifier + \
+            return str(self.trader) +  \
+            " | " + str(self.company) + \
             " | " + str(self.hit_count)
