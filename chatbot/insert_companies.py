@@ -1,4 +1,4 @@
-from chatbot.models import Company
+from chatbot.models import Industry, Company
 
 def create_company(ticker, name, industry):
     """
@@ -8,6 +8,10 @@ def create_company(ticker, name, industry):
     c.save()
 
 # these are just examples
-create_company('GOOGL', 'Google', 'Technology')
-create_company('AAPL', 'Apple', 'Technology')
-create_company('BA.', 'BAE Systems PLC', 'Aerospace & Defence')
+tech = Industry(name='technology')
+fin = Industry(name='financial')
+aero = Industry(name='aerospace')
+
+create_company('GOOGL', 'Google', tech)
+create_company('AAPL', 'Apple', tech)
+create_company('BA.', 'BAE Systems PLC', aero)
