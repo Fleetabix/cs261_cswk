@@ -34,10 +34,10 @@ give us a backup to re-insert all the companies quickly in case of something goi
 To run this script and create the companies, make sure that models have been migrated and run
 the following commands
 ```
-#start up the django shell
-python manage.py shell
-#execute the script to add all the companies (whilst in the shell)
-exec(open('chatbot/insert_companies.py').read())
+# start up the django shell
+$ python manage.py shell
+# execute the script to add all the companies (whilst in the shell)
+$ exec(open('chatbot/insert_companies.py').read())
 ```
 
 ## creating users
