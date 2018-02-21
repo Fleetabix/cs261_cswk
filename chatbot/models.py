@@ -14,7 +14,7 @@ class Company(models.Model):
     industry = models.CharField(max_length=40)
 
     def __str__(self):
-            return self.name
+            return self.ticker + " - " + self.name
 
 class PortfolioItem(models.Model):
     """
