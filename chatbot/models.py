@@ -30,7 +30,7 @@ class Company(models.Model):
             return self.ticker + " - " + self.name
 
 
-class Trader(models.Model):
+class TraderProfile(models.Model):
     """
         An extension to the user class so that we can store many
         to many relationships with the Compamy model.
@@ -48,7 +48,7 @@ def create_trader(sender, instance, created, **kwargs):
         If a user is created create the equivelent trader.
     """
     if created:
-        t = Trader(user=instance)
+        t = TraderProfile(user=instance)
         t.save()
 
 
@@ -58,14 +58,14 @@ def save_trader(sender, instance, **kwargs):
         If a user's is saved, save the information of 
         the equivelent trader.
     """
-    instance.trader.save()
+    instance.traderprofile.save()
 
 
 class CompanyHitCount(models.Model):
     """
         This will store how many times a user has queried a company.
     """
-    trader = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    trader = models.ForeignKey(TraderProfile, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     hit_count = models.IntegerField()
 
