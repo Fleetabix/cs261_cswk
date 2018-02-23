@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $("#javascript-warning").hide()
     $("#message-form").submit(function (e) {
         e.preventDefault();
         var $form = $(this);
