@@ -5,13 +5,18 @@
     "alias":["and", "+", "&", ","]
   },
   {
+    "id":"seperator",
+    "showName":"|",
+    "alias":[]
+  },
+  {
     "id":"of",
     "showName":"of",
-    "alias":["of"]
+    "alias":[]
   },
   {
     "id":"s",
     "showName":"'s",
-    "alias":["'s", "'"]
+    "alias":[]
   }
 ]

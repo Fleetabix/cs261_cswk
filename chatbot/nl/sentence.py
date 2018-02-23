@@ -16,7 +16,7 @@ class Sentence:
 		#Remove the punctuation in order to check for time phrases.
 		punctTranslator = str.maketrans('', '', string.punctuation)
 		punctFree = self.sentence.translate(punctTranslator)
-		self.time = timePhrase.getDate(punctFree, nltk.word_tokenize(punctFree))
+		self.time = timePhrase.getDate(punctFree, tokenise(punctFree))
 		#Give a default.
 		if self.time is None:
 			self.time = timePhrase.current()
@@ -26,8 +26,54 @@ class Sentence:
 		#Sort the keywords that have been found into something meaningful.
 		self.organiseKeywords()
 
+	#Organise the keywords into a tree structure to show connections.
 	def organiseKeywords(self):
-		pass
+		#The root object represents the sentence as a whole.
+		root = []
+		newKeywords = []
+		#Search for missing "and" tokens in lists of similar keywords
+		for index, word in enumerate(self.keywords):
+			#Copy the word into the new list.
+			newKeywords.append(word)
+			#As long as this isn't the last element of the list...
+			if index < (len(self.keywords) - 1):
+				#Grab the next word.
+				nextWord = self.keywords[index + 1]
+				#Check which dictionaries the keywords are both from.
+				dict1 = word["dictionary"]
+				dict2 = nextWord["dictionary"]
+				#If the dictionaries are of the right type and match...
+				if (dict1 == "qualities" and dict2 == "qualities") or (dict1 == "companies" and dict2 == "companies"):
+					#Add an extra "and" token between them.
+					newKeywords.append({"dictionary":"connectives", "id":"and", "typed":None})
+		self.keywords = newKeywords
+
+		newKeywords = []
+		#Distinguish between list and and seperator ands:
+		#Additionally, get rid of "and" as the first or last keyword.
+		for index, word in enumerate(self.keywords):
+			#If this word is marked "and"
+			if word["id"] == "and":
+				#As long as this isn't the last element of the list...
+				if index < (len(self.keywords) - 1):
+					#Grab the next word.
+					nextWord = self.keywords[index + 1]
+					#As long as this isn't the first element of the list...
+					if index > 0:
+						#Grab the previous word.
+						prevWord = self.keywords[index - 1]
+						#Check which dictionaries the keywords are both from.
+						dict1 = prevWord["dictionary"]
+						dict2 = nextWord["dictionary"]
+						if (dict1 == "qualities" and dict2 == "companies") or (dict1 == "companies" and dict2 == "qualities"):
+							newKeywords.append({"dictionary":"connectives", "id":"seperator", "typed":word["typed"]})
+						else:
+							#Copy the word into the new list.
+							newKeywords.append(word)
+			else:
+				#Copy the word into the new list.
+				newKeywords.append(word)
+		self.keywords = newKeywords
 
 	def findFromDictionaries(self, dictNames, tokens):
 		#Make an empty list of dictionaries
@@ -53,10 +99,15 @@ class Sentence:
 			length-=1 #Now check shorter strings.
 		return []
 
+	#Gives a printable representation of the sentence object.
 	def __repr__(self):
 		listOfWords = ""
 		for keyword in self.keywords:
-			listOfWords+=keyword["id"]
+			showName = getShowName(keyword["id"], keyword["dictionary"])
+			if showName is None:
+				listOfWords+="?"
+			else:
+				listOfWords+=showName
 			listOfWords+=" "
 		output = listOfWords
 		if self.time is not None:
@@ -87,6 +138,14 @@ def getIDAndDictionary(name, dictionaries):
 			for alias in entry["alias"]:
 				if wordsMatch(alias,name):
 					return {"dictionary":key, "id":entry["id"]}
+
+def getShowName(id, dictName):
+	dictionary = dict.getDict(dictName)
+	if dictionary is None:
+		return None
+	for entry in dictionary:
+		if wordsMatch(entry["id"],id):
+			return entry["showName"]
 
 def wordsMatch(word1, word2):
 	return word1.lower() == word2.lower()
