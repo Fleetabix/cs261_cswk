@@ -1,6 +1,7 @@
 import feedparser
 import requests
 import bs4
+
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
 		self.url = url
@@ -8,7 +9,6 @@ class NewsInformation:
 		self.headline = headline
 		self.image = image
 		self.date_published = article_date
-
 
 
 def getNews(ticker):

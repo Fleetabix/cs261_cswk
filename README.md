@@ -11,6 +11,7 @@ $ pip3 install <package_name_here>
 for the following packages (please edit if you add more, or change some)
  - feedparser
  - pandas_datareader
+ - bs4
 
 Lastly, some modules may not install properly on the DCS machines. I have not found
 a way to fix this, so just run and test the chatbot on your own laptops.
