@@ -3,5 +3,10 @@
     "id":"since",
     "showName":"since",
     "alias":["since", "from"]
+  },
+  {
+    "id":"to",
+    "showName":"to",
+    "alias":["to", "and", "-"]
   }
 ]
