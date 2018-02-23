@@ -16,7 +16,6 @@ def getDate(s, tokens):
     #Grab the time-phrase dictionary
     dictionary = dict.getDict("time")
     #If it's not found, just use a blank list instead.
-    assert dictionary is not None
     if dictionary is None:
         dictionary = []
     #Check for a "since" token. If it's found, return from the date til now.
@@ -60,8 +59,6 @@ def getDate(s, tokens):
         date2 = getDate(string2, tokens2)
         #Check whether the middle string is a "joining word"
         middleJoiningWord = sentence.getID(middleString, dictionary) == "to"
-        print(string1 + "|" + middleString + "|" + string2)
-        print(dictionary)
 
         #What we're looking for is for both strings 1 and 2 to be dates,
         #but for the middle string to not count as a date.
@@ -76,3 +73,16 @@ def getDate(s, tokens):
     d = datetime(*date[:6])
     #Only one date, so it's the start and the end.
     return {"start":d,"end":d}
+
+#Make sure that the start time is before the end time.
+def fixDate(d):
+    if d["start"]>d["end"]:
+        temp = d["start"]
+        d["start"] = d["end"]
+        d["end"] = temp
+    return d
+
+#Get the current time
+def current():
+    now = datetime.now()
+    return {"start":now,"end":now}

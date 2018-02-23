@@ -1,5 +1,5 @@
 import nltk
-import dict
+import dict, timePhrase
 import string
 
 class Sentence:
@@ -10,7 +10,20 @@ class Sentence:
 		self.tokens = tokenise(sentence)
 
 	def extract(self):
-		self.keywords = self.findFromDictionaries(["qualities", "comparatives", "connectives", "companies"], self.tokens)
+		#Look for key phrases in the text.
+		dictionaries = ["qualities", "comparatives", "connectives", "companies"]
+		self.keywords = self.findFromDictionaries(dictionaries, self.tokens)
+		#Remove the punctuation in order to check for time phrases.
+		punctTranslator = str.maketrans('', '', string.punctuation)
+		punctFree = self.sentence.translate(punctTranslator)
+		self.time = timePhrase.getDate(punctFree, nltk.word_tokenize(punctFree))
+		#Give a default.
+		if self.time is None:
+			self.time = timePhrase.current()
+		#Make sure that time flows forward.
+		else:
+			self.time = timePhrase.fixDate(self.time)
+		#Sort the keywords that have been found into something meaningful.
 		self.organiseKeywords()
 
 	def organiseKeywords(self):
@@ -45,8 +58,11 @@ class Sentence:
 		for keyword in self.keywords:
 			listOfWords+=keyword["id"]
 			listOfWords+=" "
-		#return "Keywords: " + self.keywords.__repr__() + "\n" + listOfWords
-		return listOfWords
+		output = listOfWords
+		if self.time is not None:
+			output += "\n" + str(self.time["start"])
+			output += " - " + str(self.time["end"])
+		return output
 
 def tokenise(sentence):
 	tokens = nltk.word_tokenize(sentence)

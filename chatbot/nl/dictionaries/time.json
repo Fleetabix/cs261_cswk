@@ -2,11 +2,11 @@
   {
     "id":"since",
     "showName":"since",
-    "alias":["since", "from"]
+    "alias":["since", "from", "in", "over"]
   },
   {
     "id":"to",
     "showName":"to",
-    "alias":["to", "and", "-"]
+    "alias":["to", "and", "-", "or"]
   }
 ]
