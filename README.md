@@ -1,6 +1,17 @@
 # cs261_cswk
 Financial Trader Chatbot
 
+## dependencies
+
+For the chatbot to function properly, you need to install some python packages before
+trying to use the data or nlp functions. To install them just use
+```
+$ pip3 install <package_name_here>
+```
+for the following packages (please edit if you add more, or change some)
+ - feedparser
+ - pandas_datareader
+
 ## helpful commands
 
 When using the manage.py script, make sure it's running on python 3. Using just 'python'
