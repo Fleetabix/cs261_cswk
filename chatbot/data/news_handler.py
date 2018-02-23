@@ -27,5 +27,6 @@ def getImage(url):
 	if (response.status_code == 200):
 		soup = bs4.BeautifulSoup(response.content, "lxml")
 		image = soup.find("meta",  property="og:image")
-		image_url = image["content"]	
+		if image is not None:
+			image_url = image["content"]	
 	return image_url
