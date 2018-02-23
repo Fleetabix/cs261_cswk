@@ -1,3 +1,5 @@
 chatbot/__pycache__/
 chatbot/migrations/
 website/__pycache__/
+chatbot/data/__pycache__/
+chatbot/nl/__pycache__/
