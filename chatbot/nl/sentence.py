@@ -114,7 +114,7 @@ class Sentence:
 		self.queries = []
 		for q in queries:
 			for quality in q["qualities"]:
-				newQuery = {"companies":q["companies"],"areas":q["areas"],"quality":quality,"comparative":q["comparative"]}
+				newQuery = {"companies":q["companies"],"areas":q["areas"],"quality":quality,"comparative":q["comparative"],"time":self.time}
 				self.queries.append(newQuery)
 
 	def findFromDictionaries(self, dictNames, tokens):
