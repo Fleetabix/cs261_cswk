@@ -1,6 +1,6 @@
 from stock_handler import CompanyStock
 import stock_handler
-from news_handler import NewsHandler
+import news_handler
 class Company:
 	def __init__(self, comp_name, ticker_name):
 		self.fullname = comp_name
@@ -19,4 +19,4 @@ class Company:
 		return stock_handler.getHistoricalStockInformation(self.ticker, start, end)
 
 	def getNews(self):		
-		return NewsHandler.getNews(self.ticker)
+		return news_handler.getNews(self.ticker)
