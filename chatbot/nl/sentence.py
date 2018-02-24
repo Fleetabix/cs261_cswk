@@ -28,8 +28,8 @@ class Sentence:
 
 	#Organise the keywords into a tree structure to show connections.
 	def organiseKeywords(self):
-		#The root object represents the sentence as a whole.
-		root = []
+		#The queries object holds each indiviual query
+		queries = []
 		newKeywords = []
 		#Search for missing "and" tokens in lists of similar keywords
 		for index, word in enumerate(self.keywords):
