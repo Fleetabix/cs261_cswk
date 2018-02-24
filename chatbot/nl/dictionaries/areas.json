@@ -1,0 +1,12 @@
+[
+  {
+    "id":"pharmaceuticals",
+    "showName":"pharmaceutical",
+    "alias":["pharmaceutical", "pharmaceuticals", "medicine"]
+  },
+  {
+    "id":"transport",
+    "showName":"transport",
+    "alias":["transport", "travel"]
+  }
+]

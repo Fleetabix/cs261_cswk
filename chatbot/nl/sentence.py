@@ -5,13 +5,16 @@ import string
 class Sentence:
 	__doc__="A class for natural language sentences"
 
+	#Refers to the previous noun/nouns mentioned.
+	it = {"dictionary":"connectives", "id":"it", "typed":None}
+
 	def __init__(self, sentence):
 		self.sentence = sentence
 		self.tokens = tokenise(sentence)
 
 	def extract(self):
 		#Look for key phrases in the text.
-		dictionaries = ["qualities", "comparatives", "connectives", "companies"]
+		dictionaries = ["qualities", "comparatives", "connectives", "companies", "areas"]
 		self.keywords = self.findFromDictionaries(dictionaries, self.tokens)
 		#Remove the punctuation in order to check for time phrases.
 		punctTranslator = str.maketrans('', '', string.punctuation)
@@ -24,7 +27,22 @@ class Sentence:
 		else:
 			self.time = timePhrase.fixDate(self.time)
 		#Sort the keywords that have been found into something meaningful.
+		self.removeIts()
 		self.organiseKeywords()
+
+	#Replace all instances of "it" or its alias with the previous company or area.
+	def removeIts(self):
+		newKeywords = []
+		for word in self.keywords:
+			if word["dictionary"] == "companies" or word["dictionary"] == "areas":
+				Sentence.it = word
+				newKeywords.append(word)
+			elif word["id"] == "it":
+				newKeywords.append(Sentence.it)
+			else:
+				newKeywords.append(word)
+		self.keywords = newKeywords
+
 
 	#Organise the keywords into a tree structure to show connections.
 	def organiseKeywords(self):
