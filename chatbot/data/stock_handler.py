@@ -2,7 +2,8 @@ import feedparser
 import datetime
 import pandas_datareader.data as web
 import requests
-import datatime
+import datetime
+import bs4
 
 class CompanyStock:
 	def __init__(self, spotprice, change, percentchange, retrieve_datetime):
@@ -22,6 +23,7 @@ def getStockInformation(ticker):
 		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
 	return cs
+	
 def getHistoricalStockInformation(ticker, start, end):
 	data = web.DataReader(ticker, "google", start, end)
 	return data
