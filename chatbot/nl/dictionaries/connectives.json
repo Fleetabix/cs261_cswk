@@ -1,0 +1,17 @@
+[
+  {
+    "id":"and",
+    "showName":"and",
+    "alias":["and", "+", "&", ","]
+  },
+  {
+    "id":"seperator",
+    "showName":"|",
+    "alias":[]
+  },
+  {
+    "id":"it",
+    "showName":"it",
+    "alias":["it","its","their","they","them"]
+  }
+]

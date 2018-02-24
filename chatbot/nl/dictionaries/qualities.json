@@ -1,0 +1,12 @@
+[
+  {
+    "id":"price",
+    "showName":"stock price",
+    "alias":["stock price", "spot price", "price"]
+  },
+  {
+    "id":"news",
+    "showName":"news",
+    "alias":["news", "headline", "headlines", "article", "articles"]
+  }
+]
