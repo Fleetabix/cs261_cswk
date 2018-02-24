@@ -28,8 +28,6 @@ class Sentence:
 
 	#Organise the keywords into a tree structure to show connections.
 	def organiseKeywords(self):
-		#The queries object holds each indiviual query
-		queries = []
 		newKeywords = []
 		#Search for missing "and" tokens in lists of similar keywords
 		for index, word in enumerate(self.keywords):
@@ -58,22 +56,48 @@ class Sentence:
 				if index < (len(self.keywords) - 1):
 					#Grab the next word.
 					nextWord = self.keywords[index + 1]
-					#As long as this isn't the first element of the list...
-					if index > 0:
-						#Grab the previous word.
-						prevWord = self.keywords[index - 1]
-						#Check which dictionaries the keywords are both from.
-						dict1 = prevWord["dictionary"]
-						dict2 = nextWord["dictionary"]
-						if (dict1 == "qualities" and dict2 == "companies") or (dict1 == "companies" and dict2 == "qualities"):
-							newKeywords.append({"dictionary":"connectives", "id":"seperator", "typed":word["typed"]})
-						else:
-							#Copy the word into the new list.
-							newKeywords.append(word)
+					#Ignore duplicate "and"s.
+					if nextWord["id"] != "and":
+						#As long as this isn't the first element of the list...
+						if index > 0:
+							#Grab the previous word.
+							prevWord = self.keywords[index - 1]
+							#Check which dictionaries the keywords are both from.
+							dict1 = prevWord["dictionary"]
+							dict2 = nextWord["dictionary"]
+							if (dict1 == "qualities" and dict2 == "companies") or (dict1 == "companies" and dict2 == "qualities"):
+								newKeywords.append({"dictionary":"connectives", "id":"seperator", "typed":word["typed"]})
+							else:
+								#Copy the word into the new list.
+								newKeywords.append(word)
 			else:
 				#Copy the word into the new list.
 				newKeywords.append(word)
 		self.keywords = newKeywords
+		#The queries object holds each indiviual query
+		queries = []
+		query = {"companies":[],"qualities":[],"areas":[],"comparative":None}
+		#Read the keywords up to a seperator character.
+		for word in self.keywords:
+			if word["id"] == "seperator":
+				queries.append(query)
+				query = {"companies":[],"qualities":[],"areas":[],"comparative":None}
+			elif word["dictionary"] == "companies":
+				query["companies"].append(word["id"])
+			elif word["dictionary"] == "qualities":
+				query["qualities"].append(word["id"])
+			elif word["dictionary"] == "areas":
+				query["areas"].append(word["id"])
+			elif word["dictionary"] == "comparative" and query["comparative"] == None:
+				query["comparative"] = word["id"]
+		#Add the final query
+		queries.append(query)
+		#Now read through to seperate "qualities" into individual queries.
+		self.queries = []
+		for q in queries:
+			for quality in q["qualities"]:
+				newQuery = {"companies":q["companies"],"areas":q["areas"],"quality":quality,"comparative":q["comparative"]}
+				self.queries.append(newQuery)
 
 	def findFromDictionaries(self, dictNames, tokens):
 		#Make an empty list of dictionaries
