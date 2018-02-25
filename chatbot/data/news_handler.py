@@ -15,7 +15,7 @@ def getNews(ticker):
 	f = feedparser.parse(webpage)
 	for stories in f.entries:
 		image_url = getImage(stories.link)
-		date_published = stories.pubDate
+		date_published = stories.published
 		news.append(NewsInformation(stories.link, stories.title, image_url, date_published))
 	return news
 
