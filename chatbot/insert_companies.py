@@ -1,14 +1,34 @@
-from chatbot.models import Industry, Company, Alias
+from chatbot.models import Industry, Company, CompanyAlias, IndustryAlias
 
-def create_company(ticker, name, industry, aliases):
+def create_industry(name, aliases):
+    """
+        Method to create an industry along with its aliases.
+    """
+    i = Industry.objects.create(name=name)
+    for alias in aliases:
+        IndustryAlias.objects.create(industry=i, industry_alias=alias)
+    return i
+
+
+def create_company(ticker, name, industries, aliases):
     """
         Method to create a company and save it in the database
+        along with it's industries and aliases.
     """
-    c = Company.objects.create(ticker=ticker, name=name, industry=industry)
+    c = Company.objects.create(ticker=ticker, name=name)
+    # add all the industries
+    for industry in industries:
+        c.industries.add(industry)
+    # add all the aliases
     for alias in aliases:
         Alias.objects.create(company=c, company_alias=alias)
 
-#List of industries
+
+# List of industries
+# Try to split the industries into more atomic groups i.e aerospace & defense
+# will split into two industries. For each industry you can optionaly add 
+# aliases so that florin can check for it's other names when the user ask
+#example: leis = create_industry('leisure', ['alias1', 'alias2'])
 aero = Industry.objects.create(name = 'aerospace & defense')
 auto = Industry.objects.create(name = 'automobiles & parts')
 bank = Industry.objects.create(name = 'banks')
@@ -48,7 +68,11 @@ tech = Industry.objects.create(name = 'technology hardware & equipment')
 toba = Industry.objects.create(name = 'tobacco')
 trav = Industry.objects.create(name = 'travel & leisure')
 
-#List of FTSE100 companies
+
+
+# List of FTSE100 companies.
+# Make sure the industries (even if it's just one) is in
+# a list - this applies to aliases to.
 create_company('AAL', 'Anglo American', mine, [])
 create_company('ABF', 'Associated British Foods', fpro, [])
 create_company('ADM', 'Admiral Group', insu, [])
