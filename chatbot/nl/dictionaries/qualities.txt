@@ -1,0 +1,4 @@
+stock price, price, spot price
+news, headlines, articles
+
+--Moving to qualities.json-- :)

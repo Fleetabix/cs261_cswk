@@ -1,0 +1,22 @@
+[
+  {
+    "id":"higher",
+    "showName":"higher",
+    "alias":["higher", "more", "more than", "greater", "greater than", "larger", "larger than", "better"]
+  },
+  {
+    "id":"highest",
+    "showName":"highest",
+    "alias":["highest", "most", "best", "greatest", "largest"]
+  },
+  {
+    "id":"lower",
+    "showName":"lower",
+    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than"]
+  },
+  {
+    "id":"lowest",
+    "showName":"lowest",
+    "alias":["lowest", "least", "worst", "smallest"]
+  }
+]
