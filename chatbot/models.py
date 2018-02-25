@@ -17,6 +17,7 @@ class Industry(models.Model):
     def __str__(self):
             return self.name
 
+
 class Company(models.Model):
     """
         The company model which will be stored in the database.
@@ -24,20 +25,33 @@ class Company(models.Model):
     """
     ticker = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=40)
-    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
+    industries = models.ManyToManyField(Industry)
 
     def __str__(self):
             return self.ticker + " - " + self.name
 
-class Alias(models.Model):
+
+class CompanyAlias(models.Model):
     """
         Stores aliases for the specified company.
     """
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    company_alias = models.CharField(max_length=40)
+    alias = models.CharField(max_length=40)
 
     def __str__(self):
-            return self.company_alias
+            return self.company.ticker + " - " + self.alias
+
+
+class IndustryAlias(models.Model):
+    """
+        Stores aliases for the specified company.
+    """
+    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
+    alias = models.CharField(max_length=40)
+
+    def __str__(self):
+            return self.industry.name + " - " + self.alias
+
 
 class TraderProfile(models.Model):
     """
