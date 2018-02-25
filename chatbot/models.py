@@ -29,6 +29,15 @@ class Company(models.Model):
     def __str__(self):
             return self.ticker + " - " + self.name
 
+class Alias(models.Model):
+    """
+        Stores aliases for the specified company.
+    """
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company_alias = models.CharField(max_length=40)
+
+    def __str__(self):
+            return self.company_alias
 
 class TraderProfile(models.Model):
     """
