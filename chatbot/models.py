@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from data.news_handler import NewsInformation
+from data.stock_handler import CompanyStock
 
 # Create your models here.
 
@@ -28,6 +29,38 @@ class Company(models.Model):
 
     def __str__(self):
             return self.ticker + " - " + self.name
+    
+    def getSpotPrice(self):
+        
+    """
+        Returns spot price for specified company as a string
+    """
+		return stock_handler.getStockInformation(self).spot_price
+
+	def getSpotPriceDifference(self):
+    """
+        Returns difference between current and last spot price for specified company as a string
+    """
+		return stock_handler.getStockInformation(self.ticker).price_difference
+
+	def getSpotPercentageDifference(self):
+    """
+        Returns percentage difference between current and last spot price for specified company as a string
+    """
+		return stock_handler.getStockInformation(self.ticker).percent_difference
+
+	def getStockHistory(self, start, end):
+    """
+        Returns a pandas DataFrame for historical prices for specified company between a start and end date,
+        will include the high and low for that day and opening price
+    """
+		return stock_handler.getHistoricalStockInformation(self.ticker, start, end)
+
+	def getNews(self):	
+    """
+        Returns a list of NewsInformation objects of articles related to specified company
+    """	
+		return news_handler.getNews(self.ticker)
 
 class Alias(models.Model):
     """
