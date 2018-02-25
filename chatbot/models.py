@@ -36,6 +36,9 @@ class Alias(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     company_alias = models.CharField(max_length=40)
 
+    def __str__(self):
+            return self.company_alias
+
 class TraderProfile(models.Model):
     """
         An extension to the user class so that we can store many
