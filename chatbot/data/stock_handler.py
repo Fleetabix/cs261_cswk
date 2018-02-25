@@ -23,7 +23,26 @@ def getStockInformation(ticker):
 		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
 	return cs
+
+
+"""
+	Retrieves stock information from set of tickers (in a certain industry)
 	
+"""
+def getIndustryStocks(tickers):
+	stocks = {}
+	for ticker in tickers:
+		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
+		if (response.status_code == 200):
+			soup = bs4.BeautifulSoup(response.content, "lxml")
+			data = soup.find("div", {"class": "tr darkEven"})
+			stock = [x.text.strip() for x in data.findAll('span')]
+			retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
+			stocks[ticker] = CompanyStock(stock[0], stock[1], stock[2], retrieved)
+	return stocks
+
+
+
 def getHistoricalStockInformation(ticker, start, end):
 	data = web.DataReader(ticker, "google", start, end)
 	return data

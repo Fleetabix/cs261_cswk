@@ -6,7 +6,6 @@ import articleDateExtractor
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
 		self.url = url
-		self.keywords = list()
 		self.headline = headline
 		self.image = image
 		self.date_published = article_date
