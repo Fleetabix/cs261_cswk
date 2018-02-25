@@ -1,7 +1,6 @@
 import feedparser
 import requests
 import bs4
-import articleDateExtractor
 
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
@@ -16,7 +15,7 @@ def getNews(ticker):
 	f = feedparser.parse(webpage)
 	for stories in f.entries:
 		image_url = getImage(stories.link)
-		date_published = articleDateExtractor.extractArticlePublishedDate(stories.link)
+		date_published = stories.pubDate
 		news.append(NewsInformation(stories.link, stories.title, image_url, date_published))
 	return news
 
