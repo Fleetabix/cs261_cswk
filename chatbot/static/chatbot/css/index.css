@@ -11,6 +11,10 @@
     --btn-colour: #17252A;
 }
 
+::placeholder {
+    color: #DDD;
+}
+
 /*
     make sure the page streches to the bottom of the window
     and set the body colour to black (this is so the javascript
@@ -145,6 +149,26 @@ a {
         float: left; /* needed otherwise message board does funky things on slide */
         display: inline-block;
     }
+}
+
+#search-holder {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#searchbox {
+    width: 100%;
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour);
+    border: 0.5px solid black;
+    border-radius: 0.25em;
+    padding-left: .5em;
+}
+
+#search-results {
+    border-top: 1px solid var(--body-bg-colour);
+    border-bottom: 1px solid var(--body-bg-colour);
+    display: none;
 }
 
 #portfolios {
