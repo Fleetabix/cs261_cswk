@@ -154,15 +154,42 @@ a {
 #search-holder {
     width: 100%;
     margin-bottom: 10px;
+    text-align: center;
+}
+
+#query-type {
+    height: 2em;
+    width: 30%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -webkit-appearance: none;
+    border: 0.5px solid black;
+    margin-right: 0;
+    padding-left: 5px;
+}
+
+#query-type:hover {
+    background-color: #DDD;
 }
 
 #searchbox {
-    width: 100%;
+    height: 2em;
+    width: 50%;
     background-color: var(--body-bg-colour);
     color: var(--body-fg-colour);
     border: 0.5px solid black;
     border-radius: 0.25em;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     padding-left: .5em;
+    margin-left: 0;
+}
+
+#clear-search-btn {
+    height: 2em;
+    text-align: center;
+    background-color: var(--accent-colour);
+    color: var(--body-fg-colour);
 }
 
 #search-results {

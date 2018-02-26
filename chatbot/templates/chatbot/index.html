@@ -44,7 +44,14 @@
 <div id="portfolio-tab" class="pane">
     <h2>Portfolio</h2>
     <div id="search-holder">
+        <select id="query-type">
+            <option value="industry">Industry:</option>
+            <option value="company" selected="selected">Company:</option>
+        </select>
         <input id="searchbox" type="text" autocomplete="off" placeholder="Search Here!"\>
+        <button id="clear-search-btn" type="button" class="btn">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
     <div id="search-results">
         <!-- search results for new portfolios to add will go here -->
