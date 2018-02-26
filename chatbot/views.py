@@ -38,7 +38,13 @@ def get_entities(request):
         moment just companies) given a query.
     """
     query = request.GET.get('query')
-    result_set = CompanyAlias.objects.filter(alias__contains=query)
+    user = request.user
+    # get all companies that have aliases like the query but are
+    # not in the user's portfolio
+    result_set = CompanyAlias.objects \
+        .exclude(company__in=user.traderprofile.portfolio.all()) \
+        .filter(alias__contains=query)
+    # add all the companies we got to the data object to return 
     data = {}
     for r in result_set:
         c = r.company
