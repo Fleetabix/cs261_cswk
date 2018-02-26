@@ -16,6 +16,7 @@ def index(request):
     """
     return render(request, 'chatbot/index.html')
 
+
 @login_required
 def ask_chatbot(request):
     """
@@ -30,6 +31,7 @@ def ask_chatbot(request):
     else:
         data = getTextData(query)
     return JsonResponse(data)
+
 
 @login_required
 def get_entities(request):
@@ -65,6 +67,17 @@ def add_to_portfolio(request):
     c = Company.objects.get(ticker=request.POST.get("ticker"))
     user.traderprofile.portfolio.add(c)
     return JsonResponse({"status": "whooohoo!"})
+
+@login_required
+def get_portfolio(request):
+    data = {}
+    user = request.user
+    companies = user.traderprofile.portfolio.all()
+    for c in companies:
+        data[c.ticker] = {
+            "name": c.name
+        }
+    return JsonResponse(data)
 
 
 def getTextData(query):

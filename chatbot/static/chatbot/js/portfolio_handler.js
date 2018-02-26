@@ -8,6 +8,7 @@ if(typeof(String.prototype.trim) === "undefined")
 }
 
 $(document).ready(function() {
+    getPortfolio();
     $("#searchbox").keyup(function() {
         sendQuery($(this).val());
     });
@@ -60,6 +61,7 @@ function addToPortfolio(ticker, result) {
     }).done(function (response) {
         result.css("background-color", "green");
         result.find("button").remove();
+        getPortfolio();
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
@@ -83,4 +85,27 @@ function printSearchResults(results) {
             "</div>"
         );
     }
+}
+
+function getPortfolio() {
+    $("#portfolios").empty();
+    console.log("getting portfolios");
+    $.ajax({
+        url: 'get_portfolio/',
+        method: "get"
+    }).done(function (response) {
+        for (ticker in response) {
+            // add portfolio items here
+            c = response[ticker];
+            console.log(c);
+            $("#portfolios").append(
+                "<div id='"+ticker+"' class='portfolio'>" +
+                    "<h5>"+ticker+" - "+c.name+"</h5>" +
+                "</div>"
+            );
+        }
+    }).fail(function (response) {
+        console.log("-----Fail-------");
+        console.log(response);
+    });
 }
