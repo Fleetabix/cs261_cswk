@@ -28,10 +28,7 @@ class Company(models.Model):
     """
     ticker = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=40)
-    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
-
-    def __str__(self):
-            return self.ticker + " - " + self.name
+    industries = models.ManyToManyField(Industry)
 
     def getSpotPrice(self):
         """
@@ -63,17 +60,32 @@ class Company(models.Model):
             Returns a list of NewsInformation objects of articles related to specified company
         """
         return news_handler.getNews(self.ticker)
+      
+    def __str__(self):
+        return self.ticker + " - " + self.name
 
 
-class Alias(models.Model):
+class CompanyAlias(models.Model):
     """
         Stores aliases for the specified company.
     """
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    company_alias = models.CharField(max_length=40)
+    alias = models.CharField(max_length=40)
 
     def __str__(self):
-            return self.company_alias
+            return self.company.ticker + " - " + self.alias
+
+
+class IndustryAlias(models.Model):
+    """
+        Stores aliases for the specified company.
+    """
+    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
+    alias = models.CharField(max_length=40)
+
+    def __str__(self):
+            return self.industry.name + " - " + self.alias
+
 
 
 class TraderProfile(models.Model):
