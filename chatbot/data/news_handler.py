@@ -3,7 +3,6 @@ import requests
 import bs4
 import time
 
- #d9c204a671844e58b110128b0b806c1f
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
 		self.url = url
@@ -11,6 +10,7 @@ class NewsInformation:
 		self.image = image
 		self.date_published = article_date
 
+<<<<<<< HEAD
 def benchmark():
 	start = time.time()
 	getNews('WTB')
@@ -24,6 +24,8 @@ def benchmark():
 def getNewsNewsAPI(company_name):
 	news = list()
 	
+=======
+>>>>>>> 6ad1fb083e5b943b92df85c07573f33042f63734
 
 def getNews(ticker):
 	news = list()
@@ -34,6 +36,7 @@ def getNews(ticker):
 		date_published = stories.published
 		news.append(NewsInformation(stories.link, stories.title, image_url, date_published))
 	return news
+
 
 def getImage(url):
 	response = requests.get(url)

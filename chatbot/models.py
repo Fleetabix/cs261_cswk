@@ -20,6 +20,16 @@ class Industry(models.Model):
             return self.name
 
 
+@receiver(post_save, sender=Industry)
+def create_industry(sender, instance, created, **kwargs):
+    """
+        If an industry is created create an alias for the
+        industry with its name as the alias.
+    """
+    if created:
+        IndustryAlias.objects.create(industry=instance, alias=instance.name)
+
+
 class Company(models.Model):
     """
         The company model which will be stored in the database.
@@ -64,6 +74,16 @@ class Company(models.Model):
         return self.ticker + " - " + self.name
 
 
+@receiver(post_save, sender=Company)
+def create_company(sender, instance, created, **kwargs):
+    """
+        If a company is created create an alias for the
+        company with its name as the alias.
+    """
+    if created:
+        CompanyAlias.objects.create(company=instance, alias=instance.name)
+            
+
 class CompanyAlias(models.Model):
     """
         Stores aliases for the specified company.
@@ -84,7 +104,6 @@ class IndustryAlias(models.Model):
 
     def __str__(self):
             return self.industry.name + " - " + self.alias
-
 
 
 class TraderProfile(models.Model):
