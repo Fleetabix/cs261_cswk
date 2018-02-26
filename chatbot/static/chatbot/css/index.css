@@ -166,9 +166,31 @@ a {
 }
 
 #search-results {
-    border-top: 1px solid var(--body-bg-colour);
     border-bottom: 1px solid var(--body-bg-colour);
     display: none;
+    overflow-y: scroll;
+    max-height: 80%;
+    padding: 1.3em;
+}
+
+.result {
+    background-color: var(--body-bg-colour);
+    border-radius: 0.5em;
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    color: var(--body-fg-colour)
+}
+
+.add-portfolio-btn {
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour)
+}
+
+.add-comp-coll {
+    text-align: right;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 #portfolios {
