@@ -15,6 +15,41 @@ class Industry(models.Model):
         model is so it's easier for whoever is mainting the db.
     """
     name = models.CharField(max_length=40)
+    companies = models.ManyToManyField(Company)
+
+    def getSpotPrice(self):
+        """
+            Gets the total spot price of all companies in the sector
+        """
+        return sum([int(c.getSpotPrice()) for c in self.companies])
+
+    def getSpotPriceDifference(self):
+        """
+            Returns sum of difference between current and last spot price for each
+            company in the sector.
+        """
+        return sum([int(c.getSpotPriceDifference()) for c in self.companies])
+
+    def getSpotPercentageDifference(self):
+        """
+            Returns sum of percentage difference for all companies 
+            for all companies in the sector
+        """
+        return sum([int(c.getSpotPercentageDifference()) for c in self.companies])
+
+
+    def getStockHistory(self, start, end):
+        """
+            Returns a pandas DataFrame for historical prices for specified company between a start and end date,
+            will include the high and low for that day and opening price
+        """
+        return None
+
+    def getNews(self):
+        """
+            Returns a list of NewsInformation objects of articles related to specified company
+        """
+        return None
 
     def __str__(self):
             return self.name
@@ -37,7 +72,6 @@ class Company(models.Model):
     """
     ticker = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=40)
-    industries = models.ManyToManyField(Industry)
 
     def getSpotPrice(self):
         """
