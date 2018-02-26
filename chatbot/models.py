@@ -77,11 +77,12 @@ class Company(models.Model):
 @receiver(post_save, sender=Company)
 def create_company(sender, instance, created, **kwargs):
     """
-        If a company is created create an alias for the
-        company with its name as the alias.
+        If a company is created, create an aliases for the
+        company with its name and the ticker as the alias.
     """
     if created:
         CompanyAlias.objects.create(company=instance, alias=instance.name)
+        CompanyAlias.objects.create(company=instance, alias=instance.ticker)
             
 
 class CompanyAlias(models.Model):
