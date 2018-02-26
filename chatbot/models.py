@@ -33,32 +33,32 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self).spot_price
+        return chatbot.data.stock_handler.getStockInformation(self).spot_price
 
     def getSpotPriceDifference(self):
         """
             Returns difference between current and last spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self.ticker).price_difference
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).price_difference
 
     def getSpotPercentageDifference(self):
         """
             Returns percentage difference between current and last spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self.ticker).percent_difference
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
 
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-        return stock_handler.getHistoricalStockInformation(self.ticker, start, end)
+        return chatbot.data.stock_handler.getHistoricalStockInformation(self.ticker, start, end)
 
     def getNews(self):
         """
             Returns a list of NewsInformation objects of articles related to specified company
         """
-        return news_handler.getNews(self.ticker)
+        return chatbot.data.news_handler.getNews(self.ticker)
       
     def __str__(self):
         return self.ticker + " - " + self.name

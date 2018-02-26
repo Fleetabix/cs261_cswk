@@ -2,6 +2,8 @@ import feedparser
 import requests
 import bs4
 
+
+ #d9c204a671844e58b110128b0b806c1f
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
 		self.url = url
