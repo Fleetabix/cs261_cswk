@@ -1,7 +1,7 @@
 import feedparser
 import requests
 import bs4
-
+import time
 
  #d9c204a671844e58b110128b0b806c1f
 class NewsInformation:
@@ -10,6 +10,20 @@ class NewsInformation:
 		self.headline = headline
 		self.image = image
 		self.date_published = article_date
+
+def benchmark():
+	start = time.time()
+	getNews('WTB')
+	end = time.time()
+	print(end-start)
+	start = time.time()	
+	end = time.time()
+	print(end-start)
+	
+
+def getNewsNewsAPI(company_name):
+	news = list()
+	
 
 def getNews(ticker):
 	news = list()

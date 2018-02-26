@@ -33,7 +33,7 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a string
         """
-        return chatbot.data.stock_handler.getStockInformation(self).spot_price
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).spot_price
 
     def getSpotPriceDifference(self):
         """
