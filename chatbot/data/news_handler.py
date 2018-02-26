@@ -24,14 +24,18 @@ def benchmark():
 	print(end-start)
 	
 # need to mention powered by NewsAPI
-def getNewsNewsAPI(company_name, keyword = None):
+
+"""
+can be used for both industry and company
+"""
+def getNewsNewsAPI(name, keyword = None):
 	news = list()
 	search_query = ""
 	if keyword is not None:
-		search_query = company_name+" "+keyword
+		search_query = name+" "+keyword
 		search_query = search_query.replace(' ', '%20')
 	else:
-		search_query = company_name.replace(' ', '%20')
+		search_query = name.replace(' ', '%20')
 	url = 'https://newsapi.org/v2/everything?q='+search_query+'&apiKey=d9c204a671844e58b110128b0b806c1f'
 	response = requests.get(url)
 	json_data = json.loads(response.text)
