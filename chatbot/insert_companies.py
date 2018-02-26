@@ -18,7 +18,7 @@ def create_company(ticker, name, industries, aliases=[]):
     c = Company.objects.create(ticker=ticker, name=name)
     # add all the industries
     for industry in industries:
-        c.industries.add(industry)
+        industry.companies.add(c)
     # add all the aliases
     for alias in aliases:
         CompanyAlias.objects.create(company=c, alias=alias)
