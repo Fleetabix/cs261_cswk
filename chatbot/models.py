@@ -2,14 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-<<<<<<< HEAD
-from data.news_handler import *
-from data.stock_handler import *
-=======
-
 import chatbot.data.news_handler
 import chatbot.data.stock_handler
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
 
 # Create your models here.
 
@@ -35,56 +29,29 @@ class Company(models.Model):
     name = models.CharField(max_length=40)
     industries = models.ManyToManyField(Industry)
 
-<<<<<<< HEAD
-    def __str__(self):
-        return self.ticker + " - " + self.name
-    
-=======
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
     def getSpotPrice(self):
         """
             Returns spot price for specified company as a string
         """
-<<<<<<< HEAD
-		return getStockInformation(self.ticker).spot_price
-=======
         return stock_handler.getStockInformation(self).spot_price
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
 
     def getSpotPriceDifference(self):
         """
             Returns difference between current and last spot price for specified company as a string
         """
-<<<<<<< HEAD
-		return getStockInformation(self.ticker).price_difference
-=======
         return stock_handler.getStockInformation(self.ticker).price_difference
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
 
     def getSpotPercentageDifference(self):
         """
             Returns percentage difference between current and last spot price for specified company as a string
         """
-<<<<<<< HEAD
-		return getStockInformation(self.ticker).percent_difference
-=======
         return stock_handler.getStockInformation(self.ticker).percent_difference
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
 
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-<<<<<<< HEAD
-		return getHistoricalStockInformation(self.ticker, start, end)
-
-	def getNews(self):	
-    """
-        Returns a list of NewsInformation objects of articles related to specified company
-    """	
-		return getNews(self.ticker)
-=======
         return stock_handler.getHistoricalStockInformation(self.ticker, start, end)
 
     def getNews(self):
@@ -96,7 +63,6 @@ class Company(models.Model):
     def __str__(self):
         return self.ticker + " - " + self.name
 
->>>>>>> 5843442865831263a7472ef151d39914a63e1e09
 
 class CompanyAlias(models.Model):
     """
