@@ -8,5 +8,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('ask_chatbot/', views.ask_chatbot, name='ask_chatbot')
+    path('ask_chatbot/', views.ask_chatbot, name='ask_chatbot'),
+    path('get_entities/', views.get_entities, name='get_entities')
 ]
