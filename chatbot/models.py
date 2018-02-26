@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
 import chatbot.data.news_handler
 import chatbot.data.stock_handler
 
@@ -21,6 +20,16 @@ class Industry(models.Model):
             return self.name
 
 
+@receiver(post_save, sender=Industry)
+def create_industry(sender, instance, created, **kwargs):
+    """
+        If an industry is created create an alias for the
+        industry with its name as the alias.
+    """
+    if created:
+        IndustryAlias.objects.create(industry=instance, alias=instance.name)
+
+
 class Company(models.Model):
     """
         The company model which will be stored in the database.
@@ -34,36 +43,46 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self).spot_price
+        return chatbot.data.stock_handler.getStockInformation(self).spot_price
 
     def getSpotPriceDifference(self):
         """
             Returns difference between current and last spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self.ticker).price_difference
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).price_difference
 
     def getSpotPercentageDifference(self):
         """
             Returns percentage difference between current and last spot price for specified company as a string
         """
-        return stock_handler.getStockInformation(self.ticker).percent_difference
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
 
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-        return stock_handler.getHistoricalStockInformation(self.ticker, start, end)
+        return chatbot.data.stock_handler.getHistoricalStockInformation(self.ticker, start, end)
 
     def getNews(self):
         """
             Returns a list of NewsInformation objects of articles related to specified company
         """
-        return news_handler.getNews(self.ticker)
+        return chatbot.data.news_handler.getNews(self.ticker)
       
     def __str__(self):
         return self.ticker + " - " + self.name
 
+
+@receiver(post_save, sender=Company)
+def create_company(sender, instance, created, **kwargs):
+    """
+        If a company is created create an alias for the
+        company with its name as the alias.
+    """
+    if created:
+        CompanyAlias.objects.create(company=instance, alias=instance.name)
+            
 
 class CompanyAlias(models.Model):
     """
@@ -85,7 +104,6 @@ class IndustryAlias(models.Model):
 
     def __str__(self):
             return self.industry.name + " - " + self.alias
-
 
 
 class TraderProfile(models.Model):
