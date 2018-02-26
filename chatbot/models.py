@@ -8,6 +8,49 @@ import chatbot.data.stock_handler
 # Create your models here.
 
 
+class Company(models.Model):
+    """
+        The company model which will be stored in the database.
+        The ticker is the primary key.
+    """
+    ticker = models.CharField(primary_key=True, max_length=10)
+    name = models.CharField(max_length=40)
+
+    def getSpotPrice(self):
+        """
+            Returns spot price for specified company as a string
+        """
+        return chatbot.data.stock_handler.getStockInformation(self).spot_price
+
+    def getSpotPriceDifference(self):
+        """
+            Returns difference between current and last spot price for specified company as a string
+        """
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).price_difference
+
+    def getSpotPercentageDifference(self):
+        """
+            Returns percentage difference between current and last spot price for specified company as a string
+        """
+        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
+
+    def getStockHistory(self, start, end):
+        """
+            Returns a pandas DataFrame for historical prices for specified company between a start and end date,
+            will include the high and low for that day and opening price
+        """
+        return chatbot.data.stock_handler.getHistoricalStockInformation(self.ticker, start, end)
+
+    def getNews(self):
+        """
+            Returns a list of NewsInformation objects of articles related to specified company
+        """
+        return chatbot.data.news_handler.getNews(self.ticker)
+      
+    def __str__(self):
+        return self.ticker + " - " + self.name
+
+
 class Industry(models.Model):
     """
         A model to store all various industries. The reason this
@@ -63,49 +106,6 @@ def create_industry(sender, instance, created, **kwargs):
     """
     if created:
         IndustryAlias.objects.create(industry=instance, alias=instance.name)
-
-
-class Company(models.Model):
-    """
-        The company model which will be stored in the database.
-        The ticker is the primary key.
-    """
-    ticker = models.CharField(primary_key=True, max_length=10)
-    name = models.CharField(max_length=40)
-
-    def getSpotPrice(self):
-        """
-            Returns spot price for specified company as a string
-        """
-        return chatbot.data.stock_handler.getStockInformation(self).spot_price
-
-    def getSpotPriceDifference(self):
-        """
-            Returns difference between current and last spot price for specified company as a string
-        """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).price_difference
-
-    def getSpotPercentageDifference(self):
-        """
-            Returns percentage difference between current and last spot price for specified company as a string
-        """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
-
-    def getStockHistory(self, start, end):
-        """
-            Returns a pandas DataFrame for historical prices for specified company between a start and end date,
-            will include the high and low for that day and opening price
-        """
-        return chatbot.data.stock_handler.getHistoricalStockInformation(self.ticker, start, end)
-
-    def getNews(self):
-        """
-            Returns a list of NewsInformation objects of articles related to specified company
-        """
-        return chatbot.data.news_handler.getNews(self.ticker)
-      
-    def __str__(self):
-        return self.ticker + " - " + self.name
 
 
 @receiver(post_save, sender=Company)
