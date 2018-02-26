@@ -35,18 +35,12 @@ $(document).ready(function() {
 function printSearchResults(results) {
     for (ticker in results) {
         comp_info = results[ticker]
-        console.log(comp_info);
-        industries = ""
-        for (i in comp_info["industries"]) {
-            industries += "<p>"+i+"</p>";
-        }
         $("#search-results").append(
             "<div class='result row' data_comp_ticker='"+ticker+"'>" +
                 "<div class='col-md-9'>" +
                     "<h5>"+ticker+" - "+comp_info["name"]+"</h5>" +
-                    industries +
                 "</div>" +
-                "<div class='col-md-3'>" +
+                "<div class='col-md-3 add-comp-coll'>" +
                     "<button class='add-portfolio-btn btn'>" +
                         "<i class='fas fa-plus'></i>" +
                     "</button>" + 
