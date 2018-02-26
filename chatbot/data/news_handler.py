@@ -1,6 +1,7 @@
 import feedparser
 import requests
 import bs4
+import json
 import time
 
 class NewsInformation:
@@ -23,6 +24,13 @@ def benchmark():
 
 def getNewsNewsAPI(company_name, keyword = None):
 	news = list()
+	if keyword is None:
+		company_name = company_name.replace(' ', '%20')
+		url = 'https://newsapi.org/v2/everything?q='+company_name+'&apiKey=d9c204a671844e58b110128b0b806c1f'
+		response = requests.get(url)
+		json_data = json.loads(response.text)
+		for stories in json_data["articles"]:
+			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["publishedAt"]))
 	
 
 def getNews(ticker):
