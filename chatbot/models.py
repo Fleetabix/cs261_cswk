@@ -34,7 +34,7 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a string
         """
-		return getStockInformation(self).spot_price
+		return getStockInformation(self.ticker).spot_price
 
 	def getSpotPriceDifference(self):
         """
