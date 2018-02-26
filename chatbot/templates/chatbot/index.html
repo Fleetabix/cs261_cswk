@@ -31,6 +31,8 @@
 
                 </div>
                 <div class="dropdown-divider"></div>
+                <button class="dropdown-item" type="button" onclick="openInPopUp()">Open Popup</button>
+                <div class="dropdown-divider"></div>
                 <a id='logout-lnk' class="dropdown-item" href="{% url 'logout' %}">Sign Out</a>
             </div>
         </div>
@@ -71,6 +73,10 @@
 {% block scripts %}
     <script>
         var username = "{{ user.get_username }}";
+
+        function openInPopUp() {
+            window.open(window.location.href, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400");
+        }
     </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <script src="{% static 'chatbot/js/portfolio_dropdown.js' %}"></script>
