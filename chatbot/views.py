@@ -54,6 +54,19 @@ def get_entities(request):
         }
     return JsonResponse(data)
 
+
+@login_required
+def add_to_portfolio(request):
+    """
+        Given a ticker in the request. Add the relevant company to the
+        user's portfolio.
+    """
+    user = request.user
+    c = Company.objects.get(ticker=request.POST.get("ticker"))
+    user.traderprofile.portfolio.add(c)
+    return JsonResponse({"status": "whooohoo!"})
+
+
 def getTextData(query):
     """ 
         test for text response
