@@ -11,11 +11,16 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def index(request):
     """
-        Returns the html for the chatbot
+        Returns the html for the chatbot.
     """
     return render(request, 'chatbot/index.html')
 
+@login_required
 def ask_chatbot(request):
+    """
+        Given a query in the POST data, it will
+        parse the message then return a valid response.
+    """
     query = request.POST.get('query')
     if (query == ":ex_chart"):
         data = getChartData()
@@ -24,6 +29,15 @@ def ask_chatbot(request):
     else:
         data = getTextData(query)
     return JsonResponse(data)
+
+@login_required
+def get_entities(request):
+    """
+        Used to get a list of matching entities (at this
+        moment just companies) given a query.
+    """
+    query = request.GET.get('query')
+    #TODO return a company query to the user 
 
 def getTextData(query):
     """ 
