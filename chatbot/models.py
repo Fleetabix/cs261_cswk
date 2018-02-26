@@ -113,7 +113,8 @@ class TraderProfile(models.Model):
         to many relationships with the Compamy model.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    portfolio = models.ManyToManyField(Company)
+    c_portfolio = models.ManyToManyField(Company)
+    i_portfolio = models.ManyToManyField(Industry)
 
     def __str__(self):
         return str(self.user)
