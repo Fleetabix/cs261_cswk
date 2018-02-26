@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
+from chatbot.models import *
 
 # Create your views here.
 
@@ -37,7 +38,15 @@ def get_entities(request):
         moment just companies) given a query.
     """
     query = request.GET.get('query')
-    #TODO return a company query to the user 
+    result_set = CompanyAlias.objects.filter(alias__contains=query)
+    data = {}
+    for r in result_set:
+        c = r.company
+        industries = [x.name for x in c.industries.all()]
+        data[c.ticker] = {
+            "name": c.name
+        }
+    return JsonResponse(data)
 
 def getTextData(query):
     """ 
