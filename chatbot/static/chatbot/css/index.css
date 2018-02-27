@@ -224,6 +224,19 @@ a {
     margin-bottom: auto;
 }
 
+.portfolio-item {
+    border: 0.5px solid black;
+    border-radius: 0.25em;
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour);
+    padding: 1em;
+    margin-top: 1em;
+}
+
+.portfolio-item canvas {
+    width: 100%;
+}
+
 #message-board {
     background-color: var(--body-bg-colour);
     color: var(--body-fg-colour);
