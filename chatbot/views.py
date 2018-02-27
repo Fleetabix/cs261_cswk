@@ -58,10 +58,11 @@ def get_entities(request):
     data = {}
     for r in result_set:
         e = r.industry if (entity_type == "industry") else r.company
-        data[e.id] = {
+        key = e.id if (entity_type == "industry") else e.ticker
+        data[key] = {
             "name": e.name
         }
-    return JsonResponse(data)
+    return JsonResponse({"type": entity_type, "data": data})
 
 
 @login_required
