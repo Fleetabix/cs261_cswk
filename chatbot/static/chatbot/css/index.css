@@ -132,6 +132,7 @@ a {
     float: top;
     width: 100%;
     padding: 10px;
+    overflow-y: scroll;
 }
 
 
@@ -221,10 +222,6 @@ a {
     text-align: right;
     margin-top: auto;
     margin-bottom: auto;
-}
-
-#portfolios {
-    height: 100%;
 }
 
 #message-board {
