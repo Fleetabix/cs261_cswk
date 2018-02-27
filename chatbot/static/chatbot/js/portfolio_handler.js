@@ -8,7 +8,7 @@ if(typeof(String.prototype.trim) === "undefined") {
 
 
 $(document).ready(function() {
-    getPortfolio();
+    getPortfolio(true);
     // when the user types in a new character update the
     // search
     $("#searchbox").keyup(function() {
@@ -134,13 +134,17 @@ function printSearchResults(results) {
 /** Gets all the companies and industries in the user's portfolio
  *  and then adds them to the portfolio div.
  */
-function getPortfolio() {
+function getPortfolio(historical) {
     $("#portfolios").empty();
     console.log("getting portfolios");
+    data = {"historical": historical};
     $.ajax({
         url: 'get_portfolio/',
+        data: data,
+        dataType: "json",
         method: "get"
     }).done(function (response) {
+        console.log(response);
         for (ticker in response) {
             // add portfolio items here
             c = response[ticker];
