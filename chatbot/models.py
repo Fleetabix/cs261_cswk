@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import chatbot.data.news_handler
-import chatbot.data.stock_handler
+import chatbot.data.news_handler as nh
+import chatbot.data.stock_handler as sh
 
 # Create your models here.
 
@@ -18,34 +18,41 @@ class Company(models.Model):
 
     def getSpotPrice(self):
         """
-            Returns spot price for specified company as a string
+            Returns spot price for specified company as a float
         """
-        return chatbot.data.stock_handler.getStockInformation(self).spot_price
+        string_price = sh.getStockInformation(self.ticker).spot_price
+        return float(string_price.replace(",", ""))
 
     def getSpotPriceDifference(self):
         """
-            Returns difference between current and last spot price for specified company as a string
+            Returns difference between current and last spot price for 
+            specified company as a float
         """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).price_difference
+        pc = sh.getStockInformation(self.ticker).price_difference
+        return float(pc.replace(",", ""))
 
     def getSpotPercentageDifference(self):
         """
-            Returns percentage difference between current and last spot price for specified company as a string
+            Returns percentage difference between current and last spot
+            price for specified company as a string
         """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
+        pc = sh.getStockInformation(self.ticker).percent_difference
+        return float(pc.replace("%", ""))
 
     def getStockHistory(self, start, end):
         """
-            Returns a pandas DataFrame for historical prices for specified company between a start and end date,
-            will include the high and low for that day and opening price
+            Returns a pandas DataFrame for historical prices for specified
+            company between a start and end date, will include the high and
+            low for that day and opening price
         """
-        return chatbot.data.stock_handler.getHistoricalStockInformation(self.ticker, start, end)
+        return sh.getHistoricalStockInformation(self.ticker, start, end)
 
     def getNews(self):
         """
-            Returns a list of NewsInformation objects of articles related to specified company
+            Returns a list of NewsInformation objects of articles related to
+            specified company
         """
-        return chatbot.data.news_handler.getNews(self.ticker)
+        return nh.getNews(self.ticker)
       
     def __str__(self):
         return self.ticker + " - " + self.name
@@ -64,22 +71,22 @@ class Industry(models.Model):
         """
             Gets the total spot price of all companies in the sector
         """
-        return sum([int(c.getSpotPrice()) for c in self.companies])
+        return sum([float(c.getSpotPrice()) for c in self.companies.all()])
 
     def getSpotPriceDifference(self):
         """
             Returns sum of difference between current and last spot price for each
             company in the sector.
         """
-        return sum([int(c.getSpotPriceDifference()) for c in self.companies])
+        return sum([float(c.getSpotPriceDifference()) for c in self.companies.all()])
 
     def getSpotPercentageDifference(self):
         """
             Returns sum of percentage difference for all companies 
             for all companies in the sector
         """
-        return sum([int(c.getSpotPercentageDifference()) for c in self.companies])
-
+        total = sum([float(c.getSpotPercentageDifference()) for c in self.companies.all()]) 
+        return total / len(self.companies.all())
 
     def getStockHistory(self, start, end):
         """
