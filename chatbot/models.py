@@ -13,7 +13,7 @@ class Company(models.Model):
         The company model which will be stored in the database.
         The ticker is the primary key.
     """
-    ticker = models.CharField(primary_key=True, max_length=10)
+    ticker = models.CharField(unique=True, max_length=10)
     name = models.CharField(max_length=40)
 
     def getSpotPrice(self):
