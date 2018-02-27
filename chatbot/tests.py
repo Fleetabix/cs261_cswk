@@ -12,13 +12,36 @@ class DataTests(TestCase):
         querying all companies in that industry, we can only test
         getting data for companies
     """
+    def setUp(self):
+        """
+            Insert companies into the data base here for
+            NLP methods to use if the need them. These will not be saved
+            as they are stored in a transaction, then dropped after the
+            test class is done (so go wild).
+        """
+        mine = Industry.objects.create(name='Mining')
+        mine.save()
+        Company.objects.create(ticker='AAL', name='Anglo American')
+        angloAmerican = Company.objects.get(name='Anglo American')
+        angloAmerican.industries.add(mine)
+
+        fake = Industry.objects.create(name='Fake companies')
+        fake.save()
+        Company.objects.create(ticker='NOPE', name='No exist')
+        nonExistent = Company.objects.get(name='No exist')
+        nonExistent.industries.add(fake)
+
+
 
     def test_get_company_spot_price(self):
         """
             Just check if a companies spot price can be retrieved
             and is in a valid format
-        """
-        self.assertTrue(False)
+        """        
+        angloAmerican = Company.objects.get(name='Anglo American')
+        
+        print(angloAmerican.getSpotPrice())
+        self.assertTrue(angloAmerican.getSpotPrice() != '')
 
     def test_get_non_existent_company_spot_price(self):
         """
@@ -26,27 +49,36 @@ class DataTests(TestCase):
             not exist. (could be an error that is thrown on purpose
             or a value that is specified as an error number)
         """
-        self.assertTrue(False)
+        nonExistent = Company.objects.get(name='No exist')
+        self.assertIsNone(nonExistent.getSpotPrice())
 
     def test_get_company_percentage_change(self):
         """
             Make sure you can get a companies % change. Test for
             the format as well to make sure it's correct.
         """
-        self.assertTrue(False)
+
+        angloAmerican = Company.objects.get(name='Anglo American')
+
+        self.assertTrue(angloAmerican.getSpotPercentageDifference() != '')
 
     def test_get_non_existent_company_percentage_change(self):
         """
             Test if the method handles when you ask for the % change
             of a company that doesn't exist.
         """
-        self.assertTrue(False)
+        nonExistent = Company.objects.get(name='No exist')
+        self.assertIsNone(nonExistent.getSpotPercentageDifference())
+
+        # self.assertTrue()
 
     def test_get_company_spot_price_over_time(self):
         """
             Can you get the spot price of a company over a period of 
             time? Make sure the list is of the right type etc.
         """
+
+
         self.assertTrue(False)
 
     def test_get_non_existent_company_spot_price_over_time(self):
@@ -113,8 +145,8 @@ class NLPTests(TestCase):
             as they are stored in a transaction, then dropped after the
             test class is done (so go wild).
         """
-        tech = Industry.objects.create(name='Technology')
-        Company.objects.create(ticker='GOOGL', name='Google', industry=tech)
+        # tech = Industry.objects.create(name='Technology')
+        # Company.objects.create(ticker='GOOGL', name='Google', industry=tech)
 
     def test_can_identify_ticker(self):
         """

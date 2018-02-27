@@ -10,7 +10,7 @@ class NewsInformation:
 		self.image = image
 		self.date_published = article_date
 
-<<<<<<< HEAD
+# <<<<<<< HEAD
 def benchmark():
 	start = time.time()
 	getNews('WTB')
@@ -24,8 +24,8 @@ def benchmark():
 def getNewsNewsAPI(company_name):
 	news = list()
 	
-=======
->>>>>>> 6ad1fb083e5b943b92df85c07573f33042f63734
+# =======
+# >>>>>>> 6ad1fb083e5b943b92df85c07573f33042f63734
 
 def getNews(ticker):
 	news = list()

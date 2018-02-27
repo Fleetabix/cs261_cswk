@@ -43,7 +43,14 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a string
         """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).spot_price
+        si = chatbot.data.stock_handler.getStockInformation(self.ticker)
+        return None if si is None else si.spot_price
+
+
+        # if chatbot.data.stock_handler.getStockInformation(self.ticker) is not None :
+        #     return chatbot.data.stock_handler.getStockInformation(self.ticker).spot_price
+        # else :
+        #     return None
 
     def getSpotPriceDifference(self):
         """
@@ -55,7 +62,16 @@ class Company(models.Model):
         """
             Returns percentage difference between current and last spot price for specified company as a string
         """
-        return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
+
+        si = chatbot.data.stock_handler.getStockInformation(self.ticker)
+        return None if si is None else si.percent_difference
+
+        # if chatbot.data.stock_handler.getStockInformation(self.ticker) is not None :
+        #     return chatbot.data.stock_handler.getStockInformation(self.ticker).percent_difference
+        # else :
+        #     return None
+
+        
 
     def getStockHistory(self, start, end):
         """

@@ -19,6 +19,11 @@ def getStockInformation(ticker):
 	if (response.status_code == 200):
 		soup = bs4.BeautifulSoup(response.content, "lxml")
 		data = soup.find("div", {"class": "tr darkEven"})
+		print("\nsomething\n")
+		# Catches cases where the website redirects to homepage due to nonexistent company
+		if data is None:
+			print("failed")
+			return None
 		stock = [x.text.strip() for x in data.findAll('span')]
 		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
