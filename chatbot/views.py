@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 from chatbot.models import *
+import datetime
 
 # Create your views here.
 
@@ -90,19 +91,29 @@ def get_portfolio(request):
     """
     data = {}
     user = request.user
+    include_historical = request.GET.get("historical")
     # get all the companies in the user's portfolio
     companies = user.traderprofile.c_portfolio.all()
+    now = datetime.datetime.today()
+    day = datetime.timedelta(days=7)
     for c in companies:
-        data[c.ticker] = {
+        data[c.id] = {
             "type": "company",
-            "name": c.name
+            "ticker": c.ticker,
+            "name": c.name,
+            "price": c.getSpotPrice(),
+            "change": c.getSpotPercentageDifference(),
         }
+        if include_historical == "true":
+            data[c.id]["historical"] = c.getStockHistory(now - day, now).to_json()
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
         data[i.id] = {
             "type": "industry",
-            "name": i.name
+            "name": i.name,
+            "price": i.getSpotPrice(),
+            "change": i.getSpotPercentageDifference()
         }
     return JsonResponse(data)
 
