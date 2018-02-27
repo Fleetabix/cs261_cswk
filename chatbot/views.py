@@ -135,6 +135,17 @@ def get_portfolio(request):
     return JsonResponse(data)
 
 
+@login_required
+def remove_from_portfolio(request):
+    entity_type = request.POST.get("type")
+    id = request.POST.get("id")
+    user = request.user
+    if entity_type == "industry":
+        user.traderprofile.i_portfolio.remove(Industry.objects.get(id=id))
+    else:
+        user.traderprofile.c_portfolio.remove(Company.objects.get(id=id))
+    return JsonResponse({"status": "yehhhhh!"})
+
 def simple_line_chart(line_name, labels, values):
     """
         Creates a simple line graph with 1 line where labels is the
