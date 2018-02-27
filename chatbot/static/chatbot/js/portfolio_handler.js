@@ -149,10 +149,10 @@ function getPortfolio(historical) {
             // add portfolio items here
             e = response[id];
             $("#portfolios").append(
-                "<div id='"+e.type+id+"' class='portfolio'>" +
+                "<div id='"+e.type+id+"' class='portfolio-item'>" +
                     "<h5>" + 
                         ((e.type == "industry") ? "" : e.ticker + " ") +
-                        e.name +
+                        fstUp(e.name) +
                         " - £" +
                         e.price.toFixed(2) + 
                         " (" + e.change.toFixed(2) + "%)" +
@@ -168,4 +168,8 @@ function getPortfolio(historical) {
         console.log("-----Fail-------");
         console.log(response);
     });
+}
+
+function fstUp(str) {
+    return str.charAt(0).toUpperCase() + str.substring(1, str.length);
 }
