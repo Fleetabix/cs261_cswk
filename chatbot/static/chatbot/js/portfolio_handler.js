@@ -145,15 +145,24 @@ function getPortfolio(historical) {
         method: "get"
     }).done(function (response) {
         console.log(response);
-        for (ticker in response) {
+        for (id in response) {
             // add portfolio items here
-            c = response[ticker];
-            console.log(c);
+            e = response[id];
             $("#portfolios").append(
-                "<div id='"+ticker+"' class='portfolio'>" +
-                    "<h5>"+ticker+" - "+c.name+"</h5>" +
+                "<div id='"+e.type+id+"' class='portfolio'>" +
+                    "<h5>" + 
+                        ((e.type == "industry") ? "" : e.ticker + " ") +
+                        e.name +
+                        " - £" +
+                        e.price.toFixed(2) + 
+                        " (" + e.change.toFixed(2) + "%)" +
+                    "</h5>" +
+                    "<canvas id='" + e.type+id + "chart'></canvas>" +
                 "</div>"
             );
+            if (e.type != "industry") {
+                createChart(e.type+id+"chart", e.historical);
+            }
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
