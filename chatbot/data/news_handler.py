@@ -33,7 +33,7 @@ def getNews(name, keyword = None):
 	search_query = ""
 	if keyword is not None:
 		search_query = name+" "+keyword
-		search_query = search_query.replace(' ', '%20')
+		search_query = search_query.replace('&', ' and ').replace('/',' or ').replace(' ', '%20')
 	else:
 		search_query = name.replace(' ', '%20')
 	url = 'https://newsapi.org/v2/everything?q='+search_query+'&apiKey=d9c204a671844e58b110128b0b806c1f'
