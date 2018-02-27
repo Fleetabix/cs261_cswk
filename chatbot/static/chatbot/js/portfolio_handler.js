@@ -30,6 +30,27 @@ $(document).ready(function() {
         var type = result.attr("data-type");
         addToPortfolio(key, type, result);
     });
+    // when a cross in a portfolio-item is clicked, remove that
+    // company/industry from the portfolio
+    $("body").on('click', '.rm-from-portfolio', function() {
+        var item = $(this).closest(".portfolio-item");
+        var data = {
+            type: item.attr("data-type"),
+            id: item.attr("data-id")
+        };
+        $.ajax({
+            url: "remove_from_portfolio/",
+            data: data,
+            dataType: "json",
+            method: "post"
+        }).done(function(data) {
+            item.remove();
+        }).fail(function(data) {
+            alert("Sorry, something went wrong");
+            console.log("----FAIL----");
+            console.log(data);
+        });
+    });
 });
 
 
@@ -148,14 +169,23 @@ function getPortfolio(historical) {
             // add portfolio items here
             e = response[id];
             $("#portfolios").append(
-                "<div id='"+e.type+id+"' class='portfolio-item'>" +
-                    "<h5>" + 
-                        ((e.type == "industry") ? "" : e.ticker + " ") +
-                        fstUp(e.name) +
-                        " - £" +
-                        e.price.toFixed(2) + 
-                        " (" + e.change.toFixed(2) + "%)" +
-                    "</h5>" +
+                "<div id='"+e.type+id+"' class='portfolio-item' data-type='"+e.type+"' data-id='"+id+"'>" +
+                    "<div class='row'>" + 
+                        "<div class='col-9'>" +
+                            "<h5>" + 
+                                ((e.type == "industry") ? "" : e.ticker + " ") +
+                                fstUp(e.name) +
+                                " - £" +
+                                e.price.toFixed(2) + 
+                                " (" + e.change.toFixed(2) + "%)" +
+                            "</h5>" +
+                        "</div>" +
+                        "<div class='col-3 rm-prt'>" +
+                            "<button class='btn rm-from-portfolio'>" +
+                                "<i class='fas fa-times'></i>" +
+                            "</button>" +
+                        "</div>" +
+                    "</div>" +
                     "<canvas id='" + e.type+id + "chart'></canvas>" +
                 "</div>"
             );
@@ -167,6 +197,10 @@ function getPortfolio(historical) {
     });
 }
 
+/** Returns the string but with the first character in upper case.
+ *  Doesn't check for anything.
+ * @param {string} str 
+ */
 function fstUp(str) {
     return str.charAt(0).toUpperCase() + str.substring(1, str.length);
 }
