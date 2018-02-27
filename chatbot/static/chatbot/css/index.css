@@ -154,7 +154,9 @@ a {
 #search-holder {
     width: 100%;
     margin-bottom: 10px;
+    padding-bottom: 1em;
     text-align: center;
+    border-bottom: 0.5px solid black;
 }
 
 #query-type {
@@ -198,11 +200,12 @@ a {
     overflow-y: scroll;
     max-height: 80%;
     padding: 1.3em;
+    padding-top: 0;
 }
 
 .result {
     background-color: var(--body-bg-colour);
-    border-radius: 0.5em;
+    border-radius: 0.25em;
     margin-top: 0.5em;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
