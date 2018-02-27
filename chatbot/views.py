@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from chatbot.models import *
 import datetime
+import calendar
 
 # Create your views here.
 
@@ -95,7 +96,7 @@ def get_portfolio(request):
     # get all the companies in the user's portfolio
     companies = user.traderprofile.c_portfolio.all()
     now = datetime.datetime.today()
-    day = datetime.timedelta(days=7)
+    last_week = datetime.timedelta(days=7)
     for c in companies:
         data[c.id] = {
             "type": "company",
@@ -105,7 +106,16 @@ def get_portfolio(request):
             "change": c.getSpotPercentageDifference(),
         }
         if include_historical == "true":
-            data[c.id]["historical"] = c.getStockHistory(now - day, now).to_json()
+            df = c.getStockHistory(now - last_week, now)
+            # for each entry in the dataframe, get the date, the
+            # value and pass them to the create_simple_chart function
+            dates = [df.iloc[i].name for i in range(len(df))]
+            data[c.id]["historical"] = simple_line_chart \
+                (
+                    line_name=c.ticker + " - " + c.name, 
+                    labels=[calendar.day_name[x.weekday()][:3] for x in dates], 
+                    values=[df.iloc[i].Close for i in range(len(df))]
+                )
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
@@ -115,7 +125,35 @@ def get_portfolio(request):
             "price": i.getSpotPrice(),
             "change": i.getSpotPercentageDifference()
         }
+        if include_historical == "true":
+            data[c.id]["historical"] = simple_line_chart \
+                (
+                    i.name, 
+                    labels=[], 
+                    values=[]
+                )
     return JsonResponse(data)
+
+
+def simple_line_chart(line_name, labels, values):
+    """
+        Creates a simple line graph with 1 line where labels is the
+        x-axis and values is the y axis.    
+    """
+    #TODO do this function
+    return  {
+                "type": "line",
+                "data": {
+                    "labels": labels,
+                    "datasets": [
+                        {
+                            "label": line_name,
+                            "data" : values,
+                            "lineTension": 0
+                        }
+                    ]
+                }
+            }
 
 
 def getTextData(query):
@@ -159,7 +197,7 @@ def getChartData():
                 "name": "FLORIN",
                 "type": "chart",
                 "chart_object": {
-                    "type": "line",
+                    "type": "bar",
                     "data": {
                         "labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
                         "datasets": [
