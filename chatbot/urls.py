@@ -11,5 +11,6 @@ urlpatterns = [
     path('ask_chatbot/', views.ask_chatbot, name='ask_chatbot'),
     path('get_entities/', views.get_entities, name='get_entities'),
     path('add_to_portfolio/', views.add_to_portfolio, name='add_to_portfolio'),
-    path('get_portfolio/', views.get_portfolio, name='get_portfolio')
+    path('get_portfolio/', views.get_portfolio, name='get_portfolio'),
+    path('remove_from_portfolio/', views.remove_from_portfolio, name='remove_from_portfolio')
 ]
