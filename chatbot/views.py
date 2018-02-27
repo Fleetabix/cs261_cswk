@@ -126,7 +126,7 @@ def get_portfolio(request):
             "change": i.getSpotPercentageDifference()
         }
         if include_historical == "true":
-            data[c.id]["historical"] = simple_line_chart \
+            data[i.id]["historical"] = simple_line_chart \
                 (
                     i.name, 
                     labels=[], 
