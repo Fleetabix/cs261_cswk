@@ -18,10 +18,10 @@ def create_company(ticker, name, industries, aliases=[]):
     c = Company.objects.create(ticker=ticker, name=name)
     # add all the industries
     for industry in industries:
-        c.industries.add(industry)
+        industry.companies.add(c)
     # add all the aliases
     for alias in aliases:
-        Alias.objects.create(company=c, alias=alias)
+        CompanyAlias.objects.create(company=c, alias=alias)
 
 
 # List of industries
@@ -35,7 +35,7 @@ beve = create_industry(name = 'beverages', aliases=['drinks'])
 chem = create_industry(name = 'chemicals')
 cons = create_industry(name = 'construction & materials', aliases=['construction'])
 elec = create_industry(name = 'electricity')
-eleq = create_industry(name = 'electronic & electrical equipment', aliases=[electronics])
+eleq = create_industry(name = 'electronic & electrical equipment', aliases=['electronics'])
 equi = create_industry(name = 'equity investment instruments')
 fina = create_industry(name = 'financial services')
 tele = create_industry(name = 'fixed line telecommunications')
@@ -46,7 +46,7 @@ util = create_industry(name = 'gas, water & multiutilities', aliases=['gas', 'wa
 geni = create_industry(name = 'general industrials')
 genr = create_industry(name = 'general retailers')
 heal = create_industry(name = 'healthcare equipment & services', aliases=['healthcare', 'healthcare equipment', 'healthcare services'])
-home = create_industry(name = 'household goods & home construction', alases=['household goods', 'home construction'])
+home = create_industry(name = 'household goods & home construction', aliases=['household goods', 'home construction'])
 inme = create_industry(name = 'industrial metals')
 life = create_industry(name = 'life insurance')
 medi = create_industry(name = 'media')
@@ -56,7 +56,7 @@ insu = create_industry(name = 'nonlife insurance')
 ogpr = create_industry(name = 'oil & gas producers', aliases=['oil producers', 'gas producers'])
 pers = create_industry(name = 'personal goods')
 phar = create_industry(name = 'pharmaceuticals & biotechnology', aliases=['pharmaceuticals', 'biotechnology'])
-reit = create_industry(name = 'real estate investment trusts', alises=['real estate'])
+reit = create_industry(name = 'real estate investment trusts', aliases=['real estate'])
 soft = create_industry(name = 'software & computer services', aliases=['software', 'computer services'])
 supp = create_industry(name = 'support services')
 tech = create_industry(name = 'technology hardware & equipment', aliases=['hardware', ['technical equipment']])
