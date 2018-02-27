@@ -1,0 +1,5 @@
+feedparser
+pandas_datareader
+bs4
+nltk
+parsedatetime
