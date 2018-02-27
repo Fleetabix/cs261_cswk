@@ -19,6 +19,7 @@ $(document).ready(function() {
     $("#clear-search-btn").click(function() {
         $("#search-results").empty();
         $("#search-results").css("display", "none");
+        $("#portfolios").css("display", "block");
         $("#searchbox").val("");
     });
     // when a button signifying a user wants to add a company to a portfolio
@@ -42,6 +43,7 @@ function getSearchResults(type, query) {
     // make sure that there's something to look for
     if (query.trim() != "") {
         $("#search-results").css("display", "block");
+        $("#portfolios").css("display", "none");
         var data = {
             type: type,
             query: query
@@ -70,6 +72,7 @@ function getSearchResults(type, query) {
         });
     } else {
         $("#search-results").css("display", "none");
+        $("#portfolios").css("display", "block");
     }
 }
 
