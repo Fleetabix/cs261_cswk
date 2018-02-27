@@ -237,6 +237,15 @@ a {
     width: 100%;
 }
 
+.rm-prt {
+    text-align: right;
+}
+
+.rm-from-portfolio {
+    background-color: inherit;
+    color: inherit;
+}
+
 #message-board {
     background-color: var(--body-bg-colour);
     color: var(--body-fg-colour);
