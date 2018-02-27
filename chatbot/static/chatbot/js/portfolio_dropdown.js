@@ -24,6 +24,11 @@ $(document).ready(function () {
     $(".portfolio-btn").click(function () {
         if (mobile) {
             $("#portfolio-tab").animate({height: "toggle"}, fastSpeed);
+            if (open) {
+                toggleButton(mobile, close_chevron, open_chevron);
+            } else {
+                toggleButton(mobile, open_chevron, close_chevron);
+            } 
         } else {
             if (open) {
                 $("#portfolio-tab").animate({width: "toggle"}, fastSpeed);

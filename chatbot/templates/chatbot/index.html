@@ -42,8 +42,22 @@
 
 {% block content %}
 <div id="portfolio-tab" class="pane">
+    <h2>Portfolio</h2>
+    <div id="search-holder">
+        <select id="query-type">
+            <option value="industry">Industry:</option>
+            <option value="company" selected="selected">Company:</option>
+        </select>
+        <input id="searchbox" type="text" autocomplete="off" placeholder="Search Here!"\>
+        <button id="clear-search-btn" type="button" class="btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div id="search-results">
+        <!-- search results for new portfolios to add will go here -->
+    </div>
     <div id="portfolios">
-        <h2>Portfolio</h2>
+        <!-- portfolio objects go here -->
     </div>
 </div>
 <div id="message-board" class="pane">
@@ -84,6 +98,7 @@
     <script src="{% static 'chatbot/js/message_handler.js' %}"></script>
     <script src="{% static 'chatbot/js/theme_handler.js' %}"></script>
     <script src="{% static 'chatbot/js/speech_recognition.js' %}"></script>
+    <script src="{% static 'chatbot/js/portfolio_handler.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js" 
         integrity="sha256-vyehT44mCOPZg7SbqfOZ0HNYXjPKgBCaqxBkW3lh6bg=" 
         crossorigin="anonymous">
