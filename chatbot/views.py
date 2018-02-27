@@ -72,18 +72,37 @@ def add_to_portfolio(request):
         user's portfolio.
     """
     user = request.user
-    c = Company.objects.get(ticker=request.POST.get("ticker"))
-    user.traderprofile.portfolio.add(c)
+    entity_type = request.POST.get("type")
+    if entity_type == "industry":
+        i = Industry.objects.get(id=request.POST.get("key"))
+        user.traderprofile.i_portfolio.add(i)
+    else:
+        c = Company.objects.get(ticker=request.POST.get("key"))
+        user.traderprofile.c_portfolio.add(c)
     return JsonResponse({"status": "whooohoo!"})
+
 
 @login_required
 def get_portfolio(request):
+    """
+        Returns all the companies and industries the user has in
+        their portfolio.
+    """
     data = {}
     user = request.user
-    companies = user.traderprofile.portfolio.all()
+    # get all the companies in the user's portfolio
+    companies = user.traderprofile.c_portfolio.all()
     for c in companies:
         data[c.ticker] = {
+            "type": "company",
             "name": c.name
+        }
+    # get all the industries in the user's portfolio
+    industries = user.traderprofile.i_portfolio.all()
+    for i in industries:
+        data[i.id] = {
+            "type": "industry",
+            "name": i.name
         }
     return JsonResponse(data)
 
@@ -99,6 +118,7 @@ def getTextData(query):
                 "caption" : "£1,000,000"
             }
     
+
 def getNewsData():
     """ 
         test for the news response
@@ -121,6 +141,7 @@ def getNewsData():
                     }
                 ]
             }
+
 
 def getChartData():
     return  {
