@@ -39,20 +39,27 @@ def get_entities(request):
         Used to get a list of matching entities (at this
         moment just companies) given a query.
     """
+    entity_type = request.GET.get('type')
     query = request.GET.get('query')
     user = request.user
-    # get all companies that have aliases like the query but are
-    # not in the user's portfolio
-    result_set = CompanyAlias.objects \
-        .exclude(company__in=user.traderprofile.portfolio.all()) \
-        .filter(alias__contains=query)
+    result_set = None
+    # get all companies or industries (depending on the type) that have 
+    # aliases like the query but are not in the user's portfolio
+    if entity_type == "industry":
+        result_set = IndustryAlias.objects \
+            .exclude(industry__in=user.traderprofile.i_portfolio.all()) \
+            .filter(alias__contains=query)
+    else:
+        result_set = CompanyAlias.objects \
+            .exclude(company__in=user.traderprofile.c_portfolio.all()) \
+            .filter(alias__contains=query)
+
     # add all the companies we got to the data object to return 
     data = {}
     for r in result_set:
-        c = r.company
-        industries = [x.name for x in c.industries.all()]
-        data[c.ticker] = {
-            "name": c.name
+        e = r.industry if (entity_type == "industry") else r.company
+        data[e.id] = {
+            "name": e.name
         }
     return JsonResponse(data)
 
