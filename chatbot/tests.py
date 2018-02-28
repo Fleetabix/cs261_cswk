@@ -114,15 +114,10 @@ class DataTests(TestCase):
             A test to see if we can get news of a company from a specific
             time period (e.g. in the last week)
         """
-        self.assertTrue(False)
-
-    def test_get_non_existent_company_news_from_specified_time(self):
-        """
-            Test what happens when you ask for news of a company that
-            doesn't exists. Again, look to catch a specified error 
-            or look for output that means an error.
-        """
-        self.assertTrue(False)
+        news = self.aa.getNewsFrom(self.now - self.delta_week, self.now)
+        for article in news:
+            self.assertGreaterEqual(article.date_published, self.now - self.delta_week)
+            self.assertLessEqual(article.date_published, self.now)
 
     def test_get_company_recent_news(self):
         """
@@ -130,14 +125,10 @@ class DataTests(TestCase):
             the right time frame (probably defined in the method you're)
             testing.
         """
-        self.assertTrue(False)
-
-    def test_get_non_existent_company_recent_news(self):
-        """
-            Check what happens when we look for news of a 
-            company that doesn't exist.
-        """
-        self.assertTrue(False)
+        news = self.aa.getNews()
+        for article in news:
+            self.assertGreaterEqual(article.date_published, self.now - self.delta_week)
+            self.assertLessEqual(article.date_published, self.now)
 
 
 class NLPTests(TestCase):
