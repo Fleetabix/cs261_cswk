@@ -1,17 +1,19 @@
 from django.test import TestCase
 from chatbot.models import Company, Industry
 
+import datetime
+
 # Create your tests here. All test methods names should 
 # start with the word 'test'
 
 class DataTests(TestCase):
-
     """
         Tests for retreiving data for different companies.
         As you (probably) be able to build industry data from just
         querying all companies in that industry, we can only test
         getting data for companies
     """
+
     def setUp(self):
         """
             Insert companies into the data base here for
@@ -19,29 +21,28 @@ class DataTests(TestCase):
             as they are stored in a transaction, then dropped after the
             test class is done (so go wild).
         """
-        mine = Industry.objects.create(name='Mining')
-        mine.save()
-        Company.objects.create(ticker='AAL', name='Anglo American')
-        angloAmerican = Company.objects.get(name='Anglo American')
-        angloAmerican.industries.add(mine)
-
-        fake = Industry.objects.create(name='Fake companies')
-        fake.save()
-        Company.objects.create(ticker='NOPE', name='No exist')
-        nonExistent = Company.objects.get(name='No exist')
-        nonExistent.industries.add(fake)
-
-
+        self.mine = Industry.objects.create(name='Mining')
+        self.aa = Company.objects.create(ticker='AAL', name='Anglo American')
+        self.rr = Company.objects.create(ticker='RRS', name='Randgold Resources')
+        self.mine.companies.add(self.aa)
+        self.mine.companies.add(self.rr)
+        # the non existent company
+        self.ne = Company.objects.create(ticker='ZZZ', name='GiveUsYourMoney')
+        # some datetime stuff to help with historical data
+        self.now = datetime.datetime.now()
+        self.delta_week = datetime.timedelta(days=7)
+        self.the_past = datetime.timedelta(days=200000)
 
     def test_get_company_spot_price(self):
         """
             Just check if a companies spot price can be retrieved
             and is in a valid format
         """        
-        angloAmerican = Company.objects.get(name='Anglo American')
-        
-        print(angloAmerican.getSpotPrice())
-        self.assertTrue(angloAmerican.getSpotPrice() != '')
+        price = self.aa.getSpotPrice()
+        # checks price is not none (none is falsey)
+        self.assertTrue(price)
+        self.assertGreaterEqual(price,  0)
+        self.assertIsInstance(price, float)
 
     def test_get_non_existent_company_spot_price(self):
         """
@@ -49,58 +50,64 @@ class DataTests(TestCase):
             not exist. (could be an error that is thrown on purpose
             or a value that is specified as an error number)
         """
-        nonExistent = Company.objects.get(name='No exist')
-        self.assertIsNone(nonExistent.getSpotPrice())
+        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
+            self.ne.getSpotPrice()
 
     def test_get_company_percentage_change(self):
         """
             Make sure you can get a companies % change. Test for
             the format as well to make sure it's correct.
         """
-
-        angloAmerican = Company.objects.get(name='Anglo American')
-
-        self.assertTrue(angloAmerican.getSpotPercentageDifference() != '')
+        change = self.rr.getSpotPercentageDifference()
+        self.assertTrue(change)
+        self.assertIsInstance(change, float)
+        self.assertGreaterEqual(change, -500)
+        self.assertLessEqual(change, 500)
 
     def test_get_non_existent_company_percentage_change(self):
         """
             Test if the method handles when you ask for the % change
             of a company that doesn't exist.
         """
-        nonExistent = Company.objects.get(name='No exist')
-        self.assertIsNone(nonExistent.getSpotPercentageDifference())
-
-        # self.assertTrue()
+        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
+            self.ne.getSpotPrice()
 
     def test_get_company_spot_price_over_time(self):
         """
             Can you get the spot price of a company over a period of 
             time? Make sure the list is of the right type etc.
         """
-
-
-        self.assertTrue(False)
+        df = self.aa.getStockHistory(self.now - self.delta_week, self.now)
+        self.assertIsNot(df, None)
+        # there should be 5 entries (as markets are not open on the weekends)
+        self.assertEqual(len(df), 5)
+        # check all dates in the dataframe are within 7 days of today
+        for date in [df.iloc[i].name for i in range(len(df))]:
+            self.assertLessEqual((self.now - date).days, 7)
 
     def test_get_non_existent_company_spot_price_over_time(self):
         """
             Check what happens when you request the stock change
             of a company that doesn't exist.
         """
-        self.assertTrue(False)
+        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
+            self.ne.getStockHistory(self.now - self.delta_week, self.now)
 
     def test_get_company_spot_price_for_the_future(self):
         """
             A test to see what happens if you request a company's data
             for a time period in the future (like next week?)
         """
-        self.assertTrue(False)
+        with self.assertRaisesMessage(ValueError, "This date range goes into the future!"):
+            self.ne.getStockHistory(self.now, self.now + self.delta_week)
 
     def test_get_company_spot_price_for_distant_past(self):
         """
             A test to see what happens if you request a company's data
             for a time period we can't access (e.g. 1950 or something)
         """
-        self.assertTrue(False)
+        with self.assertRaisesMessage(ValueError, "Date range goes to far in the past!"):
+            self.ne.getStockHistory(self.now - self.the_past, self.now)
 
     def test_get_company_news_from_specified_time(self):
         """
