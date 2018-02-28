@@ -28,11 +28,10 @@ def getStockInformation(ticker):
 	return cs
 
 
-"""
-	Retrieves stock information from set of tickers (in a certain industry)
-	
-"""
 def getIndustryStocks(tickers):
+	"""
+		Retrieves stock information from set of tickers (in a certain industry)
+	"""
 	stocks = {}
 	for ticker in tickers:
 		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
