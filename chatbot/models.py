@@ -6,6 +6,8 @@ from django.dispatch import receiver
 import chatbot.data.news_handler as nh
 import chatbot.data.stock_handler as sh
 
+import datetime
+
 # Create your models here.
 
 
@@ -51,9 +53,18 @@ class Company(models.Model):
     def getNews(self):
         """
             Returns a list of NewsInformation objects of articles related to
-            specified company
+            specified company from the last week
         """
-        return nh.getNews(self.ticker)
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now)
+
+    def getNewsFrom(self, start, end):
+        """
+            Returns news published within the given start and end dates
+        """
+        news = nh.getNews(self.ticker, self.name)
+        in_range = lambda x: start <= x.date_published <= end 
+        return list(filter(in_range, news))
       
     def __str__(self):
         return self.ticker + " - " + self.name
