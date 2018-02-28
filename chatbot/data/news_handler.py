@@ -11,25 +11,13 @@ class NewsInformation:
 		self.headline = headline
 		self.image = image
 		self.date_published = datetime.datetime.strptime(article_date, '%Y-%m-%dT%H:%M:%SZ')
-
-# def benchmark():
-# 	start = time.time()
-# 	print('using get news function')
-# 	getNews('WTB')
-# 	end = time.time()
-# 	print(end-start)
-# 	start = time.time()	
-# 	print('using new get news function')
-# 	getNewsNewsAPI('whitbread')
-# 	end = time.time()
-# 	print(end-start)
 	
-# need to mention powered by NewsAPI
 
-"""
-can be used for both industry and company
-"""
+# need to mention powered by NewsAPI
 def getNews(name, keyword = None):
+	"""
+	can be used for both industry and company
+	"""
 	news = list()
 	search_query = ""
 	if keyword is not None:
@@ -44,24 +32,3 @@ def getNews(name, keyword = None):
 		news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["publishedAt"]))
 	return news
 	
-
-# def getNews(ticker):
-# 	news = list()
-# 	webpage = 'https://finance.google.com/finance/company_news?q='+ticker+'&ei=OwiKWrHYB5CWUo31grgL&output=rss'
-# 	f = feedparser.parse(webpage)
-# 	for stories in f.entries:
-# 		image_url = getImage(stories.link)
-# 		date_published = stories.published
-# 		news.append(NewsInformation(stories.link, stories.title, image_url, date_published))
-# 	return news
-
-
-def getImage(url):
-	response = requests.get(url)
-	image_url = ""
-	if (response.status_code == 200):
-		soup = bs4.BeautifulSoup(response.content, "lxml")
-		image = soup.find("meta",  property="og:image")
-		if image is not None:
-			image_url = image["content"]	
-	return image_url
