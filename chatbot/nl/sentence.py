@@ -1,5 +1,5 @@
 import nltk
-import dict, timePhrase
+from chatbot.nl import dict, timePhrase
 import string
 
 class Sentence:
@@ -10,6 +10,9 @@ class Sentence:
 
 	def __init__(self, sentence):
 		self.sentence = sentence
+		#Remove punctuation from the sentence
+		punctTranslator = str.maketrans('', '', string.punctuation)
+		self.sentence = self.sentence.translate(punctTranslator)
 		self.tokens = tokenise(sentence)
 
 	def extract(self):
@@ -17,9 +20,7 @@ class Sentence:
 		dictionaries = ["qualities", "comparatives", "connectives", "companies", "areas"]
 		self.keywords = self.findFromDictionaries(dictionaries, self.tokens)
 		#Remove the punctuation in order to check for time phrases.
-		punctTranslator = str.maketrans('', '', string.punctuation)
-		punctFree = self.sentence.translate(punctTranslator)
-		self.time = timePhrase.getDate(punctFree, tokenise(punctFree))
+		self.time = timePhrase.getDate(self.sentence, self.tokens)
 		#Give a default.
 		if self.time is None:
 			self.time = timePhrase.current()

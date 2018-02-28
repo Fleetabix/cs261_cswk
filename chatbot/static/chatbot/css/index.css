@@ -9,6 +9,11 @@
     --accent-colour: #2B7A78;
     --border-colour: #000000;
     --btn-colour: #17252A;
+    --canvas-colour: #17252A;
+}
+
+::placeholder {
+    color: #999;
 }
 
 /*
@@ -128,6 +133,7 @@ a {
     float: top;
     width: 100%;
     padding: 10px;
+    overflow-y: scroll;
 }
 
 
@@ -147,8 +153,98 @@ a {
     }
 }
 
-#portfolios {
-    height: 100%;
+#search-holder {
+    width: 100%;
+    margin-bottom: 10px;
+    padding-bottom: 1em;
+    text-align: center;
+    border-bottom: 0.5px solid black;
+}
+
+#query-type {
+    height: 2em;
+    width: 30%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -webkit-appearance: none;
+    border: 0.5px solid black;
+    margin-right: 0;
+    padding-left: 5px;
+}
+
+#query-type:hover {
+    background-color: #DDD;
+}
+
+#searchbox {
+    height: 2em;
+    width: 50%;
+    background-color: white;
+    color: black;
+    border: 0.5px solid black;
+    border-radius: 0.25em;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-left: .5em;
+    margin-left: 0;
+}
+
+#clear-search-btn {
+    height: 2em;
+    text-align: center;
+    background-color: var(--accent-colour);
+    color: var(--body-fg-colour);
+}
+
+#search-results {
+    border-bottom: 1px solid var(--body-bg-colour);
+    display: none;
+    overflow-y: scroll;
+    max-height: 80%;
+    padding: 1.3em;
+    padding-top: 0;
+}
+
+.result {
+    background-color: var(--body-bg-colour);
+    border-radius: 0.25em;
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    color: var(--body-fg-colour)
+}
+
+.add-portfolio-btn {
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour)
+}
+
+.add-comp-coll {
+    text-align: right;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.portfolio-item {
+    border: 0.5px solid black;
+    border-radius: 0.25em;
+    background-color: var(--body-bg-colour);
+    color: var(--body-fg-colour);
+    padding: 1em;
+    margin-top: 1em;
+}
+
+.portfolio-item canvas {
+    width: 100%;
+}
+
+.rm-prt {
+    text-align: right;
+}
+
+.rm-from-portfolio {
+    background-color: inherit;
+    color: inherit;
 }
 
 #message-board {
@@ -219,7 +315,7 @@ a {
     font-size: 1em;
     text-align: left;
     background-color: var(--accent-colour);
-    border-radius: 10px;
+    border-radius: 0.5em;
     padding: 10px;
 }
 
@@ -263,8 +359,9 @@ a {
 }
 
 canvas {
-    background-color: var(--header-bg-colour);
-    border-radius: 10px;
+    background-color: var(--canvas-colour);
+    color: white;
+    border-radius: 0.25em;
 }
 
 @media only screen and (max-width: 768px) {

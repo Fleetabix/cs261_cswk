@@ -6,6 +6,7 @@ var themes = {
         '--body-fg-colour': "#DEF2F1",
         '--accent-colour': "#2B7A78",
         '--border-colour': "#000",
+        '--canvas-colour': "#17252A",
         '--btn-colour': "#17252A"
     },
     Pink: {
@@ -15,6 +16,7 @@ var themes = {
         '--body-fg-colour': "#000",
         '--accent-colour': "#E0DFFF",
         '--border-colour': "#000",
+        '--canvas-colour': "#444",
         '--btn-colour': "#FFF"
     },
     Light: {
@@ -22,8 +24,9 @@ var themes = {
         '--header-fg-colour': "#000",
         '--body-bg-colour': "#FFF",
         '--body-fg-colour': "#000",
-        '--accent-colour': "#44BBDD",
+        '--accent-colour': "#0C99C1",
         '--border-colour': "#000",
+        '--canvas-colour': "#0f395E",
         '--btn-colour': "#44BBDD"
     },
     Lava: {
@@ -33,11 +36,13 @@ var themes = {
         '--body-fg-colour': "#FFF",
         '--accent-colour': "#C31",
         '--border-colour': "#C21",
+        '--canvas-colour': "#555",
         '--btn-colour': "#C31"
     }
 };
 
 $(document).ready(function () {
+    Chart.defaults.global.defaultFontColor = "#fff";
     for (name in themes) {
         var theme = themes[name];
         $("#themes").append(

@@ -6,13 +6,14 @@ Financial Trader Chatbot
 For the chatbot to function properly, you need to install some python packages before
 trying to use the data or nlp functions. To install them just use
 ```
-$ pip3 install <package_name_here>
+$ pip3 install -r requirments.txt
 ```
 for the following packages (please edit if you add more, or change some)
  - feedparser
  - pandas_datareader
  - bs4
- - articleDateExtractor
+ - nltk (additional setup may be required after pip3 installing)
+ - parsedatetime
 
 Lastly, some modules may not install properly on the DCS machines. I have not found
 a way to fix this, so just run and test the chatbot on your own laptops.
