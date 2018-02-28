@@ -14,9 +14,9 @@ class NewsInformation:
 	
 
 def getNews(name, keyword = None, breaking = None):
-  """
-    can be used for both industry and company
-  """
+	"""
+		can be used for both industry and company
+	"""
 	news = list()
 	search_query = ""
 	if keyword is not None:
