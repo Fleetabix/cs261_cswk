@@ -3,13 +3,14 @@ import requests
 import bs4
 import json
 import time
+import datetime
 
 class NewsInformation:
 	def __init__(self, url, headline, image, article_date):
 		self.url = url
 		self.headline = headline
 		self.image = image
-		self.date_published = article_date
+		self.date_published = datetime.datetime.strptime(article_date, '%Y-%m-%dT%H:%M:%SZ')
 
 # def benchmark():
 # 	start = time.time()
@@ -41,6 +42,7 @@ def getNews(name, keyword = None):
 	json_data = json.loads(response.text)
 	for stories in json_data["articles"]:
 		news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["publishedAt"]))
+	return news
 	
 
 # def getNews(ticker):
