@@ -9,6 +9,8 @@ from chatbot.models import *
 import datetime
 import calendar
 
+from chatbot.nl import nl
+
 # Create your views here.
 
 @login_required
@@ -26,12 +28,21 @@ def ask_chatbot(request):
         parse the message then return a valid response.
     """
     query = request.POST.get('query')
-    if (query == ":ex_chart"):
-        data = getChartData()
-    elif (query == ":ex_news"):
-        data = getNewsData()
+    if False:
+        if (query == ":ex_chart"):
+            data = getChartData()
+        elif (query == ":ex_news"):
+            data = getNewsData()
+        else:
+            data = getTextData(query)
+    requests = nl.getRequests(query)
+    if requests == [] or requests == None:
+        data = nl.genericUnknownResponse()
     else:
-        data = getTextData(query)
+        message = "You asked about "
+        for i in requests:
+            message += i["quality"] + ", "
+        data = nl.turnIntoResponse(message)
     return JsonResponse(data)
 
 
@@ -45,7 +56,7 @@ def get_entities(request):
     query = request.GET.get('query')
     user = request.user
     result_set = None
-    # get all companies or industries (depending on the type) that have 
+    # get all companies or industries (depending on the type) that have
     # aliases like the query but are not in the user's portfolio
     if entity_type == "industry":
         result_set = IndustryAlias.objects \
@@ -56,7 +67,7 @@ def get_entities(request):
             .exclude(company__in=user.traderprofile.c_portfolio.all()) \
             .filter(alias__contains=query)
 
-    # add all the companies we got to the data object to return 
+    # add all the companies we got to the data object to return
     data = {}
     for r in result_set:
         e = r.industry if (entity_type == "industry") else r.company
@@ -112,8 +123,8 @@ def get_portfolio(request):
             dates = [df.iloc[i].name for i in range(len(df))]
             data[c.id]["historical"] = simple_line_chart \
                 (
-                    line_name=c.ticker + " - " + c.name, 
-                    labels=[calendar.day_name[x.weekday()][:3] for x in dates], 
+                    line_name=c.ticker + " - " + c.name,
+                    labels=[calendar.day_name[x.weekday()][:3] for x in dates],
                     values=[df.iloc[i].Close for i in range(len(df))]
                 )
     # get all the industries in the user's portfolio
@@ -128,8 +139,8 @@ def get_portfolio(request):
         if include_historical == "true":
             data[i.id]["historical"] = simple_line_chart \
                 (
-                    i.name, 
-                    labels=[], 
+                    i.name,
+                    labels=[],
                     values=[]
                 )
     return JsonResponse(data)
@@ -149,7 +160,7 @@ def remove_from_portfolio(request):
 def simple_line_chart(line_name, labels, values):
     """
         Creates a simple line graph with 1 line where labels is the
-        x-axis and values is the y axis.    
+        x-axis and values is the y axis.
     """
     #TODO do this function
     return  {
@@ -168,7 +179,7 @@ def simple_line_chart(line_name, labels, values):
 
 
 def getTextData(query):
-    """ 
+    """
         test for text response
     """
     return  {
@@ -177,10 +188,10 @@ def getTextData(query):
                 "body": "The current spot price of '" + query.split(" ")[0].upper() + "' is",
                 "caption" : "£1,000,000"
             }
-    
+
 
 def getNewsData():
-    """ 
+    """
         test for the news response
     """
     return  {
@@ -195,7 +206,7 @@ def getNewsData():
                     },
                     {
                         "title": "If you'd invested in: EasyJet and WPP",
-                        "description": "In the first nine months, WPP's like-for-like revenue fell by 0.9% as huge customers cut marketing budgets after questioning the effectiveness of buying online advertisements through media firms, rather than turning to Google.", 
+                        "description": "In the first nine months, WPP's like-for-like revenue fell by 0.9% as huge customers cut marketing budgets after questioning the effectiveness of buying online advertisements through media firms, rather than turning to Google.",
                         "url": "https://www.google.co.uk/url?sa=t&rct=j&q=&esrc=s&source=newssearch&cd=3&cad=rja&uact=8&ved=0ahUKEwioo7zn1pnZAhUFJsAKHYE8CHoQqQIILigAMAI&url=https%3A%2F%2Fmoneyweek.com%2Fif-youd-invested-in-easyjet-and-wpp%2F&usg=AOvVaw2SGlOHd2vVPZVD8ZlDmwOP",
                         "pic_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDtEeR1fMbghVy9LkwuVkJLADg9B7hagjaKRODMChHt6AHEeYQ5VzT3aFr0GSZUtNMnQuwwg"
                     }
