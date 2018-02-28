@@ -1,5 +1,5 @@
 import nltk
-import dict, timePhrase
+from chatbot.nl import dict, timePhrase
 import string
 
 class Sentence:

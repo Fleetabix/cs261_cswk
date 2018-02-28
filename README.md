@@ -6,7 +6,7 @@ Financial Trader Chatbot
 For the chatbot to function properly, you need to install some python packages before
 trying to use the data or nlp functions. To install them just use
 ```
-$ pip3 install <package_name_here>
+$ pip3 install -r requirments.txt
 ```
 for the following packages (please edit if you add more, or change some)
  - feedparser

@@ -1,7 +1,6 @@
 import parsedatetime
 from datetime import datetime
-import sentence
-import dict
+from chatbot.nl import sentence, dict
 
 #Returns the dates retrieved from a string, or None if there is no date.
 def getDate(s, tokens):
