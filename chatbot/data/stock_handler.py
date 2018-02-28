@@ -47,6 +47,9 @@ def getIndustryStocks(tickers):
 
 
 def getHistoricalStockInformation(ticker, start, end):
-	data = web.DataReader(ticker, "google", start, end)
-	return data
+	if datetime.datetime.now() < end:
+		raise ValueError("This date range goes into the future!")
+	if start < (datetime.datetime.now() - datetime.timedelta(days=366)):
+		raise ValueError("Date range goes to far in the past!")
+	return web.DataReader(ticker, "google", start, end)
 		
