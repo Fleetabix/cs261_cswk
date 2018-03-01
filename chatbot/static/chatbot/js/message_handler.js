@@ -124,10 +124,10 @@ function createChart(chartId, chartObject) {
     Generates a random colour (can't do black though, black is yucky)
 */
 function getRandomColor() {
-    var letters = '3456789ABCDEF';
+    var letters = '68ACE';
     var color = '#';
     for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 13)];
+        color += letters[Math.floor(Math.random() * letters.length)];
     }
     return color;
 }
