@@ -13,7 +13,6 @@ class CompanyStock:
 		self.retrieved = retrieve_datetime
 
 def getStockInformation(ticker): 
-	# [possibly] Temporary rss feed for now - till better one is found - current implementation is slow
 	response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
 	cs = None
 	if (response.status_code == 200):

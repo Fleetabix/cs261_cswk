@@ -23,7 +23,7 @@ def getNews(name, keyword = None, breaking = None):
 		search_query = name+" "+keyword
 		search_query = search_query.replace('&', ' and ').replace('/',' or ').replace(' ', '%20')
 	else:
-		search_query = name.replace(' ', '%20')
+		search_query = name.replace('&', ' and ').replace('/',' or ').replace(' ', '%20')
 
 	if breaking:
 		url =  'https://newsapi.org/v2/top-headlines?q='+search_query+'&language=en&apiKey=d9c204a671844e58b110128b0b806c1f'
