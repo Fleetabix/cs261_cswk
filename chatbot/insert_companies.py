@@ -2,7 +2,7 @@ from chatbot.models import Industry, Company, CompanyAlias, IndustryAlias
 
 def create_industry(name, aliases=[]):
     """
-        Method to create an industry along with its aliases.
+        method to create an industry along with its aliases.
     """
     i = Industry.objects.create(name=name)
     for alias in aliases:
@@ -158,7 +158,7 @@ create_company('SMIN', 'Smiths Group', [geni])
 create_company('SMT', 'Scottish Mortgage Investment Trust', [equi])
 create_company('SN.', 'Smith & Nephew', [heal], ['Smith and Nephew', 'Smith & Nephew Plc', 'Smith and Nephew Plc'])
 create_company('SSE', 'SSE', [elec])
-create_company('STAN', 'Standard Chartered', [bank], ['Standard Chartered Bank'. 'Standard Chartered Plc'])
+create_company('STAN', 'Standard Chartered', [bank], ['Standard Chartered Bank', 'Standard Chartered Plc'])
 create_company('STJ', "St James's Place", [life])
 create_company('SVT', 'Severn Trent', [util])
 create_company('TSCO', 'Tesco', [fdre], ['Tesco Plc'])
