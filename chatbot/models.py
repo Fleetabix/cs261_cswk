@@ -72,9 +72,9 @@ class Company(models.Model):
             optional topic
         """
         if topic is None:
-            news = nh.getNews(self.ticker, self.name)
+            news = nh.getNews(self.name + ' plc')
         else:
-            news = nh.getNews(self.name, topic)
+            news = nh.getNews(self.name + ' plc', topic)
         in_range = lambda x: start <= x.date_published <= end 
         return list(filter(in_range, news))
 
