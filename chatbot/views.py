@@ -48,8 +48,11 @@ def respond_to_request(request):
     quality = request["quality"]
     companies = request["companies"]
     areas = request["areas"]
+    comparative = request["comparative"]
     if quality == "price":
         #Responses to price
+        if comparative is not None:
+            return nl.turnIntoResponse("Huh. A comparative.")
         if len(companies) == 0:
             #Response for no companies being listed.
             if len(areas) > 0:
@@ -65,11 +68,13 @@ def respond_to_request(request):
             return nl.turnIntoResponseWithCaption(message, caption)
         else:
             data = []
-            caption = "Here are the current prices."
+            caption = []
+            counter = len(companies)
             for company in companies:
                 price = Company.objects.get(ticker = company).getSpotPrice()
-                data.append({"label":company, "data":price})
-            return nl.turnIntoBarChart(["Current Stock Price"],data, caption)
+                data.append({"label":company, "data":[price]})
+                caption.append(nl.posessive(company) + " at " + nl.printAsSterling(price))
+            return nl.turnIntoBarChart(["Current Stock Price"],data, nl.makeList(caption))
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":

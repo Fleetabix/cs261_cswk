@@ -24,7 +24,7 @@ def turnIntoResponse(body):
 def turnIntoResponseWithCaption(body, caption):
 	return {
 			"type": "text",
-			"body": body + " | " + caption,
+			"body": body,
 			"caption" : caption
 		}
 
@@ -47,6 +47,19 @@ def printCompanyList():
 def printAsSterling(amount):
 	amount = '£{:,.2f}'.format(amount)
 	return amount
+
+#Turn a set of objects into a comma and and seperated list.
+def makeList(segments):
+	counter = len(segments)
+	sentence = ""
+	for segment in segments:
+		sentence+=segment
+		counter -= 1
+		if counter == 1:
+			sentence+=" and "
+		elif counter>1:
+			sentence+=", "
+	return sentence
 
 #Make a term possessive (term's)
 def posessive(term):
