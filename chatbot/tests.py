@@ -190,14 +190,63 @@ class NLPTests(TestCase):
             Input a sentence containing a company name, check if
             it can identify it.
         """
-        self.assertTrue(False)
+        ticker = "GOOGL"
+        queries = [
+            "what is the price of google", 
+            "get me % change of Google blah",
+            "Google blah sjh dsjjjh news change"
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(ticker in r["companies"])
 
     def test_can_identify_multiple_company_names(self):
         """
             Input a sentence containing multiple company name, check if
             it can identify it.
         """
-        self.assertTrue(False)
+        queries = [
+            "what is the price of amazon and google", 
+            "get me % change of Hanson & Amazon blah",
+            "Is Google doing as well as Amazon and Hanson on stock price this week?"
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(len(r["companies"]) > 1)
+
+    def test_can_identify_company_alias(self):
+        """
+            Tests to see if a company can be obtained with an alias
+        """
+        ticker = "GOOGL"
+        queries = [
+            "what is the price of alphabet", 
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(ticker in r["companies"])
+        
+    def test_can_identify_multiple_company_aliases(self):
+        """
+            Tests to see if multiple companies can be obtained with their aliases
+        """
+        #TODO find out why second query fails
+        queries = [
+            "what is the price of amz and alphabet", 
+            "What is the % change of PLC, google and amz",
+            "Is google doing as well as amazon and hanson plc on stock price this week?"
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(len(r["companies"]) > 1)
 
     def test_can_identify_comparative_in_query(self):
         """
