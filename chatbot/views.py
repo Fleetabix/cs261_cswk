@@ -27,22 +27,19 @@ def ask_chatbot(request):
         Given a query in the POST data, it will
         parse the message then return a valid response.
     """
-    query = request.POST.get('query')
-    if False:
-        if (query == ":ex_chart"):
-            data = getChartData()
-        elif (query == ":ex_news"):
-            data = getNewsData()
-        else:
-            data = getTextData(query)
+    query = request.POST.get("query")
+    data = {
+        "name": "FLORIN",
+        "messages": []
+    }
     requests = nl.getRequests(query)
     if requests == [] or requests == None:
-        data = nl.genericUnknownResponse()
+        data["messages"].append(nl.genericUnknownResponse())
     else:
         message = "You asked about "
         for i in requests:
             message += i["quality"] + ", "
-        data = nl.turnIntoResponse(message)
+        data["messages"].append(nl.turnIntoResponse(message))
     return JsonResponse(data)
 
 
