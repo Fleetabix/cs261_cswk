@@ -104,7 +104,7 @@ function outputMessage(name, message) {
     $("#message-txt").val("");
 
     if (message.type == "chart") {
-        createChart(chartId, data.chart_object);
+        createChart(chartId, message.chart_object);
     }
 }
 
