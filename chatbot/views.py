@@ -54,6 +54,8 @@ def respond_to_request(request):
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
         return nl.turnIntoResponse("--Message about price difference--")
+    elif quality == "percentDiff":
+        return nl.turnIntoResponse("--Message about percentage difference--")
     else:
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
