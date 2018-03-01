@@ -12,12 +12,30 @@ $(document).ready(function() {
     // when the user types in a new character update the
     // search
     $("#searchbox").keyup(function() {
-        getSearchResults($("#query-type").val(), $(this).val());
+        $("#search-results").empty();
+        var query = $(this).val();
+        // make sure that there's something to look for
+        if (query.trim() != "") {
+            $("#clear-search-btn").find($("svg"))
+                .removeClass("fa-sync")
+                .addClass("fa-times");
+            getSearchResults($("#query-type").val(), query);
+        } else {
+            $("#search-results").css("display", "none");
+            $("#portfolios").css("display", "block");
+            $("#clear-search-btn").find($("svg"))
+                .removeClass("fa-times")
+                .addClass("fa-sync");
+            getPortfolio(true, outputPortfolio);
+        }
     });
     //if the clear button is pressed, clear the search results and
     // search box
     $("#clear-search-btn").click(function() {
         getPortfolio(true, outputPortfolio);
+        $("#clear-search-btn").find($("svg"))
+            .removeClass("fa-times")
+            .addClass("fa-sync");
         $("#search-results").empty();
         $("#search-results").css("display", "none");
         $("#portfolios").css("display", "block");
@@ -61,42 +79,34 @@ $(document).ready(function() {
  * @param {string} query the string that the alias should be similar to
  */
 function getSearchResults(type, query) {
-    $("#search-results").empty();
-    // make sure that there's something to look for
-    if (query.trim() != "") {
-        $("#search-results").css("display", "block");
-        $("#portfolios").css("display", "none");
-        var data = {
-            type: type,
-            query: query
-        };
-        $.ajax({
-            url: 'get_entities/',
-            data: data,
-            dataType: "json",
-            method: "get"
-        }).done(function (response) {
-            // if there was a result, print it. otherwise say sorry.
-            if (Object.keys(response.data).length > 0) {
-                printSearchResults(response);
-            } else {
-                $("#search-results").append(
-                    "<div class='result row'>" +
-                        "<div class='col-md-12'>" +
-                            "<h5>Sorry - No results found</h5>" +
-                        "</div>" +
-                    "</div>"
-                );
-            }
-        }).fail(function (response) {
-            console.log("-----Fail-------");
-            console.log(response);
-        });
-    } else {
-        $("#search-results").css("display", "none");
-        $("#portfolios").css("display", "block");
-        outputPortfolio(getPortfolio(true));
-    }
+    $("#search-results").css("display", "block");
+    $("#portfolios").css("display", "none");
+    var data = {
+        type: type,
+        query: query
+    };
+    $.ajax({
+        url: 'get_entities/',
+        data: data,
+        dataType: "json",
+        method: "get"
+    }).done(function (response) {
+        // if there was a result, print it. otherwise say sorry.
+        if (Object.keys(response.data).length > 0) {
+            printSearchResults(response);
+        } else {
+            $("#search-results").append(
+                "<div class='result row'>" +
+                    "<div class='col-md-12'>" +
+                        "<h5>Sorry - No results found</h5>" +
+                    "</div>" +
+                "</div>"
+            );
+        }
+    }).fail(function (response) {
+        console.log("-----Fail-------");
+        console.log(response);
+    });
 }
 
 /** Adds the selected entity to the user's portfolio.
