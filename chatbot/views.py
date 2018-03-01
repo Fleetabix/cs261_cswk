@@ -51,7 +51,7 @@ def respond_to_request(request):
         #return nl.turnIntoResponse("--Message about price--")
         if len(companies) == 1:
             return nl.turnIntoResponse("You told me one company")
-        return nl.turnIntoBarChart(["one"],[{"label":"TSCO", "data":[100,200]}], "Tesco stock price")
+        return nl.turnIntoBarChart(["one", "two"],[{"label":"TSCO", "data":[100,200]}], "Tesco stock price")
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
