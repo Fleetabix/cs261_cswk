@@ -129,12 +129,17 @@ def union(list1, list2):
     return list1 + list(set(list2) - set(list1))
 
 def companiesInIndustry(industryName):
-    return []
-    #PLEASE CODE PROPERLY
+    i = Industry.objects.get(name = industryName)
+    return extractTickers(i.companies.all())
 
 def allCompanies():
-    return []
-    #REALLY PLEASE CODE PROPERLY
+    return extractTickers(Company.objects.all())
+
+def extractTickers(results):
+    output = []
+    for company in results:
+        output.append(company.ticker)
+    return output
 
 @login_required
 def get_entities(request):
