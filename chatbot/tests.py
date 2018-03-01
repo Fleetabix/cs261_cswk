@@ -1,5 +1,7 @@
 from django.test import TestCase
-from chatbot.models import Company, Industry
+from chatbot.models import *
+
+from chatbot.nl import nl
 
 import datetime
 
@@ -44,15 +46,6 @@ class DataTests(TestCase):
         self.assertGreaterEqual(price,  0)
         self.assertIsInstance(price, float)
 
-    def test_get_non_existent_company_spot_price(self):
-        """
-            Test for whatever should be returned if the company does
-            not exist. (could be an error that is thrown on purpose
-            or a value that is specified as an error number)
-        """
-        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
-            self.ne.getSpotPrice()
-
     def test_get_company_percentage_change(self):
         """
             Make sure you can get a companies % change. Test for
@@ -63,14 +56,6 @@ class DataTests(TestCase):
         self.assertIsInstance(change, float)
         self.assertGreaterEqual(change, -500)
         self.assertLessEqual(change, 500)
-
-    def test_get_non_existent_company_percentage_change(self):
-        """
-            Test if the method handles when you ask for the % change
-            of a company that doesn't exist.
-        """
-        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
-            self.ne.getSpotPrice()
 
     def test_get_company_spot_price_over_time(self):
         """
@@ -84,14 +69,6 @@ class DataTests(TestCase):
         # check all dates in the dataframe are within 7 days of today
         for date in [df.iloc[i].name for i in range(len(df))]:
             self.assertLessEqual((self.now - date).days, 7)
-
-    def test_get_non_existent_company_spot_price_over_time(self):
-        """
-            Check what happens when you request the stock change
-            of a company that doesn't exist.
-        """
-        with self.assertRaisesMessage(ValueError, "Ticker does not exist!"):
-            self.ne.getStockHistory(self.now - self.delta_week, self.now)
 
     def test_get_company_spot_price_for_the_future(self):
         """
@@ -143,21 +120,70 @@ class NLPTests(TestCase):
             as they are stored in a transaction, then dropped after the
             test class is done (so go wild).
         """
-        # tech = Industry.objects.create(name='Technology')
-        # Company.objects.create(ticker='GOOGL', name='Google', industry=tech)
+        self.tech = self.create_industry(name='Technology')
+        self.reta = self.create_industry(name='Retailers')
+        self.mining = self.create_industry(name='Mining')
+
+        self.goog = self.create_company(ticker='GOOGL', name='Google', industries=[self.tech], aliases=["Alphabet"])
+        self.amaz = self.create_company(ticker='AMZ', name='Amazon', industries=[self.tech, self.reta])
+        self.hans = self.create_company(ticker='HNS', name='Hanson', industries=[self.mining], aliases=['Hanson PLC'])
+
+
+    def create_industry(self, name, aliases=[]):
+        """
+            method to create an industry along with its aliases.
+        """
+        i = Industry.objects.create(name=name)
+        for alias in aliases:
+            IndustryAlias.objects.create(industry=i, alias=alias)
+        return i
+
+
+    def create_company(self, ticker, name, industries, aliases=[]):
+        """
+            method to create a company and save it in the database
+            along with it's industries and aliases.
+        """
+        c = Company.objects.create(ticker=ticker, name=name)
+        # add all the industries
+        for industry in industries:
+            industry.companies.add(c)
+        # add all the aliases
+        for alias in aliases:
+            CompanyAlias.objects.create(company=c, alias=alias)
+
 
     def test_can_identify_ticker(self):
         """
             Can it get a ticker from a sentence.
         """
-        self.assertTrue(False)
+        ticker = "AMZ"
+        queries = [
+            "what is the price of $", 
+            "get me % change of $ blah",
+            "$ blah sjh dsjjjh news change"
+            ]
+        responses = [nl.getRequests(x.replace("$", ticker)) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(ticker in r["companies"])
 
     def test_can_identify_multiple_tickers(self):
         """
             Can it get a tickers from a sentence containing many
             of them.
         """
-        self.assertTrue(False)
+        queries = [
+            "what is the price of AMZ and GOOGL", 
+            "get me % change of HNS & AMZ blah",
+            "Is GOOGL doing as well as AMZ and HNS on stock price this week?"
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for r in rq: 
+                self.assertTrue(len(r["companies"]) > 1)
 
     def test_can_identify_company_name(self):
         """
