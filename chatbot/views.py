@@ -47,16 +47,29 @@ def respond_to_request(request):
     """
     quality = request["quality"]
     companies = request["companies"]
+    areas = request["areas"]
     if quality == "price":
-        #return nl.turnIntoResponse("--Message about price--")
+        #Responses to price
         if len(companies) == 0:
+            #Response for no companies being listed.
+            if len(areas) > 0:
+                message = "Here's the current price of " + areas[0] + ":"
+                caption = Industry.objects.get(name = areas[0]).getSpotPrice()
+                caption = nl.printAsSterling(caption)
+                return nl.turnIntoResponseWithCaption(message, caption)
             return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
         elif len(companies) == 1:
             message = "Here's " + nl.posessive(companies[0]) + " current price:"
             caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
-            caption = "£" + str(caption)
+            caption = nl.printAsSterling(caption)
             return nl.turnIntoResponseWithCaption(message, caption)
-        return nl.turnIntoBarChart(["stock price"],[{"label":"TSCO", "data":[100]},{"label":"BA.", "data":[150]}], "Tesco stock price")
+        else:
+            data = []
+            caption = "Here are the current prices."
+            for company in companies:
+                price = Company.objects.get(ticker = company).getSpotPrice()
+                data.append({"label":company, "data":price})
+            return nl.turnIntoBarChart(["Current Stock Price"],data, caption)
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":

@@ -24,7 +24,7 @@ def turnIntoResponse(body):
 def turnIntoResponseWithCaption(body, caption):
 	return {
 			"type": "text",
-			"body": body + " - " + caption,
+			"body": body + " | " + caption,
 			"caption" : caption
 		}
 
@@ -44,6 +44,12 @@ def turnIntoBarChart(labels, datasets, body):
 def printCompanyList():
 	print(dict.getDict("companies"))
 
+def printAsSterling(amount):
+	amount = '£{:,.2f}'.format(amount)
+	return amount
+
 #Make a term possessive (term's)
 def posessive(term):
+	if term.endswith("s"):
+		return term+"'"
 	return term+"'s"
