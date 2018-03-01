@@ -7,6 +7,9 @@ $(document).ready(function () {
     });
 });
 
+/** Sends a query to the server and prints the response.
+ * @param {string} query what you want to ask FLORIN
+ */
 function askChatbot(query) {
     var data = {
         query: query
@@ -37,7 +40,8 @@ function askChatbot(query) {
 
 function outputMessage(name, message) {
     var chartId;
-    var messageBox = "<div class='message'>";
+    var messageBox = "<div class='message-holder row'>";
+    messageBox += "<div class='florin-message message col-10'>";
     messageBox += "<h3>" + name + "</h3>";
     switch (message.type) {
         case "text":
@@ -78,6 +82,7 @@ function outputMessage(name, message) {
         default:
             messageBox += "<h4>Response type not found</h4>"
     }
+    messageBox += "</div>";
     messageBox += "</div>";
     $("#messages").append(messageBox);
     $("#messages").scrollTop($("#messages").prop("scrollHeight"));
@@ -128,10 +133,13 @@ function getRandomColor() {
 }
 
 function outputQuery(query) {
-    var messageBox = "<div class='message user-message'>";
-    messageBox += "<h3>"+username+"</h3>";
-    messageBox += "<p>"+query+"</p>";
-    messageBox += "</div>";
+    var messageBox = 
+        "<div class='message-holder row justify-content-end'>" +
+            "<div class='message user-message col-10'>" +
+                "<h3>"+username+"</h3>" +
+                "<p>"+query+"</p>" +
+            "</div>" +
+        "</div>";
     $("#messages").append(messageBox);
     $("#messages").scrollTop($("#messages").prop("scrollHeight"));
     $("#message-txt").val("");

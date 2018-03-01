@@ -305,12 +305,16 @@ a {
 }
 
 /*CSS For the Messages*/
+.message-holder {
+    padding-left: 2em;
+    padding-right: 2em;
+    width: inherit;
+}
+
 .message {
     width: inherit;
     margin: 1em;
-    border-bottom: 1px solid var(--accent-colour);
     font-size: 1em;
-    text-align: left;
     background-color: var(--accent-colour);
     border-radius: 0.5em;
     padding: 10px;
@@ -318,6 +322,10 @@ a {
 
 .user-message {
     text-align: right;
+}
+
+.florin-message {
+    text-align: left;
 }
 
 #speech-box {
