@@ -38,7 +38,6 @@ def ask_chatbot(request):
     else:
         for request in requests:
             data["messages"].append(respond_to_request(request))
-    data["messages"].append(nl.turnIntoResponse("One final message"))
     print(data)
     return JsonResponse(data)
 
@@ -56,6 +55,8 @@ def respond_to_request(request):
         return nl.turnIntoResponse("--Message about price difference--")
     elif quality == "percentDiff":
         return nl.turnIntoResponse("--Message about percentage difference--")
+    elif quality == "stockHist":
+        return nl.turnIntoResponse("--Message about stock history--")
     else:
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
