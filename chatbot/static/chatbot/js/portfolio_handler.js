@@ -8,7 +8,7 @@ if(typeof(String.prototype.trim) === "undefined") {
 
 
 $(document).ready(function() {
-    getPortfolio(true);
+    getPortfolio(true, outputPortfolio);
     // when the user types in a new character update the
     // search
     $("#searchbox").keyup(function() {
@@ -17,6 +17,7 @@ $(document).ready(function() {
     //if the clear button is pressed, clear the search results and
     // search box
     $("#clear-search-btn").click(function() {
+        getPortfolio(true, outputPortfolio);
         $("#search-results").empty();
         $("#search-results").css("display", "none");
         $("#portfolios").css("display", "block");
@@ -94,6 +95,7 @@ function getSearchResults(type, query) {
     } else {
         $("#search-results").css("display", "none");
         $("#portfolios").css("display", "block");
+        outputPortfolio(getPortfolio(true));
     }
 }
 
@@ -116,7 +118,6 @@ function addToPortfolio(key, type, result) {
     }).done(function (response) {
         result.css("background-color", "green");
         result.find("button").remove();
-        getPortfolio();
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
@@ -154,8 +155,10 @@ function printSearchResults(results) {
 
 /** Gets all the companies and industries in the user's portfolio
  *  and then adds them to the portfolio div.
+ *  @param {boolen} historical whether to get historical data or not 
+ *  @param {function} doSomething a function that uses the portfolio data
  */
-function getPortfolio(historical) {
+function getPortfolio(historical, doSomething) {
     $("#portfolios").empty();
     console.log("getting portfolios");
     data = {"historical": historical};
@@ -165,41 +168,50 @@ function getPortfolio(historical) {
         dataType: "json",
         method: "get"
     }).done(function (response) {
-        for (id in response) {
-            // add portfolio items here
-            e = response[id];
-            $("#portfolios").append(
-                "<div id='"+e.type+id+"' class='portfolio-item' data-type='"+e.type+"' data-id='"+id+"'>" +
-                    "<div class='row'>" + 
-                        "<div class='col-9'>" +
-                            "<h5>" + 
-                                ((e.type == "industry") ? "" : e.ticker + " ") +
-                                fstUp(e.name) +
-                                " - £" +
-                                e.price.toFixed(2) + 
-                                " (" + e.change.toFixed(2) + "%)" +
-                            "</h5>" +
-                        "</div>" +
-                        "<div class='col-3 rm-prt'>" +
-                            "<button class='btn rm-from-portfolio'>" +
-                                "<i class='fas fa-times'></i>" +
-                            "</button>" +
-                        "</div>" +
-                    "</div>" +
-                    "<canvas id='" + e.type+id + "chart'></canvas>" +
-                "</div>"
-            );
-            createChart(e.type+id+"chart", e.historical);
-        }
+        doSomething(response);
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
     });
 }
 
+/** Given an object that contains data of the companies and
+ *  industries in the portfolio, output it to the portfolio
+ *  tab.
+ *  @param {portfolio object} portfolio 
+ */
+function outputPortfolio(portfolio) {
+    for (id in portfolio) {
+        // add portfolio items here
+        e = portfolio[id];
+        $("#portfolios").append(
+            "<div id='"+e.type+id+"' class='portfolio-item' data-type='"+e.type+"' data-id='"+id+"'>" +
+                "<div class='row'>" + 
+                    "<div class='col-9'>" +
+                        "<h5>" + 
+                            ((e.type == "industry") ? "" : e.ticker + " ") +
+                            fstUp(e.name) +
+                            " - £" +
+                            e.price.toFixed(2) + 
+                            " (" + e.change.toFixed(2) + "%)" +
+                        "</h5>" +
+                    "</div>" +
+                    "<div class='col-3 rm-prt'>" +
+                        "<button class='btn rm-from-portfolio'>" +
+                            "<i class='fas fa-times'></i>" +
+                        "</button>" +
+                    "</div>" +
+                "</div>" +
+                "<canvas id='" + e.type+id + "chart'></canvas>" +
+            "</div>"
+        );
+        createChart(e.type+id+"chart", e.historical);
+    }
+}
+
 /** Returns the string but with the first character in upper case.
  *  Doesn't check for anything.
- * @param {string} str 
+ *  @param {string} str 
  */
 function fstUp(str) {
     return str.charAt(0).toUpperCase() + str.substring(1, str.length);
