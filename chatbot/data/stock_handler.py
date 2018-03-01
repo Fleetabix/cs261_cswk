@@ -41,9 +41,18 @@ def getStockInformation(ticker):
 
 
 def getHistoricalStockInformation(ticker, start, end):
+	"""
+		Retrieves historical stocks of a company(s) within a year from specified ticker(s).
+		Returns a pandas DataFrame with High, Low, Open and Close spot prices for each day
+		between start and end dates.
+	"""
+
+	# Check whether dates are valid
 	if datetime.datetime.now() < end:
 		raise ValueError("This date range goes into the future!")
 	if start < (datetime.datetime.now() - datetime.timedelta(days=366)):
 		raise ValueError("Date range goes to far in the past!")
+
+	# Use pandas_datareader to retrieve data remotely
 	return web.DataReader(ticker, "google", start, end)
 		
