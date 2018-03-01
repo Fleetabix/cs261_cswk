@@ -15,7 +15,6 @@ chatbotName = "FLORIN"
 
 def turnIntoResponse(body):
 	return {
-			"name": chatbotName,
 			"type": "text",
 			"body": body,
 			"caption" : None

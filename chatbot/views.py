@@ -27,22 +27,19 @@ def ask_chatbot(request):
         Given a query in the POST data, it will
         parse the message then return a valid response.
     """
-    query = request.POST.get('query')
-    if False:
-        if (query == ":ex_chart"):
-            data = getChartData()
-        elif (query == ":ex_news"):
-            data = getNewsData()
-        else:
-            data = getTextData(query)
+    query = request.POST.get("query")
+    data = {
+        "name": "FLORIN",
+        "messages": []
+    }
     requests = nl.getRequests(query)
     if requests == [] or requests == None:
-        data = nl.genericUnknownResponse()
+        data["messages"].append(nl.genericUnknownResponse())
     else:
         message = "You asked about "
         for i in requests:
             message += i["quality"] + ", "
-        data = nl.turnIntoResponse(message)
+        data["messages"].append(nl.turnIntoResponse(message))
     return JsonResponse(data)
 
 
@@ -71,10 +68,13 @@ def get_entities(request):
     data = {}
     for r in result_set:
         e = r.industry if (entity_type == "industry") else r.company
-        key = e.id if (entity_type == "industry") else e.ticker
-        data[key] = {
+        key = e.id
+        data[e.id] = {
             "name": e.name
         }
+        # if we are searching for companies, add the ticker
+        if entity_type == "company":
+            data[e.id]["ticker"] = e.ticker
     return JsonResponse({"type": entity_type, "data": data})
 
 
@@ -87,10 +87,10 @@ def add_to_portfolio(request):
     user = request.user
     entity_type = request.POST.get("type")
     if entity_type == "industry":
-        i = Industry.objects.get(id=request.POST.get("key"))
+        i = Industry.objects.get(id=request.POST.get("id"))
         user.traderprofile.i_portfolio.add(i)
     else:
-        c = Company.objects.get(ticker=request.POST.get("key"))
+        c = Company.objects.get(id=request.POST.get("id"))
         user.traderprofile.c_portfolio.add(c)
     return JsonResponse({"status": "whooohoo!"})
 
