@@ -25,7 +25,7 @@ def turnIntoBarChart(labels, datasets, body):
 	return {
 		"type": "chart",
 		"chart_object": {
-			"type": "bar",
+			"type": "line",
 			"data": {
 				"labels": labels,
 				"datasets": datasets
