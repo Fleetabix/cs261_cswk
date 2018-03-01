@@ -21,11 +21,18 @@ def turnIntoResponse(body):
 			"caption" : None
 		}
 
+def turnIntoResponseWithCaption(body, caption):
+	return {
+			"type": "text",
+			"body": body + " - " + caption,
+			"caption" : caption
+		}
+
 def turnIntoBarChart(labels, datasets, body):
 	return {
 		"type": "chart",
 		"chart_object": {
-			"type": "line",
+			"type": "bar",
 			"data": {
 				"labels": labels,
 				"datasets": datasets
@@ -36,3 +43,7 @@ def turnIntoBarChart(labels, datasets, body):
 
 def printCompanyList():
 	print(dict.getDict("companies"))
+
+#Make a term possessive (term's)
+def posessive(term):
+	return term+"'s"

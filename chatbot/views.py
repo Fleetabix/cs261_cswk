@@ -49,9 +49,14 @@ def respond_to_request(request):
     companies = request["companies"]
     if quality == "price":
         #return nl.turnIntoResponse("--Message about price--")
-        if len(companies) == 1:
-            return nl.turnIntoResponse("You told me one company")
-        return nl.turnIntoBarChart(["one", "two"],[{"label":"TSCO", "data":[100,200]}], "Tesco stock price")
+        if len(companies) == 0:
+            return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
+        elif len(companies) == 1:
+            message = "Here's " + nl.posessive(companies[0]) + " current price:"
+            caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
+            caption = "£" + str(caption)
+            return nl.turnIntoResponseWithCaption(message, caption)
+        return nl.turnIntoBarChart(["stock price"],[{"label":"TSCO", "data":[100]},{"label":"BA.", "data":[150]}], "Tesco stock price")
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
