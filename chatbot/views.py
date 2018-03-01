@@ -38,7 +38,6 @@ def ask_chatbot(request):
     else:
         for request in requests:
             data["messages"].append(respond_to_request(request))
-    print(data)
     return JsonResponse(data)
 
 def respond_to_request(request):
@@ -47,8 +46,12 @@ def respond_to_request(request):
         and format it correctly.
     """
     quality = request["quality"]
+    companies = request["companies"]
     if quality == "price":
-        return nl.turnIntoResponse("--Message about price--")
+        #return nl.turnIntoResponse("--Message about price--")
+        if len(companies) == 1:
+            return nl.turnIntoResponse("You told me one company")
+        return nl.turnIntoBarChart(["one"],[{"label":"TSCO", "data":[100,200]}], "Tesco stock price")
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
@@ -237,7 +240,7 @@ def getChartData():
                 "name": "FLORIN",
                 "type": "chart",
                 "chart_object": {
-                    "type": "bar",
+                    "type": "line",
                     "data": {
                         "labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
                         "datasets": [

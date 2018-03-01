@@ -1,4 +1,5 @@
 from chatbot.nl.sentence import Sentence
+from chatbot.nl import dict
 
 #Returns the requests found in an input string.
 def getRequests(s):
@@ -32,3 +33,6 @@ def turnIntoBarChart(labels, datasets, body):
 		},
 		"description": body
 	}
+
+def printCompanyList():
+	print(dict.getDict("companies"))
