@@ -19,3 +19,16 @@ def turnIntoResponse(body):
 			"body": body,
 			"caption" : None
 		}
+
+def turnIntoBarChart(labels, datasets, body):
+	return {
+		"type": "chart",
+		"chart_object": {
+			"type": "bar",
+			"data": {
+				"labels": labels,
+				"datasets": datasets
+			}
+		},
+		"description": body
+	}
