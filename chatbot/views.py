@@ -37,6 +37,8 @@ def ask_chatbot(request):
         data["messages"].append(nl.genericUnknownResponse())
     else:
         for request in requests:
+            if request["quality"] == "joke":
+                data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             data["messages"].append(respond_to_request(request))
     return JsonResponse(data)
 
@@ -57,6 +59,13 @@ def respond_to_request(request):
         return nl.turnIntoResponse("--Message about percentage difference--")
     elif quality == "stockHist":
         return nl.turnIntoResponse("--Message about stock history--")
+    elif quality == "joke":
+        if len(request["companies"]) == 0:
+            return nl.turnIntoResponse("To get to the other side.")
+        elif len(request["companies"])>1:
+            return nl.turnIntoResponse("To buy stock in " + nl.makeList(request["companies"]) + ".")
+        else:
+            return nl.turnIntoResponse("To buy stock in " + request["companies"][0] + ".")
     else:
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
