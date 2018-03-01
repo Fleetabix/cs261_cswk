@@ -46,35 +46,9 @@ def respond_to_request(request):
         and format it correctly.
     """
     quality = request["quality"]
-    companies = request["companies"]
-    areas = request["areas"]
-    comparative = request["comparative"]
     if quality == "price":
         #Responses to price
-        if comparative is not None:
-            return nl.turnIntoResponse("Huh. A comparative.")
-        if len(companies) == 0:
-            #Response for no companies being listed.
-            if len(areas) > 0:
-                message = "Here's the current price of " + areas[0] + ":"
-                caption = Industry.objects.get(name = areas[0]).getSpotPrice()
-                caption = nl.printAsSterling(caption)
-                return nl.turnIntoResponseWithCaption(message, caption)
-            return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
-        elif len(companies) == 1:
-            message = "Here's " + nl.posessive(companies[0]) + " current price:"
-            caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
-            caption = nl.printAsSterling(caption)
-            return nl.turnIntoResponseWithCaption(message, caption)
-        else:
-            data = []
-            caption = []
-            counter = len(companies)
-            for company in companies:
-                price = Company.objects.get(ticker = company).getSpotPrice()
-                data.append({"label":company, "data":[price]})
-                caption.append(nl.posessive(company) + " at " + nl.printAsSterling(price))
-            return nl.turnIntoBarChart(["Current Stock Price"],data, nl.makeList(caption))
+        return stock_price_response(request)
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
@@ -86,6 +60,56 @@ def respond_to_request(request):
     else:
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
+def stock_price_response(request):
+    companies = request["companies"]
+    areas = request["areas"]
+    comparative = request["comparative"]
+    print(comparative)
+    if comparative is not None:
+        if len(areas)>0:
+            return nl.turnIntoResponse("!!!")
+        elif len(companies)>1:
+            caption = "Out of "
+            companySet = []
+            bestName = "???"
+            bestPrice = -1
+            higher = (comparative == "higher" or comparative == "highest")
+            for company in companies:
+                price = Company.objects.get(ticker = company).getSpotPrice()
+                if (price>bestPrice and higher) or (price<bestPrice and (not higher)) or bestPrice == -1:
+                    bestPrice = price
+                    bestName = company
+                companySet.append(company)
+            caption+=nl.makeList(companySet)
+            caption+=", " + bestName + " has the "
+            if higher:
+                caption+="highest"
+            else:
+                caption+="lowest"
+            caption += " stock price, at " + nl.printAsSterling(bestPrice) + "."
+            return nl.turnIntoResponse(caption)
+    if len(companies) == 0:
+        #Response for no companies being listed.
+        if len(areas) == 1:
+            message = "Here's the current price of the " + areas[0] + " industry:"
+            caption = Industry.objects.get(name = areas[0]).getSpotPrice()
+            caption = nl.printAsSterling(caption)
+            return nl.turnIntoResponseWithCaption(message, caption)
+        return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
+    elif len(companies) == 1:
+        message = "Here's " + nl.posessive(companies[0]) + " current price:"
+        caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
+        caption = nl.printAsSterling(caption)
+        return nl.turnIntoResponseWithCaption(message, caption)
+    else:
+        data = []
+        caption = []
+        counter = len(companies)
+        for company in companies:
+            price = Company.objects.get(ticker = company).getSpotPrice()
+            data.append({"label":company, "data":[price]})
+            caption.append(nl.posessive(company) + " at " + nl.printAsSterling(price))
+        return nl.turnIntoBarChart(["Current Stock Price"],data, nl.makeList(caption))
 
 @login_required
 def get_entities(request):
