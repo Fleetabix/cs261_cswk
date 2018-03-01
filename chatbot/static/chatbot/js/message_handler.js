@@ -27,9 +27,7 @@ function askChatbot(query) {
             var delay = 800;
             for (i in response["messages"]) {
                 var message = response["messages"][i];
-                setTimeout(function() {
-                    outputMessage(name, message)
-                }, delay * i);
+                outputResponse(name, message, delay * i);
             }
         }).fail(function (response) {
             console.log("-----Fail-------");
@@ -38,6 +36,23 @@ function askChatbot(query) {
     }
 }
 
+/** Calls outputMessage but after waiting a set amount of time.
+ *  Used so that name and message data are stored and not overwritten
+ * @param {string} name the name of the user that is sending it
+ * @param {object} message the data that the message contains
+ * @param {integer} delay  the amount of milliseconds to delay the output
+ */
+function outputResponse(name, message, delay) {
+    setTimeout(function() {
+        outputMessage(name, message)
+    }, delay);
+}
+
+/** Outputs a message in certain styles defined by the message.
+ *  Usually used to print the bot's response
+ * @param {*} name the name of the sender
+ * @param {*} message the message content
+ */
 function outputMessage(name, message) {
     var chartId;
     var messageBox = "<div class='message-holder row'>";
