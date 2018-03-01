@@ -23,6 +23,7 @@ function askChatbot(query) {
             dataType: "json",
             method: "post"
         }).done(function (response) {
+            console.log(response);
             var name = response["name"];
             var delay = 800;
             for (i in response["messages"]) {
@@ -54,6 +55,7 @@ function outputResponse(name, message, delay) {
  * @param {*} message the message content
  */
 function outputMessage(name, message) {
+    console.log(message);
     var chartId;
     var messageBox = "<div class='message-holder row'>";
     messageBox += "<div class='florin-message message col-10'>";
@@ -62,7 +64,7 @@ function outputMessage(name, message) {
         case "text":
             if (message.body)
                 messageBox += "<p>" + message.body + "</p>";
-            if (data.caption)
+            if (message.caption)
                 messageBox += "<h4>" + message.caption + "</h4>";
             break;
         case "chart":
