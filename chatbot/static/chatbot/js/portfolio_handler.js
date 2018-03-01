@@ -9,6 +9,7 @@ if(typeof(String.prototype.trim) === "undefined") {
 
 $(document).ready(function() {
     getPortfolio(true, outputPortfolio);
+
     // when the user types in a new character update the
     // search
     $("#searchbox").keyup(function() {
@@ -29,6 +30,7 @@ $(document).ready(function() {
             getPortfolio(true, outputPortfolio);
         }
     });
+
     //if the clear button is pressed, clear the search results and
     // search box
     $("#clear-search-btn").click(function() {
@@ -41,14 +43,16 @@ $(document).ready(function() {
         $("#portfolios").css("display", "block");
         $("#searchbox").val("");
     });
+
     // when a button signifying a user wants to add a company to a portfolio
     // is pressed do the following
     $("body").on('click', '.add-portfolio-btn', function() {
         var result = $(this).closest(".result");
-        var key = result.attr("data-key");
+        var id = result.attr("data-id");
         var type = result.attr("data-type");
-        addToPortfolio(key, type, result);
+        addToPortfolio(id, type, result);
     });
+
     // when a cross in a portfolio-item is clicked, remove that
     // company/industry from the portfolio
     $("body").on('click', '.rm-from-portfolio', function() {
@@ -115,10 +119,10 @@ function getSearchResults(type, query) {
  * @param {string} type the type of entity we want to add to our portfolio
  * @param {jquery object} result the jquery object representing the search result
  */
-function addToPortfolio(key, type, result) {
+function addToPortfolio(id, type, result) {
     var data = {
         type: type,
-        key: key
+        id: id 
     };
     $.ajax({
         url: 'add_to_portfolio/',
@@ -143,13 +147,14 @@ function addToPortfolio(key, type, result) {
 function printSearchResults(results) {
     var resultsString = "";
     var data = results.data;
-    for (key in data) {
-        var info = data[key];
+    console.log(results)
+    for (id in data) {
+        var info = data[id];
         resultsString += 
-            "<div class='result row' data-type='"+results.type+"' data-key='"+key+"'>" +
+            "<div class='result row' data-type='"+results.type+"' data-id='"+id+"'>" +
                 "<div class='col-md-9'>" +
                     "<h5>" +
-                    ((results.type == "industry") ? "" : (key + " - ")) +
+                    ((results.type == "industry") ? "" : (info.ticker + " - ")) +
                     info["name"]+
                     "</h5>" +
                 "</div>" +
