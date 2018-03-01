@@ -58,14 +58,27 @@ class Company(models.Model):
         now = datetime.datetime.now()
         return self.getNewsFrom(now - datetime.timedelta(days=7), now)
 
-    def getNewsFrom(self, start, end):
+    def getNewsTopic(self, topic):
+         """
+            Returns a list of NewsInformation objects of articles related to
+            specified company and topic from the last week
         """
-            Returns news published within the given start and end dates
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+
+    def getNewsFrom(self, start, end, topic = None):
         """
-        news = nh.getNews(self.ticker, self.name)
+            Returns news published within the given start and end dates with
+            optional topic
+        """
+        if topic is None:
+            news = nh.getNews(self.ticker, self.name)
+        else:
+            news = nh.getNews(self.name, topic)
         in_range = lambda x: start <= x.date_published <= end 
         return list(filter(in_range, news))
-      
+
+
     def __str__(self):
         return self.ticker + " - " + self.name
 
@@ -109,9 +122,31 @@ class Industry(models.Model):
 
     def getNews(self):
         """
-            Returns a list of NewsInformation objects of articles related to specified company
+            Returns a list of NewsInformation objects of articles related to
+            specified sector from the last week
         """
-        return None
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now)
+
+    def getNewsTopic(self, topic):
+         """
+            Returns a list of NewsInformation objects of articles related to
+            specified company and topic from the last week
+        """
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+
+    def getNewsFrom(self, start, end, topic = None):
+        """
+            Returns news published within the given start and end dates, with 
+            optional topic
+        """
+        if topic is None:
+            news = nh.getNews(self.name + ' sector')
+        else:
+            news = nh.getNews(self.name + ' sector', topic)
+        in_range = lambda x: start <= x.date_published <= end 
+        return list(filter(in_range, news))
 
     def __str__(self):
             return self.name
