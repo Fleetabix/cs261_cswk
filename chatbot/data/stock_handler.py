@@ -13,23 +13,37 @@ class CompanyStock:
 		self.retrieved = retrieve_datetime
 
 def getStockInformation(ticker): 
+	"""
+		Retrieves stock information from a ticker for a specific company.
+		Returns a CompanyStock object with specified information.
+	"""
+
+	# Retrive response from source for website
 	response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
 	cs = None
 	if (response.status_code == 200):
+		# Format webpage to retrieve particular stock information
 		soup = bs4.BeautifulSoup(response.content, "lxml")
 		data = soup.find("div", {"class": "tr darkEven"})
+
 		# Catches cases where the website redirects to homepage due to nonexistent company
 		if data is None:
-			raise ValueError("Ticker does not exist!")	
+			raise ValueError("Ticker does not exist!")
+
 		stock = [x.text.strip() for x in data.findAll('span')]
+
+		# Retrieved time must account for 15 minute delay
 		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
+	else:
+		raise RuntimeError("Unable to retrieve response from London Stock Exchange website.")
 	return cs
 
 
 def getIndustryStocks(tickers):
 	"""
-		Retrieves stock information from set of tickers (in a certain industry)
+		Retrieves stock information from set of company tickers in a specific industry.
+		Returns a python dictionary containing names and corresponding CompanyStock object.
 	"""
 	stocks = {}
 	for ticker in tickers:

@@ -145,6 +145,7 @@ class Industry(models.Model):
             news = nh.getNews(self.name + ' sector')
         else:
             news = nh.getNews(self.name + ' sector', topic)
+        
         in_range = lambda x: start <= x.date_published <= end 
         return list(filter(in_range, news))
 
