@@ -36,11 +36,26 @@ def ask_chatbot(request):
     if requests == [] or requests == None:
         data["messages"].append(nl.genericUnknownResponse())
     else:
-        message = "You asked about "
-        for i in requests:
-            message += i["quality"] + ", "
-        data["messages"].append(nl.turnIntoResponse(message))
+        for request in requests:
+            data["messages"].append(respond_to_request(request))
+    data["messages"].append(nl.turnIntoResponse("One final message"))
+    print(data)
     return JsonResponse(data)
+
+def respond_to_request(request):
+    """
+        Given a request object, find the relevant data
+        and format it correctly.
+    """
+    quality = request["quality"]
+    if quality == "price":
+        return nl.turnIntoResponse("--Message about price--")
+    elif quality == "news":
+        return nl.turnIntoResponse("--Message about news--")
+    elif quality == "priceDiff":
+        return nl.turnIntoResponse("--Message about price difference--")
+    else:
+        return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
 
 @login_required
