@@ -84,4 +84,4 @@ def fixDate(d):
 #Get the current time
 def current():
     now = datetime.now()
-    return {"start":now,"end":now,"now"=True}
+    return {"start":now,"end":now,"now":True}

@@ -42,6 +42,7 @@ def ask_chatbot(request):
             data["messages"].append(respond_to_request(request))
             data["messages"].append(nl.turnIntoResponse(str(request["time"]["start"])))
             data["messages"].append(nl.turnIntoResponse(str(request["time"]["end"])))
+            data["messages"].append(nl.turnIntoResponse(str(request["time"]["now"])))
     return JsonResponse(data)
 
 def respond_to_request(request):
