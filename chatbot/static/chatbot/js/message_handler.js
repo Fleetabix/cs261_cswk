@@ -7,6 +7,9 @@ $(document).ready(function () {
     });
 });
 
+/** Sends a query to the server and prints the response.
+ * @param {string} query what you want to ask FLORIN
+ */
 function askChatbot(query) {
     var data = {
         query: query
@@ -20,7 +23,14 @@ function askChatbot(query) {
             dataType: "json",
             method: "post"
         }).done(function (response) {
-            outputData(response);
+            var name = response["name"];
+            var delay = 800;
+            for (i in response["messages"]) {
+                var message = response["messages"][i];
+                setTimeout(function() {
+                    outputMessage(name, message)
+                }, delay * i);
+            }
         }).fail(function (response) {
             console.log("-----Fail-------");
             console.log(response);
@@ -28,16 +38,17 @@ function askChatbot(query) {
     }
 }
 
-function outputData(data) {
+function outputMessage(name, message) {
     var chartId;
-    var messageBox = "<div class='message'>";
-    messageBox += "<h3>" + data.name + "</h3>";
-    switch (data.type) {
+    var messageBox = "<div class='message-holder row'>";
+    messageBox += "<div class='florin-message message col-10'>";
+    messageBox += "<h3>" + name + "</h3>";
+    switch (message.type) {
         case "text":
-            if (data.body)
-                messageBox += "<p>" + data.body + "</p>";
+            if (message.body)
+                messageBox += "<p>" + message.body + "</p>";
             if (data.caption)
-                messageBox += "<h4>" + data.caption + "</h4>";
+                messageBox += "<h4>" + message.caption + "</h4>";
             break;
         case "chart":
             chartId = getNextChartID();
@@ -46,13 +57,13 @@ function outputData(data) {
             messageBox += "<canvas id='" + chartId + "'></canvas>";
             messageBox += "</div>";
             messageBox += "<div class='col-md-5'>";
-            messageBox += "<p>" + data.description + "</p>";
+            messageBox += "<p>" + message.description + "</p>";
             messageBox += "</div>";
             messageBox += "</div>";
             break;
         case "news":
-            for (articleKey in data.articles) {
-                var article = data.articles[articleKey];
+            for (articleKey in message.articles) {
+                var article = message.articles[articleKey];
                 messageBox += "<div class='row news-holder'>";
                 messageBox += "<div class='col-12'>";
                 messageBox += "<a href='" + article.url + "' target='_blank'><h4>" + article.title + "</h4></a>";
@@ -72,11 +83,12 @@ function outputData(data) {
             messageBox += "<h4>Response type not found</h4>"
     }
     messageBox += "</div>";
+    messageBox += "</div>";
     $("#messages").append(messageBox);
     $("#messages").scrollTop($("#messages").prop("scrollHeight"));
     $("#message-txt").val("");
 
-    if (data.type == "chart") {
+    if (message.type == "chart") {
         createChart(chartId, data.chart_object);
     }
 }
@@ -112,19 +124,22 @@ function createChart(chartId, chartObject) {
     Generates a random colour (can't do black though, black is yucky)
 */
 function getRandomColor() {
-    var letters = '3456789ABCDEF';
+    var letters = '68ACE';
     var color = '#';
     for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 13)];
+        color += letters[Math.floor(Math.random() * letters.length)];
     }
     return color;
 }
 
 function outputQuery(query) {
-    var messageBox = "<div class='message user-message'>";
-    messageBox += "<h3>"+username+"</h3>";
-    messageBox += "<p>"+query+"</p>";
-    messageBox += "</div>";
+    var messageBox = 
+        "<div class='message-holder row justify-content-end'>" +
+            "<div class='message user-message col-10'>" +
+                "<h3>"+username+"</h3>" +
+                "<p>"+query+"</p>" +
+            "</div>" +
+        "</div>";
     $("#messages").append(messageBox);
     $("#messages").scrollTop($("#messages").prop("scrollHeight"));
     $("#message-txt").val("");

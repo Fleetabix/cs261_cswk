@@ -8,7 +8,7 @@ $(document).ready(function () {
             }
         });
 
-        //add a box to signify to the user that FLORIN is listening 
+        //add a box to signify to the user that FLORIN is listening
         //to them to the message pane
         annyang.addCallback('soundstart', function () {
             var speechBox = "<div id='speech-box' class='message user-message'>";
@@ -24,7 +24,7 @@ $(document).ready(function () {
             animateDots();
         });
 
-        //when annyang gets a result, or the speech recognition ends, remove the 
+        //when annyang gets a result, or the speech recognition ends, remove the
         //speech box from the message pane
         annyang.addCallback('result', function () {
             $("#speech-box").remove();
@@ -49,7 +49,7 @@ $(document).ready(function () {
     }
 });
 
-//when the microphone button is licked, toggle the listening
+//when the microphone button is clicked, toggle the listening
 //mode and save the next state in the browser's cookies
 $("#speech-btn").click(function () {
     var microOn = Cookies.get("microphone");
