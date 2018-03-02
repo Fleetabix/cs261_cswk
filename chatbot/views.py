@@ -40,9 +40,6 @@ def ask_chatbot(request):
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             data["messages"].append(respond_to_request(request))
-            data["messages"].append(nl.turnIntoResponse(str(request["time"]["start"])))
-            data["messages"].append(nl.turnIntoResponse(str(request["time"]["end"])))
-            data["messages"].append(nl.turnIntoResponse(str(request["time"]["now"])))
     return JsonResponse(data)
 
 def respond_to_request(request):
@@ -57,7 +54,7 @@ def respond_to_request(request):
     elif quality == "news":
         return nl.turnIntoResponse("--Message about news--")
     elif quality == "priceDiff":
-        return nl.turnIntoResponse("--Message about price difference--")
+        return price_difference_response(request)
     elif quality == "percentDiff":
         return percent_difference_response(request)
     elif quality == "stockHist":
@@ -126,6 +123,33 @@ def percent_difference_response(request):
     else:
         return makeBarChartOf(companies, "Recent Percentage Difference", getPercentDiff)
 
+def price_difference_response(request):
+    companies = request["companies"]
+    areas = request["areas"]
+    comparative = request["comparative"]
+    if comparative is not None:
+        group = companies
+        for i in areas:
+            group = union(group,companiesInIndustry(i))
+        if len(group) == 0:
+            group = allCompanies()
+        return higherLower(comparative, group, "price difference", getPriceDiff, nl.printAsSterling)
+    if len(companies) == 0:
+        if len(areas) == 1:
+            message = "Here's the most recent price difference of the " + areas[0] + " industry:"
+            caption = getPriceDiff(Industry.objects.get(name = areas[0]))
+            caption = nl.printAsSterling(caption)
+            return nl.turnIntoResponseWithCaption(message, caption)
+        #Response for no companies being listed.
+        return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the price difference of.")
+    elif len(companies) == 1:
+        message = "Here's " + nl.posessive(companies[0]) + " most recent price difference:"
+        caption = getPriceDiff(Company.objects.get(ticker = companies[0]))
+        caption = nl.printAsSterling(caption)
+        return nl.turnIntoResponseWithCaption(message, caption)
+    else:
+        return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
+
 def higherLower(comparative, companies, qualName, funct, formatFunct):
     caption = "Out of "
     companySet = []
@@ -166,6 +190,9 @@ def getSpotPrice(obj):
 
 def getPercentDiff(obj):
     return obj.getSpotPercentageDifference()
+
+def getPriceDiff(obj):
+    return obj.getSpotPriceDifference()
 
 def union(list1, list2):
     return list1 + list(set(list2) - set(list1))
