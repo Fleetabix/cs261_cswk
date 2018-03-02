@@ -65,6 +65,33 @@ def makeList(segments):
 			sentence+=", "
 	return sentence
 
+#Turn a set of objects into a comma and or seperated list.
+def makeOrList(segments):
+	counter = len(segments)
+	sentence = ""
+	for segment in segments:
+		sentence+=segment
+		counter -= 1
+		if counter == 1:
+			sentence+=" or "
+		elif counter>1:
+			sentence+=", "
+	return sentence
+
+def turnIntoArticle(title, description, url, pic_url):
+	return	{
+			    "title": title,
+				"description": description,
+				"url": url,
+				"pic_url": pic_url
+			}
+
+def turnIntoNews(articles):
+    return  {
+                "type": "news",
+                "articles": articles
+            }
+
 #Make a term possessive (term's)
 def posessive(term):
 	if term.endswith("s"):

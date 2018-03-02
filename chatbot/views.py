@@ -52,7 +52,7 @@ def respond_to_request(request):
         #Responses to price
         return stock_price_response(request)
     elif quality == "news":
-        return nl.turnIntoResponse("--Message about news--")
+        return news_response(request)
     elif quality == "priceDiff":
         return price_difference_response(request)
     elif quality == "percentDiff":
@@ -174,6 +174,25 @@ def higherLower(comparative, companies, qualName, funct, formatFunct):
         caption+="lowest "
     caption += qualName + ", at " + formatFunct(bestPrice) + "."
     return nl.turnIntoResponse(caption)
+
+def news_response(request):
+    time = request["time"]
+    companies = request["companies"]
+    articles = []
+    for industry in request["areas"]:
+        companies = union(companies, companiesInIndustry(industry))
+    if len(companies) == 0:
+        return nl.turnIntoResponse("Which companies would you like news about?")
+    for company in companies:
+        if "now" in time:
+            news = Company.objects.get(ticker = company).getNews()
+        else:
+            news = Company.objects.get(ticker = company).getNewsFrom(time["start"], time["end"])
+        for story in news:
+            articles.append(nl.turnIntoArticle(story.headline, str(story.date_published), story.url, story.image))
+    if len(articles) == 0:
+        return nl.turnIntoResponse("I'm sorry, I couldn't find any news for "+ nl.makeOrList(companies))
+    return nl.turnIntoNews(articles)
 
 def makeBarChartOf(companies, qualName, funct):
     data = []
