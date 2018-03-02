@@ -150,6 +150,10 @@ def price_difference_response(request):
     else:
         return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
 
+def stock_history_response(request):
+    time = request["time"]
+    return nl.turnIntoResponse("A nice chart for stock history goes here.")
+
 def higherLower(comparative, companies, qualName, funct, formatFunct):
     caption = "Out of "
     companySet = []
