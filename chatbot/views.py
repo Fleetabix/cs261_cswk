@@ -58,7 +58,7 @@ def respond_to_request(request):
     elif quality == "percentDiff":
         return percent_difference_response(request)
     elif quality == "stockHist":
-        return nl.turnIntoResponse("--Message about stock history--")
+        return stock_history_response(request)
     elif quality == "joke":
         if len(request["companies"]) == 0:
             return nl.turnIntoResponse("To get to the other side.")
@@ -73,6 +73,9 @@ def stock_price_response(request):
     companies = request["companies"]
     areas = request["areas"]
     comparative = request["comparative"]
+    time = request["time"]
+    if "now" not in time:
+        return stock_history_response(request)
     if comparative is not None:
         group = companies
         for i in areas:
@@ -127,6 +130,9 @@ def price_difference_response(request):
     companies = request["companies"]
     areas = request["areas"]
     comparative = request["comparative"]
+    time = request["time"]
+    if "now" not in time:
+        return stock_history_response(request)
     if comparative is not None:
         group = companies
         for i in areas:
