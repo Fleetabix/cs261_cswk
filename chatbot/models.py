@@ -120,7 +120,7 @@ class Industry(models.Model):
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-        return [c.getStockHistory() for c in self.companies.all()]
+        return [c.getStockHistory(start, end) for c in self.companies.all()]
 
     def getNews(self):
         """
