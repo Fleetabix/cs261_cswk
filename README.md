@@ -49,7 +49,7 @@ $ python -W "ignore" manage.py test chatbot.tests.NLPTests.test_can_identify....
 
 ## Database Issues
 Sometimes the database migration is outdated (will give you errors like a column/field doesn't exist etc.)
-You can fix optionaly deleting all the files apart from the innit in chatbot/migrations then running
+You can fix this by optionally deleting all the files (apart from the __innit__.py in chatbot/migrations then running
 ```
 $ ./rebuild_database.sh
 ```
