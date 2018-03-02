@@ -48,6 +48,10 @@ def printAsSterling(amount):
 	amount = '£{:,.2f}'.format(amount)
 	return amount
 
+def printAsPercent(amount):
+	amount = str(amount) + "%"
+	return amount
+
 #Turn a set of objects into a comma and and seperated list.
 def makeList(segments):
 	counter = len(segments)
