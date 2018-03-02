@@ -355,33 +355,68 @@ class NLPTests(TestCase):
             Does it give the correct response for a properly
             formatted stock price query?
         """
-        self.assertTrue(False)
-
+        ticker = "HNS"
+        industry = "Mining"
+        queries = [
+            "What is the spot price for hanson?",
+            "Give me the current price for HNS",
+            "mining price",
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        self.assertIsNot(requests, None)
+        for r in requests:
+            self.assertIsNot(r, None)
+            self.assertTrue((ticker in r[0]["companies"]) or (industry in r[0]["areas"]))
+            self.assertIn("price", r[0]["quality"])
+            
     def test_can_identify_news_query(self):
         """
             Can it identify the user asking for the news of a
             specific company. Try and test different things such as
             'recent news', 'news this week', 'news last month'
         """
-        self.assertTrue(False)
+        entity = ["GOOGL", "AMZ", "Technology"]
+        queries = [
+            "give me the recent news of google",
+            "news for AMZ since last wednesday",
+            "is there any news about technology this week"
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        for i in range(len(requests)):
+            r = requests[i][0]
+            e = entity[i]
+            self.assertIn("news", r["quality"])
+            self.assertIn(e, set().union(r["companies"], r["areas"]))
 
-    def test_can_identify_news_for_multiple_companies_query(self):
+    def test_can_identify_news_for_multiple_companies(self):
         """
             Same as above but make sure it can do it for more than
             one company. (Maybe doesn't have to be as rigourus as above
             in terms of the number of different phrases)
         """
-        self.assertTrue(False)
+        query = "give me the news for google, amazon and mining"
+        r = nl.getRequests(query)[0]
+        self.assertIsNot(r, None)
+        self.assertIn("news", r["quality"])
+        self.assertSetEqual(set(["GOOGL", "AMZ", "Mining"]), set().union(r["companies"], r["areas"]))
 
     def test_gets_correct_keywords_from_comparative_phrase(self):
         """
             Check if it works with 2 and more companies, try it with
             different functions (compare spot price, % change, news)
         """
-        self.assertTrue(False)
+        q1 = "get me the highest stock price out of amazon, google and hanson"
+        q2 = "does mining have a worse % change than Technology"
+
+        r1 = nl.getRequests(q1)
+        r2 = nl.getRequests(q2)
+        self.assertSetEqual(set(["GOOGL", "AMZ", "HNS"]), set(r1[0]["companies"]))
+        self.assertIn("price", r1[0]["quality"])
+        self.assertSetEqual(set(["Mining", "Technology"]), set(r2[0]["areas"]))
+        self.assertIn("%diff", r2[0]["quality"])
 
     def test_correct_response_from_nonesense_phrase(self):
         """
             Does it speak rubbish? Try a few examples.
         """
-        self.assertTrue(False)
+        self.assertEqual([], nl.getRequests("sjkhd kahjd kjsahd kajshd jkas dk"))
