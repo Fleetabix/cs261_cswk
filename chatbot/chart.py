@@ -51,18 +51,19 @@ class Chart:
         # for each row in the data frame, get the date then
         # convert it to a weekday name and get the first three letters
         dates = [r.name for r in rows]
-        self.labels = [calendar.day_name[x.weekday()][:3] for x in dates],
+        self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
         # get the closing prices for each row
         new_values = [r.Close for r in rows]
         # make sure there's a chart data object in the datasets
         if len(self.datasets) == 0:
-            self.datasets.append(ChartData())
-        zipped = list(zip_longest(new_values, self.datasets[0].data))
+            chart_data = ChartData()
+            self.datasets.append(chart_data)
+        zipped = list(zip_longest(new_values, self.datasets[0].data, fillvalue=0))
         # write the new values to the chart data in datasets[0] using
         # the rule lambda to decide what to do with the new and old values
         self.datasets[0].data = [rule(t[0], t[1]) for t in zipped]
 
-    def getJson(self):
+    def toJson(self):
         """
             Returns this chart's valid json format so that
             javascript can interpret it.
