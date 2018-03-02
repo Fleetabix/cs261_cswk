@@ -4,6 +4,7 @@ from chatbot.models import *
 from chatbot.nl import nl
 
 import datetime
+import monthdelta
 
 # Create your tests here. All test methods names should 
 # start with the word 'test'
@@ -254,20 +255,48 @@ class NLPTests(TestCase):
             here such as 'more', 'greater', 'less than', 'better',
             'worse' etc.
         """
-        self.assertTrue(False)
+        comparatives = ["higher", "highest", "worse"]
+        queries = [
+            "Is AMZ tock price greater than GOOGL", 
+            "Who has the best percentage change out of HNS and amazon",
+            "Is google doing worse than amazon?"
+            ]
+        responses = [nl.getRequests(x) for x in queries]
+        self.assertIsNot(responses, None)
+        for rq in responses:
+            for i in range(len(rq)): 
+                self.assertIsNot(rq[i]["comparative"], None)
+                self.assertTrue(comparatives[i] in rq[i]["comparative"])
 
     def test_can_identify_industry_in_query(self):
         """
             Just looking for a single industry here.
         """
-        self.assertTrue(False)
+        queries = [
+            "blah blah blah mining blAH PRICE",
+            "what is the stock history of technology like",
+            "what is the percentage change for mining?"
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        self.assertIsNot(requests, None)
+        for r in requests:
+            self.assertIsNotNone(r[0]["areas"])
+            self.assertEqual(len(r[0]["areas"]), 1)
 
     def test_can_identify_multiple_industries_in_query(self):
         """
             Have multiple industries in the query and make sure it
             gets them all.
         """
-        self.assertTrue(False)
+        queries = [
+            "blah blah technology blah mining blAH PRICE",
+            "what is the stock history of technology and mining like",
+            "what is the percentage change for mining, technology and blah?"
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        for r in requests:
+            self.assertIsNotNone(r[0]["areas"])
+            self.assertEqual(len(r[0]["areas"]), 2)
 
     def test_can_identify_time_phrase(self):
         """
@@ -277,7 +306,23 @@ class NLPTests(TestCase):
                 - '2018'
             etc
         """
-        self.assertTrue(False)
+        start_times = [
+            datetime.datetime.strptime('26/01/2018', '%d/%m/%Y'),
+            datetime.datetime.strptime('02/02/2018', '%d/%m/%Y'),
+            datetime.datetime.strptime('01/01/2018', '%d/%m/%Y')
+        ]
+        queries = [
+            "what has googles stock price been like from the 26th January?",
+            "Give me news of amazon dated from 02/02",
+            "Show me hanson's stock price in 2018"
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        for i in range(len(requests)):
+            time = start_times[i]
+            r = requests[i][0]
+            self.assertEqual(time.year, r["time"]["start"].year)
+            self.assertEqual(time.month, r["time"]["start"].month)
+            self.assertEqual(time.day, r["time"]["start"].day)
 
     def test_can_identify_relative_time_phrase(self):
         """
@@ -285,7 +330,25 @@ class NLPTests(TestCase):
             'this month' etc.
             
         """
-        self.assertTrue(False)
+        start_times = [
+            datetime.datetime.now() - datetime.timedelta(days=7),
+            datetime.datetime.now() - monthdelta.monthdelta(1) - datetime.timedelta(days=1),
+            datetime.datetime.now() 
+                - datetime.timedelta(days=datetime.datetime.now().weekday())
+                + datetime.timedelta(days=4, weeks=-1)
+        ]
+        queries = [
+            "what has googles stock price been like for last week?",
+            "Give me news of amazon from the last month",
+            "Show me hanson's stock price from last friday"
+        ]
+        requests = list(map(lambda x: nl.getRequests(x), queries))
+        for i in range(len(requests)):
+            time = start_times[i]
+            r = requests[i][0]["time"]["start"]
+            self.assertEqual(time.year, r.year)
+            self.assertEqual(time.month, r.month)
+            self.assertEqual(time.day, r.day)
 
     def test_can_identify_stock_price_query(self):
         """
