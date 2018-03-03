@@ -82,16 +82,14 @@ function outputMessage(name, message) {
             for (articleKey in message.articles) {
                 var article = message.articles[articleKey];
                 messageBox += "<div class='row news-holder'>";
-                messageBox += "<div class='col-12'>";
-                messageBox += "<a href='" + article.url + "' target='_blank'><h4>" + article.title + "</h4></a>";
+                messageBox += "<div class='col-9'>";
+                messageBox += "<a href='" + article.url + "' target='_blank'><h5>" + article.title + "</h5></a>";
+                messageBox += "<p>"+article.description+"</p>";
                 messageBox += "</div>";
                 messageBox += "<div class='col-sm-3 news-img-holder'>";
                 messageBox += "<a href='" + article.url + "' target='_blank'>";
                 messageBox += "<img class='news-img' src='" + article.pic_url + "'></img>";
                 messageBox += "</a>";
-                messageBox += "</div>";
-                messageBox += "<div class='col-sm-9 news-desc'>";
-                messageBox += "<p>" + article.description + "</p>";
                 messageBox += "</div>";
                 messageBox += "</div>";
             }
