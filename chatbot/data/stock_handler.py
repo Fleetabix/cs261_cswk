@@ -19,7 +19,10 @@ def getStockInformation(ticker):
 	"""
 
 	# Retrive response from source for website
-	response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
+	if (ticker == 'UKX'):
+		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/indices/summary.html?index=UKX')
+	else:
+		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
 	cs = None
 	if (response.status_code == 200):
 		# Format webpage to retrieve particular stock information
