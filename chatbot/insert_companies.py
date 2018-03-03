@@ -2,7 +2,7 @@ from chatbot.models import Industry, Company, CompanyAlias, IndustryAlias
 
 def create_industry(name, aliases=[]):
     """
-        Method to create an industry along with its aliases.
+        method to create an industry along with its aliases.
     """
     i = Industry.objects.create(name=name)
     for alias in aliases:

@@ -9,8 +9,6 @@ import chatbot.data.stock_handler as sh
 import datetime
 
 # Create your models here.
-
-
 class Company(models.Model):
     """
         The company model which will be stored in the database.
@@ -28,7 +26,7 @@ class Company(models.Model):
 
     def getSpotPriceDifference(self):
         """
-            Returns difference between current and last spot price for 
+            Returns difference between current and last spot price for
             specified company as a float
         """
         pc = sh.getStockInformation(self.ticker).price_difference
@@ -58,14 +56,27 @@ class Company(models.Model):
         now = datetime.datetime.now()
         return self.getNewsFrom(now - datetime.timedelta(days=7), now)
 
-    def getNewsFrom(self, start, end):
+    def getNewsTopic(self, topic):
         """
-            Returns news published within the given start and end dates
+            Returns a list of NewsInformation objects of articles related to
+            specified company and topic from the last week
         """
-        news = nh.getNews(self.ticker, self.name)
-        in_range = lambda x: start <= x.date_published <= end 
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+
+    def getNewsFrom(self, start, end, topic = None):
+        """
+            Returns news published within the given start and end dates with
+            optional topic
+        """
+        if topic is None:
+            news = nh.getNews(self.name + ' plc')
+        else:
+            news = nh.getNews(self.name + ' plc', topic)
+        in_range = lambda x: start <= x.date_published <= end
         return list(filter(in_range, news))
-      
+
+
     def __str__(self):
         return self.ticker + " - " + self.name
 
@@ -94,24 +105,51 @@ class Industry(models.Model):
 
     def getSpotPercentageDifference(self):
         """
-            Returns sum of percentage difference for all companies 
+            Returns sum of percentage difference for all companies
             for all companies in the sector
         """
-        total = sum([float(c.getSpotPercentageDifference()) for c in self.companies.all()]) 
-        return total / len(self.companies.all())
+        total_diff = sum([float(c.getSpotPriceDifference()) for c in self.companies.all()])
+        total_now = self.getSpotPrice()
+        if total_now == 0:
+            return 0
+        else:
+            return (total_diff / total_now) * 100
 
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-        return None
+        return [c.getStockHistory(start, end) for c in self.companies.all()]
 
     def getNews(self):
         """
-            Returns a list of NewsInformation objects of articles related to specified company
+            Returns a list of NewsInformation objects of articles related to
+            specified sector from the last week
         """
-        return None
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now)
+
+    def getNewsTopic(self, topic):
+        """
+            Returns a list of NewsInformation objects of articles related to
+            specified company and topic from the last week
+        """
+        now = datetime.datetime.now()
+        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+
+    def getNewsFrom(self, start, end, topic = None):
+        """
+            Returns news published within the given start and end dates, with
+            optional topic
+        """
+        if topic is None:
+            news = nh.getNews(self.name + ' sector')
+        else:
+            news = nh.getNews(self.name + ' sector', topic)
+
+        in_range = lambda x: start <= x.date_published <= end
+        return list(filter(in_range, news))
 
     def __str__(self):
             return self.name
@@ -136,7 +174,7 @@ def create_company(sender, instance, created, **kwargs):
     if created:
         CompanyAlias.objects.create(company=instance, alias=instance.name)
         CompanyAlias.objects.create(company=instance, alias=instance.ticker)
-            
+
 
 class CompanyAlias(models.Model):
     """
@@ -186,7 +224,7 @@ def create_trader(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_trader(sender, instance, **kwargs):
     """
-        If a user's is saved, save the information of 
+        If a user's is saved, save the information of
         the equivelent trader.
     """
     instance.traderprofile.save()

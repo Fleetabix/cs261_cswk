@@ -5,11 +5,12 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
-from chatbot.models import *
 import datetime
 import calendar
 
+from chatbot.models import *
 from chatbot.nl import nl
+from chatbot.chart import Chart
 
 # Create your views here.
 
@@ -321,15 +322,9 @@ def get_portfolio(request):
         }
         if include_historical == "true":
             df = c.getStockHistory(now - last_week, now)
-            # for each entry in the dataframe, get the date, the
-            # value and pass them to the create_simple_chart function
-            dates = [df.iloc[i].name for i in range(len(df))]
-            data[c.id]["historical"] = simple_line_chart \
-                (
-                    line_name=c.ticker + " - " + c.name,
-                    labels=[calendar.day_name[x.weekday()][:3] for x in dates],
-                    values=[df.iloc[i].Close for i in range(len(df))]
-                )
+            chart = Chart()
+            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
+            data[c.id]["historical"] = chart.toJson()
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
@@ -340,12 +335,15 @@ def get_portfolio(request):
             "change": i.getSpotPercentageDifference()
         }
         if include_historical == "true":
-            data[i.id]["historical"] = simple_line_chart \
-                (
-                    i.name,
-                    labels=[],
-                    values=[]
-                )
+            # get the dataframes for each company in the industry
+            dfs = i.getStockHistory(now - last_week, now)
+            chart = Chart()
+            #for each data frame, alter the chart by adding the new valus
+            chart.add_from_df(df=dfs[0], label=i.name)
+            for j in range(1, len(dfs)):
+                df = dfs[j]
+                chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+            data[i.id]["historical"] = chart.toJson()
     return JsonResponse(data)
 
 

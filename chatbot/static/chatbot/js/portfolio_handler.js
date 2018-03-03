@@ -196,6 +196,7 @@ function getPortfolio(historical, doSomething) {
  *  @param {portfolio object} portfolio 
  */
 function outputPortfolio(portfolio) {
+    console.log(portfolio);
     for (id in portfolio) {
         // add portfolio items here
         e = portfolio[id];
