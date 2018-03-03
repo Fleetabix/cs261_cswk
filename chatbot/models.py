@@ -113,7 +113,7 @@ class Industry(models.Model):
         if total_now == 0:
             return 0
         else:
-            return total_diff / total_now
+            return (total_diff / total_now) * 100
 
     def getStockHistory(self, start, end):
         """
