@@ -109,7 +109,7 @@ class Industry(models.Model):
             for all companies in the sector
         """
         total = sum([float(c.getSpotPercentageDifference()) for c in self.companies.all()])
-        return total / len(self.companies.all())
+        return total / 100
 
     def getStockHistory(self, start, end):
         """
