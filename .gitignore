@@ -3,3 +3,5 @@ chatbot/migrations/
 website/__pycache__/
 chatbot/data/__pycache__/
 chatbot/nl/__pycache__/
+chatbot/data/__pycache__/stock_handler.cpython-36.pyc
+chatbot/data/__pycache__/news_handler.cpython-36.pyc

@@ -4,6 +4,7 @@ from chatbot.nl import sentence, dict
 
 #Returns the dates retrieved from a string, or None if there is no date.
 def getDate(s, tokens):
+    now = datetime.now()
     #Create a calendar object.
     cal = parsedatetime.Calendar()
     #Parse the string, storing the date found in date.
@@ -21,7 +22,6 @@ def getDate(s, tokens):
     for token in tokens:
         if sentence.getID(token, dictionary) == "since":
             d = datetime(*date[:6])
-            now = datetime.now()
             return {"start":d,"end":now}
     #If there's not enough tokens to split into 2 dates, return what we have.
     if len(tokens) <=3:
@@ -84,4 +84,4 @@ def fixDate(d):
 #Get the current time
 def current():
     now = datetime.now()
-    return {"start":now,"end":now}
+    return {"start":now,"end":now,"now":True}

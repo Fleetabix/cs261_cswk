@@ -107,7 +107,7 @@ class Sentence:
 				query["qualities"].append(word["id"])
 			elif word["dictionary"] == "areas":
 				query["areas"].append(word["id"])
-			elif word["dictionary"] == "comparative" and query["comparative"] == None:
+			elif word["dictionary"] == "comparatives" and query["comparative"] == None:
 				query["comparative"] = word["id"]
 		#Add the final query
 		queries.append(query)

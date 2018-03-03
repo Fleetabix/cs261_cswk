@@ -23,13 +23,12 @@ function askChatbot(query) {
             dataType: "json",
             method: "post"
         }).done(function (response) {
+            console.log(response);
             var name = response["name"];
             var delay = 800;
             for (i in response["messages"]) {
                 var message = response["messages"][i];
-                setTimeout(function() {
-                    outputMessage(name, message)
-                }, delay * i);
+                outputResponse(name, message, delay * i);
             }
         }).fail(function (response) {
             console.log("-----Fail-------");
@@ -38,7 +37,25 @@ function askChatbot(query) {
     }
 }
 
+/** Calls outputMessage but after waiting a set amount of time.
+ *  Used so that name and message data are stored and not overwritten
+ * @param {string} name the name of the user that is sending it
+ * @param {object} message the data that the message contains
+ * @param {integer} delay  the amount of milliseconds to delay the output
+ */
+function outputResponse(name, message, delay) {
+    setTimeout(function() {
+        outputMessage(name, message)
+    }, delay);
+}
+
+/** Outputs a message in certain styles defined by the message.
+ *  Usually used to print the bot's response
+ * @param {*} name the name of the sender
+ * @param {*} message the message content
+ */
 function outputMessage(name, message) {
+    console.log(message);
     var chartId;
     var messageBox = "<div class='message-holder row'>";
     messageBox += "<div class='florin-message message col-10'>";
@@ -47,7 +64,7 @@ function outputMessage(name, message) {
         case "text":
             if (message.body)
                 messageBox += "<p>" + message.body + "</p>";
-            if (data.caption)
+            if (message.caption)
                 messageBox += "<h4>" + message.caption + "</h4>";
             break;
         case "chart":
@@ -65,16 +82,14 @@ function outputMessage(name, message) {
             for (articleKey in message.articles) {
                 var article = message.articles[articleKey];
                 messageBox += "<div class='row news-holder'>";
-                messageBox += "<div class='col-12'>";
-                messageBox += "<a href='" + article.url + "' target='_blank'><h4>" + article.title + "</h4></a>";
+                messageBox += "<div class='col-9'>";
+                messageBox += "<a href='" + article.url + "' target='_blank'><h5>" + article.title + "</h5></a>";
+                messageBox += "<p>"+article.description+"</p>";
                 messageBox += "</div>";
                 messageBox += "<div class='col-sm-3 news-img-holder'>";
                 messageBox += "<a href='" + article.url + "' target='_blank'>";
                 messageBox += "<img class='news-img' src='" + article.pic_url + "'></img>";
                 messageBox += "</a>";
-                messageBox += "</div>";
-                messageBox += "<div class='col-sm-9 news-desc'>";
-                messageBox += "<p>" + article.description + "</p>";
                 messageBox += "</div>";
                 messageBox += "</div>";
             }
@@ -89,7 +104,7 @@ function outputMessage(name, message) {
     $("#message-txt").val("");
 
     if (message.type == "chart") {
-        createChart(chartId, data.chart_object);
+        createChart(chartId, message.chart_object);
     }
 }
 
