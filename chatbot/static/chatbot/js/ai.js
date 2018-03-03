@@ -1,4 +1,4 @@
-$(doument).ready(function() {
+$(document).ready(function() {
     setTimeout(function() {
 
     }) 
