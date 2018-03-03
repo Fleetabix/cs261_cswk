@@ -10,7 +10,7 @@ class NewsInformation:
 		self.url = url
 		self.headline = headline
 		self.image = image
-		self.date_published = datetime.datetime.strptime(article_date, '%Y-%m-%dT%H:%M:%SZ')
+		self.date_published = datetime.datetime.strptime(article_date[:19], '%Y-%m-%dT%H:%M:%S')
 	
 
 def getNews(name, keyword = None, breaking = None):
