@@ -109,7 +109,7 @@ class Industry(models.Model):
             for all companies in the sector
         """
         total_diff = sum([float(c.getSpotPriceDifference()) for c in self.companies.all()])
-        total_now = self.getSpotPrice()
+        total_now = self.getSpotPrice() - total_diff
         if total_now == 0:
             return 0
         else:
