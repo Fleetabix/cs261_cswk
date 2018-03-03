@@ -381,3 +381,48 @@ canvas {
 #logout-lnk {
     color: black !important;
 }
+
+/* STYLING FOR POPUPS */
+
+.popup {
+    height: 40%;
+    width: 60%;
+    margin-top: 20%;
+    margin-left: 20%;
+    background-color: var(--accent-colour);
+    color: var(--body-fg-colour);
+    border-radius: 0.5em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    border: 1px solid black;
+    box-shadow: 5px 5px #333;
+}
+
+@media only screen and (max-width: 768px) {
+    .popup {
+        height: 60%;
+        width: 80%;
+        margin-top: 30%;
+        margin-left: 10%;
+    }
+}
+
+.popup-body {
+    margin: 3em;
+    text-align: center;
+}
+
+.close-popup {
+    background-color: var(--accent-colour);
+    color: var(--body-fg-colour); 
+    border: none;
+    border-radius: 0.5em;
+    float: right;
+    font-size: 1.5em;
+}
+
+.close-popup:hover {
+    cursor: pointer;
+}
