@@ -118,11 +118,9 @@ def get_portfolio(request):
             "change": c.getSpotPercentageDifference(),
         }
         if include_historical == "true":
-            print("getting comp hist")
-            chart = Chart()
             df = c.getStockHistory(now - last_week, now)
-            chart.alter_from_df(df)
-            chart.datasets[0].label = c.ticker + " - " + c.name
+            chart = Chart()
+            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
             data[c.id]["historical"] = chart.toJson()
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
@@ -134,14 +132,14 @@ def get_portfolio(request):
             "change": i.getSpotPercentageDifference()
         }
         if include_historical == "true":
-            print("getting ind hist")
             # get the dataframes for each company in the industry
             dfs = i.getStockHistory(now - last_week, now)
             chart = Chart()
             #for each data frame, alter the chart by adding the new valus
-            for df in dfs:
-                chart.alter_from_df(df, rule=lambda x, y: x + y)
-            chart.datasets[0].label = i.name
+            chart.add_from_df(df=dfs[0], label=i.name)
+            for j in range(1, len(dfs)):
+                df = dfs[j]
+                chart.alter_from_df(df=df, rule=lambda x, y: x + y)
             data[i.id]["historical"] = chart.toJson()
     return JsonResponse(data)
 
