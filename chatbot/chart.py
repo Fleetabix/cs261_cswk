@@ -40,28 +40,42 @@ class Chart:
         """
         self.datasets.append(chart_data)
 
-    def alter_from_df(self, df, rule=lambda x, y: x):
+    def add_from_df(self, df, label):
         """
-            Gets the data from the given data frame and 
-            alters the first ChartData object in the datasets list.
-            It uses the lambda argument 'rule' to decide what to do
-            with the old and new values
+            Get the data from a DataFrame, create a new ChartData object
+            and append it to the list of datasets.
         """
         rows = [df.iloc[i] for i in range(len(df))]
         # for each row in the data frame, get the date then
         # convert it to a weekday name and get the first three letters
         dates = [r.name for r in rows]
-        self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
+        if len(dates) < 6:
+            self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
+        else:
+            self.labels = [x.day for x in dates]
+        # get the closing prices for each row
+        new_values = [r.Close for r in rows]
+        chart_data= ChartData(label=label, data=new_values)
+        self.datasets.append(chart_data)
+
+
+    def alter_from_df(self, df, set_loc=0, rule=lambda x, y: x):
+        """
+            Gets the data from the given DataFrame and 
+            alters the ChartData object at index 'set_loc' in the datasets list.
+            It uses the lambda argument 'rule' to decide what to do
+            with the old and new values.
+            This does not alter the labels of the chart, as it assumes the dates in
+            the dataframe are consistent with the current labels.
+        """
+        rows = [df.iloc[i] for i in range(len(df))]
         # get the closing prices for each row
         new_values = [r.Close for r in rows]
         # make sure there's a chart data object in the datasets
-        if len(self.datasets) == 0:
-            chart_data = ChartData()
-            self.datasets.append(chart_data)
-        zipped = list(zip_longest(new_values, self.datasets[0].data, fillvalue=0))
+        zipped = list(zip_longest(new_values, self.datasets[set_loc].data, fillvalue=0))
         # write the new values to the chart data in datasets[0] using
         # the rule lambda to decide what to do with the new and old values
-        self.datasets[0].data = [rule(t[0], t[1]) for t in zipped]
+        self.datasets[set_loc].data = [rule(t[0], t[1]) for t in zipped]
 
     def toJson(self):
         """
