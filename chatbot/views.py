@@ -158,6 +158,13 @@ def price_difference_response(request):
 
 def stock_history_response(request):
     time = request["time"]
+    start = time["start"]
+    end = time["end"]
+    if start == end:
+        return nl.turnIntoResponse("Please provide a range of times.")
+    companies = request["companies"]
+    for industry in request["areas"]:
+        companies = union(companies, companiesInIndustry(industry))
     return nl.turnIntoResponse("A nice chart for stock history goes here.")
 
 def higherLower(comparative, companies, qualName, funct, formatFunct):
