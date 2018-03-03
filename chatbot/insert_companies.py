@@ -25,9 +25,6 @@ def create_company(ticker, name, industries, aliases=[]):
 
 
 # List of industries
-# For each industry you can optionaly add
-# aliases so that florin can check for its other names when the user asks
-# example: leis = create_industry('leisure', ['alias1', 'alias2'])
 aero = create_industry(name = 'aerospace & defense', aliases=['aerospace', 'defense'])
 auto = create_industry(name = 'automobiles & parts', aliases=['automobiles'])
 bank = create_industry(name = 'banks', aliases=['bank'])
@@ -66,8 +63,6 @@ trav = create_industry(name = 'travel & leisure', aliases=['travel', 'leisure'])
 
 
 # List of FTSE100 companies.
-# Make sure the industries (even if it's just one) is in
-# a list - this applies to aliases to.
 create_company('AAL', 'Anglo American', [mine], ['Anglo American Plc'])
 create_company('ABF', 'Associated British Foods', [fpro], ['Associated British Foods Plc'])
 create_company('ADM', 'Admiral Group', [insu], ['Admiral Group Plc', 'Admiral'])
@@ -124,7 +119,7 @@ create_company('LLOY', 'Lloyds Banking Group', [bank], ['Lloyds', 'Lloyds Bank']
 create_company('LSE', 'London Stock Exchange Group', [fina], ['London Stock Exchange'])
 create_company('MCRO', 'Micro Focus International', [soft], ['Micro Focus'])
 create_company('MDC', 'Mediclinic International', [heal])
-create_company('MKS', 'Marks & Spencer Group', [genr], ['Marks and Spencer', 'Marks & Spencer', 'M & S', 'M and S'])
+create_company('MKS', 'Marks & Spencer Group', [genr], ['Marks and Spencer', 'Marks & Spencer', 'M & S', 'M and S', 'M&S'])
 create_company('MNDI', 'Mondi', [fore])
 create_company('MRW', 'Morrison Supermarkets', [fdre], ['Morrison', ['Morrisons']])
 create_company('NG.', 'National Grid', [util])
