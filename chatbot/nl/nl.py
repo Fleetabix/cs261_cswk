@@ -41,6 +41,16 @@ def turnIntoBarChart(labels, datasets, body):
 		"description": body
 	}
 
+def turnChartIntoChartResponse(chart, description):
+	return	{
+				"type":"chart",
+				"chart_object":chart,
+				"description":description
+			}
+
+def printDate(date):
+	return date.strftime('%d/%m/%y')
+
 def printCompanyList():
 	print(dict.getDict("companies"))
 

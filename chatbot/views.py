@@ -161,12 +161,23 @@ def stock_history_response(request):
     time = request["time"]
     start = time["start"]
     end = time["end"]
+    if end > datetime.datetime.now():
+        return nl.turnIntoResponse("Please provide a range of dates in the past.")
     if start == end:
-        return nl.turnIntoResponse("Please provide a range of times.")
+        return nl.turnIntoResponse("Please provide a range of dates.")
     companies = request["companies"]
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
-    return nl.turnIntoResponse("A nice chart for stock history goes here.")
+    chart = Chart()
+    desc = "Here's how the stock price of "
+    l = []
+    for company in companies:
+        df  = Company.objects.get(ticker = company).getStockHistory(start, end)
+        chart.add_from_df(df, company)
+        l.append(company)
+    desc += nl.makeList(l)
+    desc += " has changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
+    return nl.turnChartIntoChartResponse(chart.toJson(),desc)
 
 def higherLower(comparative, companies, qualName, funct, formatFunct):
     caption = "Out of "
