@@ -48,31 +48,30 @@ class Company(models.Model):
         """
         return sh.getHistoricalStockInformation(self.ticker, start, end)
 
-    def getNews(self):
+    def getNews(self, keyword=None, breaking=None):
         """
             Returns a list of NewsInformation objects of articles related to
             specified company from the last week
         """
         now = datetime.datetime.now()
-        return self.getNewsFrom(now - datetime.timedelta(days=7), now)
+        last_week = now - datetime.timedelta(days=7)
+        return self.getNewsFrom(last_week, now, keywork, breaking)
 
-    def getNewsTopic(self, topic):
+    def getNewsTopic(self, keywork, breaking=None):
         """
             Returns a list of NewsInformation objects of articles related to
             specified company and topic from the last week
         """
         now = datetime.datetime.now()
-        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+        last_week = now - datetime.timedelta(days=7)
+        return self.getNewsFrom(last_week, now, keyword, breaking)
 
-    def getNewsFrom(self, start, end, topic = None):
+    def getNewsFrom(self, start, end, keyword=None, breaking=None):
         """
             Returns news published within the given start and end dates with
             optional topic
         """
-        if topic is None:
-            news = nh.getNews(self.name + ' plc')
-        else:
-            news = nh.getNews(self.name + ' plc', topic)
+        news = nh.getNews(self.name + ' plc', keyword=keywork, breaking=breaking)
         in_range = lambda x: start <= x.date_published <= end
         return list(filter(in_range, news))
 
