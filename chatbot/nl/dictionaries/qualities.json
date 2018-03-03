@@ -15,7 +15,7 @@
     "alias":["price difference", "difference", "stock price difference", "spot price difference", "cost difference", "price change"]
   },
   {
-    "id":"%diff",
+    "id":"percentDiff",
     "showName":"percentage difference",
     "alias":["percentage difference", "percent difference", "% difference", "percentage change", "percent change", "% change"]
   },
@@ -23,5 +23,10 @@
     "id":"stockHist",
     "showName":"stock history",
     "alias":["stock history", "history"]
+  },
+  {
+    "id":"joke",
+    "showName":"joke",
+    "alias":["joke"]
   }
 ]

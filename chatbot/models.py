@@ -108,15 +108,19 @@ class Industry(models.Model):
             Returns sum of percentage difference for all companies
             for all companies in the sector
         """
-        total = sum([float(c.getSpotPercentageDifference()) for c in self.companies.all()])
-        return total / 100
+        total_diff = sum([float(c.getSpotPriceDifference()) for c in self.companies.all()])
+        total_now = self.getSpotPrice()
+        if total_now == 0:
+            return 0
+        else:
+            return (total_diff / total_now) * 100
 
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
             will include the high and low for that day and opening price
         """
-        return None
+        return [c.getStockHistory(start, end) for c in self.companies.all()]
 
     def getNews(self):
         """
