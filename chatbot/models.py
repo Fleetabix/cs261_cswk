@@ -121,32 +121,30 @@ class Industry(models.Model):
         """
         return [c.getStockHistory(start, end) for c in self.companies.all()]
 
-    def getNews(self):
+    def getNews(self, keyword=None, breaking=None):
         """
             Returns a list of NewsInformation objects of articles related to
             specified sector from the last week
         """
         now = datetime.datetime.now()
-        return self.getNewsFrom(now - datetime.timedelta(days=7), now)
+        last_week = now - datetime.timedelta(days=7)
+        return self.getNewsFrom(last_week, now, keyword, breaking)
 
-    def getNewsTopic(self, topic):
+    def getNewsTopic(self, topic, keyword=None, breaking=None):
         """
             Returns a list of NewsInformation objects of articles related to
             specified company and topic from the last week
         """
         now = datetime.datetime.now()
-        return self.getNewsFrom(now - datetime.timedelta(days=7), now, topic)
+        last_week = now - datetime.timedelta(days=7)
+        return self.getNewsFrom(last_week, now, keyword, breaking)
 
-    def getNewsFrom(self, start, end, topic = None):
+    def getNewsFrom(self, start, end, keyword=None, breaking=None):
         """
             Returns news published within the given start and end dates, with
             optional topic
         """
-        if topic is None:
-            news = nh.getNews(self.name + ' sector')
-        else:
-            news = nh.getNews(self.name + ' sector', topic)
-
+        news = nh.getNews(self.name + ' sector', keyword, breaking)
         in_range = lambda x: start <= x.date_published <= end
         return list(filter(in_range, news))
 
@@ -240,4 +238,18 @@ class CompanyHitCount(models.Model):
     def __str__(self):
             return str(self.trader) +  \
                 " | " + str(self.company) + \
+                " | " + str(self.hit_count)
+
+
+class IndustryHitCount(models.Model):
+    """
+        This will store how many times a user has queried an industry.
+    """
+    trader = models.ForeignKey(TraderProfile, on_delete=models.CASCADE)
+    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
+    hit_count = models.IntegerField()
+
+    def __str__(self):
+            return str(self.trader) +  \
+                " | " + str(self.industry) + \
                 " | " + str(self.hit_count)
