@@ -6,10 +6,11 @@ import time
 import datetime
 
 class NewsInformation:
-	def __init__(self, url, headline, image, article_date):
+	def __init__(self, url, headline, image, description, article_date):
 		self.url = url
 		self.headline = headline
 		self.image = image
+		self.description = description
 		self.date_published = datetime.datetime.strptime(article_date, '%Y-%m-%dT%H:%M:%SZ')
 	
 
@@ -35,6 +36,6 @@ def getNews(name, keyword = None, breaking = None):
 	if (response.status_code ==  200):
 		json_data = json.loads(response.text)
 		for stories in json_data["articles"]:
-			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["publishedAt"]))
+			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["description"], stories["publishedAt"]))
 	return news
 
