@@ -20,8 +20,10 @@ def getStockInformation(ticker):
 
 	# Retrive response from source for website
 	if (ticker == 'UKX'):
+		# Response from UKX (FTSE 100)
 		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/indices/summary.html?index=UKX')
 	else:
+		# Response from tickers within FTSE 100
 		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
 	cs = None
 	if (response.status_code == 200):
