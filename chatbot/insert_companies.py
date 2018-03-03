@@ -124,7 +124,7 @@ create_company('LLOY', 'Lloyds Banking Group', [bank], ['Lloyds', 'Lloyds Bank']
 create_company('LSE', 'London Stock Exchange Group', [fina], ['London Stock Exchange'])
 create_company('MCRO', 'Micro Focus International', [soft], ['Micro Focus'])
 create_company('MDC', 'Mediclinic International', [heal])
-create_company('MKS', 'Marks & Spencer Group', [genr], ['Marks and Spencer', 'Marks & Spencer', ['M & S']])
+create_company('MKS', 'Marks & Spencer Group', [genr], ['Marks and Spencer', 'Marks & Spencer', 'M & S', 'M and S'])
 create_company('MNDI', 'Mondi', [fore])
 create_company('MRW', 'Morrison Supermarkets', [fdre], ['Morrison', ['Morrisons']])
 create_company('NG.', 'National Grid', [util])
