@@ -8,9 +8,12 @@ class ChartData:
         Stores an item to be stored in a chart's dataset.
     """
 
-    def __init__(self, label="", data=[]):
+    def __init__(self, label="", data=None):
         self.label = label
-        self.data = data 
+        if data:
+            self.data = data 
+        else:
+            self.data = []
 
     def toJson(self):
         """
@@ -29,10 +32,17 @@ class Chart:
         A simple chart class that has some useful methods.
     """
 
-    def __init__(self, chart_type="line", labels=[], datasets=[]):
+    def __init__(self, chart_type="line", labels=None, datasets=None):
+        print(datasets)
         self.chart_type = chart_type
-        self.labels = labels
-        self.datasets = datasets
+        if labels:
+            self.labels = labels
+        else: 
+            self.labels = []
+        if datasets:
+            self.datasets = datasets
+        else: 
+            self.datasets = []
 
     def add_data(self, chart_data):
         """
