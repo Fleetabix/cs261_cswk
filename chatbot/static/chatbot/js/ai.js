@@ -1,13 +1,13 @@
 $(document).ready(function() {
-    getBreifing(Math.round(Date.now() / 1000))
+    getBriefing(Math.round(Date.now() / 1000))
 });
 
-function getBreifing(since) {
+function getBriefing(since) {
     var data = {
         last_login: since
     }
     $.ajax({
-        url: 'get_welcome_breifing/',
+        url: 'get_welcome_briefing/',
         data: data,
         dataType: "json",
         method: "get"
