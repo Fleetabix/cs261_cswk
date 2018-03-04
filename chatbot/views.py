@@ -67,7 +67,7 @@ def get_alerts(request):
     perc_change = [(c, c.getSpotPercentageDifference()) for c in Company.objects.all()]
     for t in perc_change:
         # if the price has dropped by more than x%, then...
-        if t[1] <= -2:
+        if t[1] <= -10:
             hour_ago = timezone.now() - datetime.timedelta(hours=1)
             results = Alert.objects.filter(trader=trader, company=t[0]) 
             # if the company has a time less than an hour ago, update the time and

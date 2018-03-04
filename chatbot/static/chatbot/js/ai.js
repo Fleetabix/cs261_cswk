@@ -26,6 +26,13 @@ $(document).ready(function() {
         ) {
         getBriefing(lastOnline);
     }
+
+    // every checkInterval seconds, look for big price drops or
+    // any breaking news
+    var checkInterval = 60 * second;
+    setInterval(function() {
+        getAlerts(checkInterval);
+    }, checkInterval);
 });
 
 function getBriefing(since) {
@@ -42,13 +49,53 @@ function getBriefing(since) {
         data: data,
         dataType: "json",
         method: "get"
-    }).done(function (response) {
+    }).done(function(response) {
         var name = response["name"];
         var delay = 800;
         for (i in response["messages"]) {
             var message = response["messages"][i];
             outputResponse(name, message, delay * i);
         }
+    }).fail(function (response) {
+        console.log("-----Fail-------");
+        console.log(response);
+    });
+}
+
+/** Gets any alerts the user might want to know that have popped up since
+ *  the last time this function was called
+ * @param {integer} checkInterval the number of seconds since the last check
+ */
+function getAlerts(checkInterval) {
+    console.log("getting alerts");
+    var data = {
+        check_interval: checkInterval
+    }
+    $.ajax({
+        url: 'get_alerts/',
+        data: data,
+        dataType: "json",
+        method: "get"
+    }).done(function(response) {
+        var name = response["name"];
+        for (key in response["price-drops"]) {
+            drop = response["price-drops"][key];
+            popup(
+                "<h1>Price Drop Alert</h1>" +
+                "<h2>"+drop.ticker+" - "+drop.name+"</h2>" +
+                "<p>"+drop.name+" has had a price drop of</p>" +
+                "<h3>"+drop.change+"%</h3>" +
+                "<p>leaving it with a price of " +
+                "£"+drop.price+"</p>"
+            );
+        }
+        /*
+        var delay = 800;
+        for (i in response["messages"]) {
+            var message = response["messages"][i];
+            outputResponse(name, message, delay * i);
+        }
+        */
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
