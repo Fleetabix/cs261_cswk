@@ -33,7 +33,6 @@ class Chart:
     """
 
     def __init__(self, chart_type="line", labels=None, datasets=None):
-        print(datasets)
         self.chart_type = chart_type
         if labels:
             self.labels = labels
