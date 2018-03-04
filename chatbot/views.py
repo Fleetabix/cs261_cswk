@@ -43,6 +43,45 @@ def ask_chatbot(request):
             data["messages"].append(respond_to_request(request))
     return JsonResponse(data)
 
+
+@login_required
+def get_alerts(request):
+    """
+        Finds the following alert worthy information and returns it
+        back to the user.
+        - Drops in stock price
+        - Breaking news in portfolio
+        //TODO  not sure how to mark off a breaking news story as read so it doesn't
+                appear all the time 
+                Also not sure how to mark of a price drop so it doesn't keep appearing
+    """
+    user = request.user
+    response = []
+    perc_change = [(c, c.getSpotPercentageDifference()) for c in Company.objects.all()]
+    for t in perc_change:
+        if t[1] <= -10:
+            response.append({
+                "type": "price_drop",
+                "msg": {
+                    "ticker": t[0].ticker,
+                    "name": t[0].name,
+                    "price": t[0].getSpotPrice(),
+                    "change": t[1]
+                }
+            })
+    return JsonResponse(respond_to_request)
+
+
+@login_required
+def get_welcome_breifing(request):
+    breifing = {
+        "name": "FLORIN",
+        "messages": []
+    }
+
+    return JsonResponse(breifing)
+
+
 def respond_to_request(request):
     """
         Given a request object, find the relevant data
@@ -348,13 +387,14 @@ def get_portfolio(request):
         if include_historical == "true":
             # get the dataframes for each company in the industry
             dfs = i.getStockHistory(now - last_week, now)
-            chart = Chart()
             #for each data frame, alter the chart by adding the new valus
-            chart.add_from_df(df=dfs[0], label=i.name)
-            for j in range(1, len(dfs)):
-                df = dfs[j]
-                chart.alter_from_df(df=df, rule=lambda x, y: x + y)
-            data[i.id]["historical"] = chart.toJson()
+            if len(dfs) > 0:
+                chart = Chart()
+                chart.add_from_df(df=dfs[0], label=i.name)
+                for j in range(1, len(dfs)):
+                    df = dfs[j]
+                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                data[i.id]["historical"] = chart.toJson()
     return JsonResponse(data)
 
 
