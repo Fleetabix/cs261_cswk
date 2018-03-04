@@ -22,27 +22,32 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a float
         """
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=20)):
-            return self.spot_price
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.spot_price
         else:
             self.stock_information.setData()
-            return self.spot_price
+            return self.stock_information.spot_price
 
     def getSpotPriceDifference(self):
         """
             Returns difference between current and last spot price for
             specified company as a float
         """
-        pc = sh.getStockInformation(self.ticker).price_difference
-        return float(pc.replace(",", ""))
-
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.price_difference
+        else:
+            self.stock_information.setData()
+            return self.stock_information.price_difference
     def getSpotPercentageDifference(self):
         """
             Returns percentage difference between current and last spot
             price for specified company as a string
         """
-        pc = sh.getStockInformation(self.ticker).percent_difference
-        return float(pc.replace("%", ""))
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.percent_difference
+        else:
+            self.stock_information.setData()
+            return self.stock_information.percent_difference
 
     def getStockHistory(self, start, end):
         """
