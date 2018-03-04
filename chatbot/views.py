@@ -130,18 +130,18 @@ def company_briefing(c_hit_counts, max_companies):
         )
     c_msg = ""
     for c in cs:
-        c_msg +=    (c.name + " currently has a price of £" + str(c.getSpotPrice()) + " " +
+        c_msg +=    (capName(c.name) + " currently has a price of £" + str(c.getSpotPrice()) + " " +
                     "with a percentage change of " + 
                     ("%.2f" % c.getSpotPercentageDifference()) + 
                     "%. ")
     # for the most liked company out of the randomly chosen, get their spot history
     best_company = cs[0]
-    c_msg += "The chart shows stock history of " + best_company.name + " for the last week."
+    c_msg += "The chart shows stock history of " + capName(best_company.name) + " for the last week."
     now = datetime.datetime.now()
     last_week = now - datetime.timedelta(days=7)
     chart = Chart()
     df = best_company.getStockHistory(last_week, now)
-    chart.add_from_df(df=df, label=best_company.ticker +" - "+best_company.name)
+    chart.add_from_df(df=df, label=best_company.ticker +" - "+capName(best_company.name))
     return {
         "type": "chart",
         "description": c_msg,
@@ -158,14 +158,14 @@ def industry_briefing(i_hit_counts, max_industries):
     inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
     price1 = inds[0].getSpotPrice()
     i_msg = ""
-    i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
+    i_msg +=    ("The " + capName(inds[0].name) + " industry has a current price of £" + 
                 str(price1) + " " +
                 "with a percentage change of " + 
                 ("%.2f" % inds[0].getSpotPercentageDifference()) +
                 "%. ")
     if 1 < len(inds):
         price2 = inds[1].getSpotPrice()
-        i_msg +=    (inds[1].name + 
+        i_msg +=    (capName(inds[1].name) + 
                     (" is looking better " if price1 < price2 else "is behind ") +
                     "with a combined stock price of £" + str(price2) +
                     ", and has a change of " + 
@@ -567,3 +567,14 @@ def remove_from_portfolio(request):
     else:
         user.traderprofile.c_portfolio.remove(Company.objects.get(id=id))
     return JsonResponse({"status": "yehhhhh!"})
+
+def capName(name):
+    exceptions = ['for', 'and']
+    split = name.split(" ")
+    capitalised = ""
+    for s in split:
+        if s in exceptions:
+            capitalised += s + " "
+        else:
+            capitalised += s[:1].upper() + s[1:] + " "
+    return capitalised.strip()
