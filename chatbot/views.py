@@ -107,28 +107,7 @@ def get_welcome_briefing(request):
         })
 
         if len(c_hit_counts) > 0:
-            # returns a max of two companies with a probability proportional to their hit count
-            # over the total hit counts for the user
-            cs = get_from_weigted_probability([(c.company, c.hit_count) for c in c_hit_counts], 2)
-            c_msg = ""
-            for c in cs:
-                c_msg +=    (c.name + " currently has a price of £" + str(c.getSpotPrice()) + " " +
-                            "with a percentage change of " + 
-                            ("%.2f" % c.getSpotPercentageDifference()) + 
-                            "%. ")
-            # for the most liked company, get their spot history
-            best_company = cs[0]
-            c_msg += "The chart shows stock history of " + best_company.name + " for the last week."
-            now = datetime.datetime.now()
-            last_week = now - datetime.timedelta(days=7)
-            chart = Chart()
-            df = best_company.getStockHistory(last_week, now)
-            chart.add_from_df(df=df, label=best_company.ticker +" - "+best_company.name)
-            briefing["messages"].append({
-                "type": "chart",
-                "description": c_msg,
-                "chart_object": chart.toJson()
-            })
+            briefing["messages"].append(companyBriefing(c_hit_counts, 2))
 
         # get a briefing on favourite industries if the user has some
         if len(i_hit_counts) > 0:
@@ -138,7 +117,7 @@ def get_welcome_briefing(request):
             i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
                         str(price1) + " " +
                         "with a percentage change of " + 
-                        ("%.2f" % c.getSpotPercentageDifference()) +
+                        ("%.2f" % inds[0].getSpotPercentageDifference()) +
                         "%. ")
             if 1 < len(inds):
                 price2 = inds[1].getSpotPrice()
@@ -187,6 +166,39 @@ def get_welcome_briefing(request):
             })
 
     return JsonResponse(briefing)
+
+def companyBriefing(c_hit_counts, max_companies):
+    """
+        Given the user's company hit counts, get a maximum of max_companies
+        companies, and return a message to display to the user. Assumes
+        the size of c_hit_counts is greater than 0
+    """
+    # returns a max of two companies with a probability proportional to their hit count
+    # over the total hit counts for the user
+    cs = get_from_weigted_probability(
+            [(c.company, c.hit_count) for c in c_hit_counts], 
+            max_companies
+        )
+    c_msg = ""
+    for c in cs:
+        c_msg +=    (c.name + " currently has a price of £" + str(c.getSpotPrice()) + " " +
+                    "with a percentage change of " + 
+                    ("%.2f" % c.getSpotPercentageDifference()) + 
+                    "%. ")
+    # for the most liked company out of the randomly chosen, get their spot history
+    best_company = cs[0]
+    c_msg += "The chart shows stock history of " + best_company.name + " for the last week."
+    now = datetime.datetime.now()
+    last_week = now - datetime.timedelta(days=7)
+    chart = Chart()
+    df = best_company.getStockHistory(last_week, now)
+    chart.add_from_df(df=df, label=best_company.ticker +" - "+best_company.name)
+    return {
+        "type": "chart",
+        "description": c_msg,
+        "chart_object": chart.toJson()
+    }
+
 
 
 def get_from_weigted_probability(ls, max):
