@@ -55,9 +55,9 @@ class Company(models.Model):
         """
         now = datetime.datetime.now()
         last_week = now - datetime.timedelta(days=7)
-        return self.getNewsFrom(last_week, now, keywork, breaking)
+        return self.getNewsFrom(last_week, now, keyword, breaking)
 
-    def getNewsTopic(self, keywork, breaking=None):
+    def getNewsTopic(self, keyword, breaking=None):
         """
             Returns a list of NewsInformation objects of articles related to
             specified company and topic from the last week
@@ -71,7 +71,7 @@ class Company(models.Model):
             Returns news published within the given start and end dates with
             optional topic
         """
-        news = nh.getNews(self.name + ' plc', keyword=keywork, breaking=breaking)
+        news = nh.getNews(self.name + ' plc', keyword=keyword, breaking=breaking)
         in_range = lambda x: start <= x.date_published <= end
         return list(filter(in_range, news))
 
