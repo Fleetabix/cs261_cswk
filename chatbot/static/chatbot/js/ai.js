@@ -1,14 +1,25 @@
 $(document).ready(function() {
-    setTimeout(function() {
-
-    }) 
+    getBreifing(Math.round(Date.now() / 1000))
 });
 
-/** Appends a message to the alert system.
- *  Al alerts will appear on one pop-up
- * @param {*} title 
- * @param {*} message 
- */
-function florinAlert(title, message) {
-
+function getBreifing(since) {
+    var data = {
+        last_login: since
+    }
+    $.ajax({
+        url: 'get_welcome_breifing/',
+        data: data,
+        dataType: "json",
+        method: "get"
+    }).done(function (response) {
+        var name = response["name"];
+        var delay = 800;
+        for (i in response["messages"]) {
+            var message = response["messages"][i];
+            outputResponse(name, message, delay * i);
+        }
+    }).fail(function (response) {
+        console.log("-----Fail-------");
+        console.log(response);
+    });
 }
