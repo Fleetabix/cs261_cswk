@@ -74,7 +74,7 @@ def get_alerts(request):
 
 
 @login_required
-def get_welcome_breifing(request):
+def get_welcome_briefing(request):
     """
         Given a time sice the user's last login, this will look at the user's
         favourite companies and industries and give them information they
@@ -83,7 +83,7 @@ def get_welcome_breifing(request):
     time_stamp = int(request.GET.get("last_login"))
     time_since = datetime.datetime.fromtimestamp(time_stamp)
     user = request.user
-    breifing = {
+    briefing = {
         "name": "FLORIN",
         "messages": []
     }
@@ -92,7 +92,7 @@ def get_welcome_breifing(request):
     c_hit_counts = user.traderprofile.companyhitcount_set.order_by("-hit_count")
     i_hit_counts = user.traderprofile.industryhitcount_set.order_by("-hit_count")
     if len(c_hit_counts) == 0 and len(i_hit_counts) == 0:
-        breifing["messages"].append({
+        briefing["messages"].append({
             "type": "text",
             "body": "You appear not to have show interest in any companies " +
                     "or industries yet. Once you have, I can give you a brief " +
@@ -100,11 +100,12 @@ def get_welcome_breifing(request):
             "caption": ""
         })
     else:
-        breifing["messages"].append({
+        briefing["messages"].append({
             "type": "text",
             "body": "Welcome back! Here's your up to date briefing:",
             "caption": ""
         })
+
         if len(c_hit_counts) > 0:
             # returns a max of two companies with a probability proportional to their hit count
             # over the total hit counts for the user
@@ -115,18 +116,40 @@ def get_welcome_breifing(request):
                             "with a percentage change of " + str(c.getSpotPercentageDifference()) + "%. ")
             # for the most liked company, get their spot history
             best_company = cs[0]
-            c_msg += "The chart shows stock hostory of " + best_company.name + " for the last week."
+            c_msg += "The chart shows stock history of " + best_company.name + " for the last week."
             now = datetime.datetime.now()
             last_week = now - datetime.timedelta(days=7)
             chart = Chart()
             df = best_company.getStockHistory(last_week, now)
             chart.add_from_df(df=df, label=best_company.ticker +" - "+best_company.name)
-            breifing["messages"].append({
+            briefing["messages"].append({
                 "type": "chart",
                 "description": c_msg,
                 "chart_object": chart.toJson()
             })
-    return JsonResponse(breifing)
+
+        # get a briefing on favourite industries if the user has some
+        if len(i_hit_counts) > 0:
+            inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
+            price1 = inds[0].getSpotPrice()
+            i_msg = ""
+            i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
+                        str(price1) + " " +
+                        "with a percentage change of " + str(c.getSpotPercentageDifference()) +
+                        "%. ")
+            if 1 < len(inds):
+                price2 = inds[1].getSpotPrice()
+                i_msg +=    (inds[1].name + 
+                            (" is looking better " if price1 < price2 else "is behind ") +
+                            "with a combined stock price of £" + str(price2) +
+                            ", and has a change of " + str(inds[1].getSpotPercentageDifference()) + "%.")
+            briefing["messages"].append({
+                "type": "text",
+                "body": i_msg,
+                "caption": ""
+            })
+
+    return JsonResponse(briefing)
 
 
 def get_from_weigted_probability(ls, max):
