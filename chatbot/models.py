@@ -264,5 +264,5 @@ class Alert(models.Model):
     date = models.DateTimeField()
 
     def __str__(self):
-        return self.trader.username + " - " + self.company.name + " - " + date
+        return str(self.trader) + " - " + self.company.name + " - " + str(self.date)
 
