@@ -242,3 +242,42 @@ class CompanyHitCount(models.Model):
             return str(self.trader) +  \
                 " | " + str(self.company) + \
                 " | " + str(self.hit_count)
+
+
+class CompanyStock(models.Model):
+
+    spot_price = models.FloatField()
+    price_difference = models.FloatField()
+    percent_difference = models.FloatField()
+    retrieved = models.DateField()
+    company = models.OneToOneField(Company)    
+
+    def getSpotPrice(self):
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
+            return self.spot_price
+        else:
+            setData()
+            return self.spot_price
+    
+    def getSpotPriceDifference(self):
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
+            return self.price_difference
+        else:
+            setData()
+            return self.price_difference
+        
+    def getSpotPercentageDifference():
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
+            return self.percent_difference
+        else:
+            setData()
+            return self.percent_difference
+    
+    
+    def setData(self):
+        stock = sh.getStockInformation(self.company.ticker)
+        self.spot_price = stock.spot_price
+        self.price_difference = stock.price_difference
+        self.percent_difference = stock.percent_difference
+        self.retrieved = stock.retrieved
+        
