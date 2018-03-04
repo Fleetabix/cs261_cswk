@@ -61,12 +61,13 @@ def respond_to_request(request):
     elif quality == "stockHist":
         return stock_history_response(request)
     elif quality == "joke":
-        if len(request["companies"]) == 0:
+        if len(request["companies"]) == 0 and  len(request["areas"]) == 0:
             return nl.turnIntoResponse("To get to the other side.")
-        elif len(request["companies"])>1:
-            return nl.turnIntoResponse("To buy stock in " + nl.makeList(request["companies"]) + ".")
         else:
-            return nl.turnIntoResponse("To buy stock in " + request["companies"][0] + ".")
+            companies = request["companies"]
+            for i in request["areas"]:
+                companies = union(companies, companiesInIndustry(i))
+            return nl.turnIntoResponse("To buy stock in " + nl.makeList(companies) + ".")
     else:
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
@@ -172,7 +173,10 @@ def stock_history_response(request):
     desc = "Here's how the stock price of "
     l = []
     for company in companies:
-        df  = Company.objects.get(ticker = company).getStockHistory(start, end)
+        try:
+            df = Company.objects.get(ticker = company).getStockHistory(start, end)
+        except ValueError:
+            return nl.turnIntoResponse("Please enter a more recent date.")
         chart.add_from_df(df, company)
         l.append(company)
     desc += nl.makeList(l)
