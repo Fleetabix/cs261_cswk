@@ -38,7 +38,7 @@ def getStockInformation(ticker):
 		stock = [x.text.strip() for x in data.findAll('span')]
 
 		# Retrieved time must account for 15 minute delay
-		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
+		retrieved = datetime.datetime.now()
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
 	else:
 		raise RuntimeError("Unable to retrieve response from London Stock Exchange website.")

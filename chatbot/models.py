@@ -16,13 +16,17 @@ class Company(models.Model):
     """
     ticker = models.CharField(unique=True, max_length=10)
     name = models.CharField(max_length=40)
+    stock_information = models.OneToOneField(StockInformation)
 
     def getSpotPrice(self):
         """
             Returns spot price for specified company as a float
         """
-        string_price = sh.getStockInformation(self.ticker).spot_price
-        return float(string_price.replace(",", ""))
+        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=20)):
+            return self.spot_price
+        else:
+            self.stock_information.setData()
+            return self.spot_price
 
     def getSpotPriceDifference(self):
         """
@@ -244,40 +248,15 @@ class CompanyHitCount(models.Model):
                 " | " + str(self.hit_count)
 
 
-class CompanyStock(models.Model):
-
+class StockInformation(models.Model):
     spot_price = models.FloatField()
     price_difference = models.FloatField()
     percent_difference = models.FloatField()
     retrieved = models.DateField()
-    company = models.OneToOneField(Company)    
-
-    def getSpotPrice(self):
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
-            return self.spot_price
-        else:
-            setData()
-            return self.spot_price
     
-    def getSpotPriceDifference(self):
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
-            return self.price_difference
-        else:
-            setData()
-            return self.price_difference
-        
-    def getSpotPercentageDifference():
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(minutes=15, seconds=20)):
-            return self.percent_difference
-        else:
-            setData()
-            return self.percent_difference
-    
-    
-    def setData(self):
-        stock = sh.getStockInformation(self.company.ticker)
-        self.spot_price = stock.spot_price
-        self.price_difference = stock.price_difference
-        self.percent_difference = stock.percent_difference
+    def setData(self, ticker):
+        stock = sh.getStockInformation(ticker)
+        self.spot_price = float(stock.spot_price.replace(",", ""))
+        self.price_difference = float(stock.price_difference.replace(",", ""))
+        self.percent_difference = float(stock.percent_difference.replace("%",""))
         self.retrieved = stock.retrieved
-        
