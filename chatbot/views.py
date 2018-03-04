@@ -107,67 +107,20 @@ def get_welcome_briefing(request):
         })
 
         if len(c_hit_counts) > 0:
-            briefing["messages"].append(companyBriefing(c_hit_counts, 2))
+            briefing["messages"].append(company_briefing(c_hit_counts, 2))
 
         # get a briefing on favourite industries if the user has some
         if len(i_hit_counts) > 0:
-            inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
-            price1 = inds[0].getSpotPrice()
-            i_msg = ""
-            i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
-                        str(price1) + " " +
-                        "with a percentage change of " + 
-                        ("%.2f" % inds[0].getSpotPercentageDifference()) +
-                        "%. ")
-            if 1 < len(inds):
-                price2 = inds[1].getSpotPrice()
-                i_msg +=    (inds[1].name + 
-                            (" is looking better " if price1 < price2 else "is behind ") +
-                            "with a combined stock price of £" + str(price2) +
-                            ", and has a change of " + 
-                            ("%.2f" % inds[1].getSpotPercentageDifference()) + 
-                            "%.")
-            briefing["messages"].append({
-                "type": "text",
-                "body": i_msg,
-                "caption": ""
-            })
+            briefing["messages"].append(industry_briefing(i_hit_counts, 2))
 
         # get 3 articles from favourite companies and industries since last login
-        favourite_hits = list(set().union(
-            [(c.company, c.hit_count) for c in c_hit_counts],
-            [(i.industry, i.hit_count) for i in i_hit_counts]
-        ))
-        sorted(favourite_hits, key=lambda x: -x[1])
-        best_entities = get_from_weigted_probability(favourite_hits, 3)
-        articles = []
-        for e in best_entities:
-            ns = e.getNewsFrom(time_since, datetime.datetime.now())
-            if len(ns)> 0:
-                articles.append(ns[0])
+        briefing["messages"].append(news_briefing(c_hit_counts, i_hit_counts, time_since, 3))
 
-        if len(articles) > 0:
-            news_json = []
-            for n in articles:
-                news_json.append({
-                    "url": n.url,
-                    "title": n.headline,
-                    "pic_url": n.image,
-                    "description": n.get_str_date()
-                })
-            briefing["messages"].append({
-                "type": "news",
-                "articles": news_json
-            })
-        else:
-            briefing["messages"].append({
-                "type": "text",
-                "body": "There hasn't been any major news since you last logged in."
-            })
+
 
     return JsonResponse(briefing)
 
-def companyBriefing(c_hit_counts, max_companies):
+def company_briefing(c_hit_counts, max_companies):
     """
         Given the user's company hit counts, get a maximum of max_companies
         companies, and return a message to display to the user. Assumes
@@ -200,6 +153,75 @@ def companyBriefing(c_hit_counts, max_companies):
     }
 
 
+def industry_briefing(i_hit_counts, max_industries):
+    """
+        Given a list of industry hit counts and a number of how many industies
+        to include in the briefing, choose some industries based on the
+        number of hitcounts they have, and return a message to be displayed
+    """
+    inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
+    price1 = inds[0].getSpotPrice()
+    i_msg = ""
+    i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
+                str(price1) + " " +
+                "with a percentage change of " + 
+                ("%.2f" % inds[0].getSpotPercentageDifference()) +
+                "%. ")
+    if 1 < len(inds):
+        price2 = inds[1].getSpotPrice()
+        i_msg +=    (inds[1].name + 
+                    (" is looking better " if price1 < price2 else "is behind ") +
+                    "with a combined stock price of £" + str(price2) +
+                    ", and has a change of " + 
+                    ("%.2f" % inds[1].getSpotPercentageDifference()) + 
+                    "%.")
+    return {
+        "type": "text",
+        "body": i_msg,
+        "caption": ""
+    }
+
+
+def news_briefing(c_hit_counts, i_hit_counts, time_since, max_count):
+    """
+        Given industry and company hit counts, choose max_count of
+        companies/industries, and get one article from each from the
+        given time 'time_since'
+    """
+    # unions two lists of tuples of type (entity, hitcount)
+    favourite_hits = list(set().union(
+        [(c.company, c.hit_count) for c in c_hit_counts],
+        [(i.industry, i.hit_count) for i in i_hit_counts]
+    ))
+    # sort it by descending order of the second element in the tuple
+    sorted(favourite_hits, key=lambda x: -x[1])
+    best_entities = get_from_weigted_probability(favourite_hits, max_count)
+    articles = []
+    for e in best_entities:
+        ns = e.getNewsFrom(time_since, datetime.datetime.now())
+        if len(ns)> 0:
+            articles.append(ns[0])
+    # generate a message with the given articles
+    msg = {}
+    if len(articles) > 0:
+        news_json = []
+        for n in articles:
+            news_json.append({
+                "url": n.url,
+                "title": n.headline,
+                "pic_url": n.image,
+                "description": n.get_str_date()
+            })
+        msg = {
+            "type": "news",
+            "articles": news_json
+        }
+    else:
+        msg = {
+            "type": "text",
+            "body": "There hasn't been any major news since you last logged in."
+        }
+    return msg
 
 def get_from_weigted_probability(ls, max):
     """
