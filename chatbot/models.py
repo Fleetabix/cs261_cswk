@@ -25,7 +25,7 @@ class Company(models.Model):
         if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.spot_price
         else:
-            self.stock_information.setData()
+            self.stock_information.setData(self.ticker)
             return self.stock_information.spot_price
 
     def getSpotPriceDifference(self):
@@ -36,7 +36,7 @@ class Company(models.Model):
         if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.price_difference
         else:
-            self.stock_information.setData()
+            self.stock_information.setData(self.ticker)
             return self.stock_information.price_difference
     def getSpotPercentageDifference(self):
         """
@@ -46,7 +46,7 @@ class Company(models.Model):
         if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.percent_difference
         else:
-            self.stock_information.setData()
+            self.stock_information.setData(self.ticker)
             return self.stock_information.percent_difference
 
     def getStockHistory(self, start, end):
