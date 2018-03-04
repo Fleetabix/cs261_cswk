@@ -253,3 +253,16 @@ class IndustryHitCount(models.Model):
             return str(self.trader) +  \
                 " | " + str(self.industry) + \
                 " | " + str(self.hit_count)
+
+class Alert(models.Model):
+    """
+        Stores the last time (if any) a user was notified about
+        a drop in a specified company's price 
+    """
+    trader = models.ForeignKey(TraderProfile, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+
+    def __str__(self):
+        return self.trader.username + " - " + self.company.name + " - " + date
+
