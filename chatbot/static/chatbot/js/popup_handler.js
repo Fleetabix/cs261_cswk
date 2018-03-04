@@ -4,9 +4,9 @@ $(document).ready(function() {
     });
 });
 
-function popup(id, body) {
+function popup(body) {
     var popupStr = 
-        "<div id='"+id+"' class='popup'>" +
+        "<div class='popup'>" +
             "<div class='popup-header'>" +
                 "<button class='close-popup'><i class='fas fa-times'></i></button>" +
             "</div>" +
