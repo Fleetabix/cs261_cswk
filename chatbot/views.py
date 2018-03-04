@@ -172,7 +172,10 @@ def stock_history_response(request):
     desc = "Here's how the stock price of "
     l = []
     for company in companies:
-        df  = Company.objects.get(ticker = company).getStockHistory(start, end)
+        try:
+            df = Company.objects.get(ticker = company).getStockHistory(start, end)
+        except ValueError:
+            return nl.turnIntoResponse("Please enter a more recent date.")
         chart.add_from_df(df, company)
         l.append(company)
     desc += nl.makeList(l)
