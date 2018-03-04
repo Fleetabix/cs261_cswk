@@ -314,6 +314,7 @@ a {
 .message {
     width: inherit;
     margin: 1em;
+    margin-top: 0.25em;
     font-size: 1em;
     background-color: var(--accent-colour);
     border-radius: 0.5em;
