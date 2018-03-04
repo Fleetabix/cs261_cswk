@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 import datetime
 import calendar
+from random import randint
 
 from chatbot.models import *
 from chatbot.nl import nl
@@ -74,12 +75,80 @@ def get_alerts(request):
 
 @login_required
 def get_welcome_breifing(request):
+    """
+        Given a time sice the user's last login, this will look at the user's
+        favourite companies and industries and give them information they
+        might find useful and news since they were last logged in.
+    """
+    time_stamp = int(request.GET.get("last_login"))
+    time_since = datetime.datetime.fromtimestamp(time_stamp)
+    user = request.user
     breifing = {
         "name": "FLORIN",
         "messages": []
     }
-
+    # get some news from user's favourite companies/industry and print of some
+    # stock prices
+    c_hit_counts = user.traderprofile.companyhitcount_set.order_by("-hit_count")
+    i_hit_counts = user.traderprofile.industryhitcount_set.order_by("-hit_count")
+    if len(c_hit_counts) == 0 and len(i_hit_counts) == 0:
+        breifing["messages"].append({
+            "type": "text",
+            "body": "You appear not to have show interest in any companies " +
+                    "or industries yet. Once you have, I can give you a brief " +
+                    "summary on they're performance since you last logged in",
+            "caption": ""
+        })
+    else:
+        breifing["messages"].append({
+            "type": "text",
+            "body": "Welcome back! Here's your up to date briefing:",
+            "caption": ""
+        })
+        if len(c_hit_counts) > 0:
+            # returns a max of two companies with a probability proportional to their hit count
+            # over the total hit counts for the user
+            cs = get_from_weigted_probability([(c.company, c.hit_count) for c in c_hit_counts], 2)
+            c_msg = ""
+            for c in cs:
+                c_msg +=    (c.name + " currently has a price of £" + str(c.getSpotPrice()) + " " +
+                            "with a percentage change of " + str(c.getSpotPercentageDifference()) + "%. ")
+            # for the most liked company, get their spot history
+            best_company = cs[0]
+            c_msg += "The chart shows stock hostory of " + best_company.name + " for the last week."
+            now = datetime.datetime.now()
+            last_week = now - datetime.timedelta(days=7)
+            chart = Chart()
+            df = best_company.getStockHistory(last_week, now)
+            chart.add_from_df(df=df, label=best_company.ticker +" - "+best_company.name)
+            breifing["messages"].append({
+                "type": "chart",
+                "description": c_msg,
+                "chart_object": chart.toJson()
+            })
     return JsonResponse(breifing)
+
+
+def get_from_weigted_probability(ls, max):
+    """
+        Takes in a sorted list of tuples (object, score) and returns a maximum of
+        max items such that the probabilty of picking them is proportional
+        to the score of the object over the total score of the list
+    """
+    rtn_ls = []
+    for i in range(max):
+        total_score = sum(map(lambda x: x[1], ls))
+        rnd = randint(0, total_score)
+        for j in range(len(ls)):
+            rnd -= ls[j][1]
+            # if the random number gets below zero, pop the current item 
+            # from the list and append it to the return list
+            if rnd <= 0:
+                rtn_ls.append(ls.pop(j))
+                break
+    # return a list of the first item in the tuples, sorted in descending order by the
+    # second item in the tuple
+    return list(map(lambda x: x[0], sorted(rtn_ls, key=lambda x: -x[1])))
 
 
 def respond_to_request(request):
