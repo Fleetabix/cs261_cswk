@@ -113,7 +113,9 @@ def get_welcome_briefing(request):
             c_msg = ""
             for c in cs:
                 c_msg +=    (c.name + " currently has a price of £" + str(c.getSpotPrice()) + " " +
-                            "with a percentage change of " + str(c.getSpotPercentageDifference()) + "%. ")
+                            "with a percentage change of " + 
+                            ("%.2f" % c.getSpotPercentageDifference()) + 
+                            "%. ")
             # for the most liked company, get their spot history
             best_company = cs[0]
             c_msg += "The chart shows stock history of " + best_company.name + " for the last week."
@@ -135,18 +137,53 @@ def get_welcome_briefing(request):
             i_msg = ""
             i_msg +=    ("The " + inds[0].name + " industry has a current price of £" + 
                         str(price1) + " " +
-                        "with a percentage change of " + str(c.getSpotPercentageDifference()) +
+                        "with a percentage change of " + 
+                        ("%.2f" % c.getSpotPercentageDifference()) +
                         "%. ")
             if 1 < len(inds):
                 price2 = inds[1].getSpotPrice()
                 i_msg +=    (inds[1].name + 
                             (" is looking better " if price1 < price2 else "is behind ") +
                             "with a combined stock price of £" + str(price2) +
-                            ", and has a change of " + str(inds[1].getSpotPercentageDifference()) + "%.")
+                            ", and has a change of " + 
+                            ("%.2f" % inds[1].getSpotPercentageDifference()) + 
+                            "%.")
             briefing["messages"].append({
                 "type": "text",
                 "body": i_msg,
                 "caption": ""
+            })
+
+        # get 3 articles from favourite companies and industries since last login
+        favourite_hits = list(set().union(
+            [(c.company, c.hit_count) for c in c_hit_counts],
+            [(i.industry, i.hit_count) for i in i_hit_counts]
+        ))
+        sorted(favourite_hits, key=lambda x: -x[1])
+        best_entities = get_from_weigted_probability(favourite_hits, 3)
+        articles = []
+        for e in best_entities:
+            ns = e.getNewsFrom(time_since, datetime.datetime.now())
+            if len(ns)> 0:
+                articles.append(ns[0])
+
+        if len(articles) > 0:
+            news_json = []
+            for n in articles:
+                news_json.append({
+                    "url": n.url,
+                    "title": n.headline,
+                    "pic_url": n.image,
+                    "description": n.get_str_date()
+                })
+            briefing["messages"].append({
+                "type": "news",
+                "articles": news_json
+            })
+        else:
+            briefing["messages"].append({
+                "type": "text",
+                "body": "There hasn't been any major news since you last logged in."
             })
 
     return JsonResponse(briefing)
