@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 import datetime
+from django.utils import timezone
 import calendar
 from random import randint
 
@@ -54,23 +55,40 @@ def get_alerts(request):
         - Breaking news in portfolio
         //TODO  not sure how to mark off a breaking news story as read so it doesn't
                 appear all the time 
-                Also not sure how to mark of a price drop so it doesn't keep appearing
     """
-    user = request.user
-    response = []
+    trader = request.user.traderprofile
+    check_interval = request.GET.get("check_interval")
+    response = {
+        "name": "FLORIN",
+        "breaking-news": [],
+        "price-drops": []
+    }
+    # find any big price drops
     perc_change = [(c, c.getSpotPercentageDifference()) for c in Company.objects.all()]
     for t in perc_change:
-        if t[1] <= -10:
-            response.append({
-                "type": "price_drop",
-                "msg": {
+        # if the price has dropped by more than x%, then...
+        if t[1] <= -2:
+            hour_ago = timezone.now() - datetime.timedelta(hours=1)
+            results = Alert.objects.filter(trader=trader, company=t[0]) 
+            # if the company has a time less than an hour ago, update the time and
+            # add the company to the alerts list
+            if len(results) == 0 or results[0].date < hour_ago:
+                response["price-drops"].append({
                     "ticker": t[0].ticker,
                     "name": t[0].name,
                     "price": t[0].getSpotPrice(),
                     "change": t[1]
-                }
-            })
-    return JsonResponse(respond_to_request)
+                })
+            # if the alert row for this user and company doesn't exist create it
+            # otherwise alter the current record
+            if len(results) == 0:
+                Alert.objects.create(trader=trader, company=t[0], date=timezone.now())
+            else:
+                results[0].date = timezone.now()
+                results[0].save()
+
+    # find any breaking news
+    return JsonResponse(response)
 
 
 @login_required
@@ -115,6 +133,7 @@ def get_welcome_briefing(request):
 
 
     return JsonResponse(briefing)
+
 
 def company_briefing(c_hit_counts, max_companies):
     """
@@ -218,6 +237,7 @@ def news_briefing(c_hit_counts, i_hit_counts, time_since, max_count):
             "body": "There hasn't been any major news since you last logged in."
         }
     return msg
+
 
 def get_from_weigted_probability(ls, max):
     """
