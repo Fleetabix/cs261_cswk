@@ -1,8 +1,13 @@
 $(document).ready(function() {
-    getBriefing(Math.round(Date.now() / 1000))
+    getBriefing(Math.round(Date.now() / 1000) - (3*24*60*60))
 });
 
 function getBriefing(since) {
+    outputResponse("FLORIN", {
+        type: "text",
+        body: "Welcome back! Here comes your up to date briefing:",
+        caption: ""
+    }, 500);
     var data = {
         last_login: since
     }

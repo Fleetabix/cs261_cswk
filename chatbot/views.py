@@ -100,12 +100,8 @@ def get_welcome_briefing(request):
             "caption": ""
         })
     else:
-        briefing["messages"].append({
-            "type": "text",
-            "body": "Welcome back! Here's your up to date briefing:",
-            "caption": ""
-        })
-
+        # if there is a company or industry they are interested in, proceed with
+        # with the briefing
         if len(c_hit_counts) > 0:
             briefing["messages"].append(company_briefing(c_hit_counts, 2))
 
