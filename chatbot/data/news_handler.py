@@ -11,6 +11,9 @@ class NewsInformation:
 		self.headline = headline
 		self.image = image
 		self.date_published = datetime.datetime.strptime(article_date[:19], '%Y-%m-%dT%H:%M:%S')
+
+	def get_str_date(self, format="%Y-%m-%d | %H:%M:%S"):
+		return datetime.datetime.strftime(self.date_published, format)
 	
 
 def getNews(name, keyword = None, breaking = None):
