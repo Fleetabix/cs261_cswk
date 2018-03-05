@@ -24,7 +24,9 @@ class Company(models.Model):
         if (self.stockinformation.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stockinformation.spot_price
         else:
-            self.stockinformation.setData(self.ticker)
+            stock_info = self.stockinformation
+            stock_info.setData()
+            stock_info.save()
             return self.stockinformation.spot_price
 
     def getSpotPriceDifference(self):
@@ -35,7 +37,9 @@ class Company(models.Model):
         if (self.stockinformation.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stockinformation.price_difference
         else:
-            self.stockinformation.setData(self.ticker)
+            stock_info = self.stockinformation
+            stock_info.setData()
+            stock_info.save()
             return self.stockinformation.price_difference
     def getSpotPercentageDifference(self):
         """
@@ -45,7 +49,9 @@ class Company(models.Model):
         if (self.stockinformation.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stockinformation.percent_difference
         else:
-            self.stockinformation.setData(self.ticker)
+            stock_info = self.stockinformation
+            stock_info.setData()
+            stock_info.save()
             return self.stockinformation.percent_difference
 
     def getStockHistory(self, start, end):
@@ -290,8 +296,8 @@ class StockInformation(models.Model):
     percent_difference = models.FloatField()
     retrieved = models.DateTimeField()
 
-    def setData(self, ticker):
-        stock = sh.getStockInformation(ticker)
+    def setData(self):
+        stock = sh.getStockInformation(self.company.ticker)
         self.spot_price = float(stock.spot_price.replace(",", ""))
         self.price_difference = float(stock.price_difference.replace(",", ""))
         self.percent_difference = float(stock.percent_difference.replace("%",""))
