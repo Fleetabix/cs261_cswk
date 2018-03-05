@@ -92,7 +92,9 @@ function getAlerts(checkInterval) {
             );
         }
         var message = response["breaking-news"];
-        outputResponse(name, message, 1000);
+        if (message.articles.length > 0) {
+            outputResponse(name, message, 1000);
+        }
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
