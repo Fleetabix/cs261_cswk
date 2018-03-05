@@ -4,6 +4,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 import datetime
 from django.utils import timezone
@@ -31,6 +32,7 @@ def ask_chatbot(request):
         parse the message then return a valid response.
     """
     query = request.POST.get("query")
+    trader = request.user.traderprofile
     data = {
         "name": "FLORIN",
         "messages": []
@@ -40,6 +42,30 @@ def ask_chatbot(request):
         data["messages"].append(nl.genericUnknownResponse())
     else:
         for request in requests:
+            # for each company that was requested, incremenet the hit count
+            for ticker in request["companies"]:
+                try:
+                    hc = CompanyHitCount.objects.get(company__ticker=ticker, trader=trader)
+                    hc.hit_count += 1
+                    hc.save()
+                except ObjectDoesNotExist:
+                    CompanyHitCount.objects.create(
+                        company=Company.objects.get(ticker=ticker),
+                        trader=trader,
+                        hit_count=1
+                    ) 
+            # for each industry that was requested, incremenet the hit count
+            for name in request["areas"]:
+                try:
+                    hc = IndustryHitCount.objects.get(industry__name=name, trader=trader)
+                    hc.hit_count += 1
+                    hc.save()
+                except ObjectDoesNotExist:
+                    IndustryHitCount.objects.create(
+                        industry=Industry.objects.get(name=name),
+                        trader=trader,
+                        hit_count=1
+                    ) 
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             data["messages"].append(respond_to_request(request))
