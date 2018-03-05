@@ -333,6 +333,11 @@ a {
     padding-right: 30px;
 }
 
+.news-header {
+    border-bottom: 0.5px solid var(--border-colour);
+    margin-bottom: 10px;
+}
+
 .news-holder {
     padding-bottom: 10px;
 }
