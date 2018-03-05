@@ -264,7 +264,7 @@ class StockInformation(models.Model):
     spot_price = models.FloatField()
     price_difference = models.FloatField()
     percent_difference = models.FloatField()
-    retrieved = models.DateField()
+    retrieved = models.DateTimeField()
     
     def setData(self, ticker):
         stock = sh.getStockInformation(ticker)
