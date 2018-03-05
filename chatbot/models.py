@@ -253,7 +253,7 @@ class CompanyHitCount(models.Model):
 
 
 class StockInformation(models.Model):
-    stock_information = models.OneToOneField(Company, on_delete=models.CASCADE)
+    company = models.OneToOneField(Company, on_delete=models.CASCADE)
     spot_price = models.FloatField()
     price_difference = models.FloatField()
     percent_difference = models.FloatField()
