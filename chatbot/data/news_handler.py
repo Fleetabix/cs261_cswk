@@ -9,7 +9,7 @@ class NewsInformation:
 		self.url = url
 		self.headline = headline
 		self.image = image
-    self.description = description
+    	self.description = description
 		self.date_published = datetime.datetime.strptime(article_date[:19], '%Y-%m-%dT%H:%M:%S')
 
 	def get_str_date(self, format="%Y-%m-%d | %H:%M:%S"):
