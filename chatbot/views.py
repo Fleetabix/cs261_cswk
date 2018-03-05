@@ -124,8 +124,8 @@ def get_alerts(request):
     # get all companies the user has shown interest in
     entities_with_score = list(
         set().union(
-            [(c.hitcount, c.company) for c in trader.companyhitcount_set.all()],
-            [(i.hitcount, i.company) for i in trader.industryhitcount_set.all()],
+            [(c.hit_count, c.company) for c in trader.companyhitcount_set.all()],
+            [(i.hit_count, i.industry) for i in trader.industryhitcount_set.all()],
         )
     )
     list.sort(entities_with_score, reverse=True)
@@ -134,6 +134,8 @@ def get_alerts(request):
     for c in trader.c_portfolio.all():
         if not c in entities:
             entities.insert(0, c)
+    # TODO change this as just picking max 5 companies then getting breaking news
+    # isn't the best way to do it
     for i in range(min(5, len(entities))):
         e = entities[i]
         last_check = datetime.datetime.now() - datetime.timedelta(seconds=check_interval)
