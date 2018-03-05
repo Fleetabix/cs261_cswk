@@ -57,7 +57,7 @@ def stock_price_response(request):
             return nl.turnIntoResponseWithCaption(message, caption)
         #Response for no companies being listed.
         return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
-    elif len(companies) == 1:
+    elif len(companies) == 1 and len(areas)==0:
         message = "Here's " + nl.posessive(companies[0]) + " current price:"
         caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
         caption = nl.printAsSterling(caption)
