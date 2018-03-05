@@ -21,24 +21,32 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a float
         """
-        string_price = sh.getStockInformation(self.ticker).spot_price
-        return float(string_price.replace(",", ""))
+        if (self.stock_information.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.spot_price
+        else:
+            self.stock_information.setData(self.ticker)
+            return self.stock_information.spot_price
 
     def getSpotPriceDifference(self):
         """
             Returns difference between current and last spot price for
             specified company as a float
         """
-        pc = sh.getStockInformation(self.ticker).price_difference
-        return float(pc.replace(",", ""))
-
+        if (self.stock_information.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.price_difference
+        else:
+            self.stock_information.setData(self.ticker)
+            return self.stock_information.price_difference
     def getSpotPercentageDifference(self):
         """
             Returns percentage difference between current and last spot
             price for specified company as a string
         """
-        pc = sh.getStockInformation(self.ticker).percent_difference
-        return float(pc.replace("%", ""))
+        if (self.stock_information.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stock_information.percent_difference
+        else:
+            self.stock_information.setData(self.ticker)
+            return self.stock_information.percent_difference
 
     def getStockHistory(self, start, end):
         """
@@ -108,7 +116,7 @@ class Industry(models.Model):
             for all companies in the sector
         """
         total_diff = sum([float(c.getSpotPriceDifference()) for c in self.companies.all()])
-        total_now = self.getSpotPrice()
+        total_now = self.getSpotPrice() - total_diff
         if total_now == 0:
             return 0
         else:
@@ -171,6 +179,13 @@ def create_company(sender, instance, created, **kwargs):
     if created:
         CompanyAlias.objects.create(company=instance, alias=instance.name)
         CompanyAlias.objects.create(company=instance, alias=instance.ticker)
+        StockInformation.objects.create(
+            company=instance,
+            spot_price=0,
+            price_difference=0,
+            percent_difference=0,
+            retrieved=datetime.datetime.fromtimestamp(0)
+        )
 
 
 class CompanyAlias(models.Model):
@@ -254,6 +269,7 @@ class IndustryHitCount(models.Model):
                 " | " + str(self.industry) + \
                 " | " + str(self.hit_count)
 
+          
 class Alert(models.Model):
     """
         Stores the last time (if any) a user was notified about
@@ -266,3 +282,21 @@ class Alert(models.Model):
     def __str__(self):
         return str(self.trader) + " - " + self.company.name + " - " + str(self.date)
 
+      
+class StockInformation(models.Model):
+    company = models.OneToOneField(Company, on_delete=models.CASCADE)
+    spot_price = models.FloatField()
+    price_difference = models.FloatField()
+    percent_difference = models.FloatField()
+    retrieved = models.DateField()
+    
+    def setData(self, ticker):
+        stock = sh.getStockInformation(ticker)
+        self.spot_price = float(stock.spot_price.replace(",", ""))
+        self.price_difference = float(stock.price_difference.replace(",", ""))
+        self.percent_difference = float(stock.percent_difference.replace("%",""))
+        self.retrieved = stock.retrieved
+
+    def __str__(self):
+            return  self.company.name + " - £" + str(self.spot_price) + " - " + \
+                    str(self.price_difference) + "% - " + str(self.retrieved)

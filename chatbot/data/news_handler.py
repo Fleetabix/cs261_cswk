@@ -2,20 +2,20 @@ import feedparser
 import requests
 import bs4
 import json
-import time
 import datetime
 
 class NewsInformation:
-	def __init__(self, url, headline, image, article_date):
+	def __init__(self, url, headline, image, description, article_date):
 		self.url = url
 		self.headline = headline
 		self.image = image
+    self.description = description
 		self.date_published = datetime.datetime.strptime(article_date[:19], '%Y-%m-%dT%H:%M:%S')
 
 	def get_str_date(self, format="%Y-%m-%d | %H:%M:%S"):
 		return datetime.datetime.strftime(self.date_published, format)
-	
 
+	
 def getNews(name, keyword = None, breaking = None):
 	"""
 		can be used for both industry and company
@@ -38,6 +38,6 @@ def getNews(name, keyword = None, breaking = None):
 	if (response.status_code ==  200):
 		json_data = json.loads(response.text)
 		for stories in json_data["articles"]:
-			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["publishedAt"]))
+			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["description"], stories["publishedAt"]))
 	return news
 

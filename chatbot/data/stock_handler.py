@@ -19,7 +19,12 @@ def getStockInformation(ticker):
 	"""
 
 	# Retrive response from source for website
-	response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
+	if (ticker == 'UKX'):
+		# Response from UKX (FTSE 100)
+		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/indices/summary.html?index=UKX')
+	else:
+		# Response from tickers within FTSE 100
+		response = requests.get('http://m.londonstockexchange.com/exchange/mobile/stocks/summary.html?tidm='+ticker)
 	cs = None
 	if (response.status_code == 200):
 		# Format webpage to retrieve particular stock information
@@ -31,9 +36,8 @@ def getStockInformation(ticker):
 			raise ValueError("Ticker does not exist!")
 
 		stock = [x.text.strip() for x in data.findAll('span')]
-
-		# Retrieved time must account for 15 minute delay
-		retrieved = datetime.datetime.now()-datetime.timedelta(minutes=15)
+		
+		retrieved = datetime.datetime.now()
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
 	else:
 		raise RuntimeError("Unable to retrieve response from London Stock Exchange website.")
