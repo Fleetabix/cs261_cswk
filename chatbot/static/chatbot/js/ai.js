@@ -36,6 +36,7 @@ $(document).ready(function() {
 });
 
 function getBriefing(since) {
+    console.log("getting briefing");
     outputResponse("FLORIN", {
         type: "text",
         body: "Welcome back! Here is your up to date briefing...",
