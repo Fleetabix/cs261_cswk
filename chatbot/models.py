@@ -16,7 +16,6 @@ class Company(models.Model):
     """
     ticker = models.CharField(unique=True, max_length=10)
     name = models.CharField(max_length=40)
-    stock_information = models.OneToOneField(StockInformation)
 
     def getSpotPrice(self):
         """
@@ -254,6 +253,7 @@ class CompanyHitCount(models.Model):
 
 
 class StockInformation(models.Model):
+    stock_information = models.OneToOneField(Company, on_delete=models.CASCADE)
     spot_price = models.FloatField()
     price_difference = models.FloatField()
     percent_difference = models.FloatField()
@@ -265,3 +265,7 @@ class StockInformation(models.Model):
         self.price_difference = float(stock.price_difference.replace(",", ""))
         self.percent_difference = float(stock.percent_difference.replace("%",""))
         self.retrieved = stock.retrieved
+
+    def __str__(self):
+            return  self.company.name + " - £" + str(self.spot_price) + " - " + \
+                    str(self.price_difference) + "% - " + str(self.retrieved)
