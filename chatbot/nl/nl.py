@@ -59,7 +59,7 @@ def printAsSterling(amount):
 	return amount
 
 def printAsPercent(amount):
-	amount = str(amount) + "%"
+	amount = "%.3f%%" % amount
 	return amount
 
 #Turn a set of objects into a comma and and seperated list.
