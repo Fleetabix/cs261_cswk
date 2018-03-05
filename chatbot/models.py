@@ -182,6 +182,13 @@ def create_company(sender, instance, created, **kwargs):
     if created:
         CompanyAlias.objects.create(company=instance, alias=instance.name)
         CompanyAlias.objects.create(company=instance, alias=instance.ticker)
+        StockInformation.objects.create(
+            company=instance,
+            spot_price=0,
+            price_difference=0,
+            percent_difference=0,
+            retrieved=datetime.datetime.fromtimestamp(0)
+        )
 
 
 class CompanyAlias(models.Model):
