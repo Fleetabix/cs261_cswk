@@ -63,6 +63,8 @@ def stock_price_response(request):
         caption = nl.printAsSterling(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
     else:
+        for i in areas:
+            companies = union(companies, companiesInIndustry(i))
         return makeBarChartOf(companies, "Current Stock price", getSpotPrice)
 
 def percent_difference_response(request):
