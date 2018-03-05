@@ -39,5 +39,7 @@ def getNews(name, keyword = None, breaking = None):
 		json_data = json.loads(response.text)
 		for stories in json_data["articles"]:
 			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["description"], stories["publishedAt"]))
+	else:
+		raise RuntimeError("Unable to retrieve response from NewsAPI.")
 	return news
 
