@@ -48,24 +48,17 @@ $ python -W "ignore" manage.py test chatbot.tests.NLPTests.test_can_identify....
 ```
 
 ## Database Issues
-Sometimes the database migration is outdated (will give you errors like a column/field doesn't exist etc.)
-You can fix this by optionally deleting all the files (apart from the __innit__.py in chatbot/migrations then running
+Destroy and rebuild the database using the following command. You should do this if ot's giving you errors such as some column doesn't exist
 ```
 $ ./rebuild_database.sh
 ```
 
-## Adding companies
+## Populating the Database
 
-For whoever is adding the companies, please use the chatbot/insert_companies.py file as this will
-give us a backup to re-insert all the companies quickly in case of something going wrong.
-
-To run this script and create the companies, make sure that models have been migrated and run
+The database can now be populated using a script from the command line. To alter this script go to `chatbot/management/populate_db.py'. To run this script enter the following and execute
 the following commands
 ```
-# start up the django shell
-$ python manage.py shell
-# execute the script to add all the companies (whilst in the shell)
-$ exec(open('chatbot/insert_companies.py').read())
+$ python3 manage.py populate_db
 ```
 
 ## Creating users
