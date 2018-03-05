@@ -128,7 +128,7 @@ def get_alerts(request):
             [(i.hit_count, i.industry) for i in trader.industryhitcount_set.all()],
         )
     )
-    list.sort(entities_with_score, reverse=True)
+    sorted(entities_with_score, key=lambda x: -x[0])
     # remove the score and just keep the entities
     entities = list(map(lambda x: x[1], entities_with_score))
     for c in trader.c_portfolio.all():
