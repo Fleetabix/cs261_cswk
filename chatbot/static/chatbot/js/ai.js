@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     // every checkInterval seconds, look for big price drops or
     // any breaking news
-    var checkInterval = 5 * 60 * second;
+    var checkInterval = 2 * 60 * second;
     setInterval(function() {
         getAlerts(checkInterval);
     }, checkInterval);
