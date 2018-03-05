@@ -24,17 +24,27 @@ $(document).ready(function() {
             lastOnline != undefined &&
             minInterval <= Math.round(Date.now() / 1000) - lastOnline
         ) {
-        getBriefing(lastOnline);
+        getBriefing((lastOnline == undefined) ? 0 : lastOnline);
     }
 
     // every checkInterval seconds, look for big price drops or
     // any breaking news
-    var checkInterval = 2 * 60 * second;
+    var newsCheckInterval = 2 * 60 * second;
     setInterval(function() {
-        getAlerts(checkInterval);
-    }, checkInterval);
+        getBreakingNews(newsCheckInterval);
+    }, newsCheckInterval);
+
+    //check for stock price drops every dropCheckInterval seconds
+    var dropCheckInterval = 30 * second;
+    setInterval(function() {
+        getPriceDropAlerts();
+    }, dropCheckInterval);
 });
 
+/** Gets a briefing of the user's favourite company.
+ *  Outputs the results as messages from florin.
+ * @param {integer} since the number of seconds since the user was last online 
+ */
 function getBriefing(since) {
     console.log("getting briefing");
     outputResponse("FLORIN", {
@@ -63,19 +73,13 @@ function getBriefing(since) {
     });
 }
 
-/** Gets any alerts the user might want to know that have popped up since
- *  the last time this function was called
- * @param {integer} checkInterval the number of seconds since the last check
- */
-function getAlerts(checkInterval) {
-    console.log("getting alerts");
-    var data = {
-        check_interval: checkInterval
-    }
+/** Finds and ouptuts any companies that have a percentage difference of less
+ *  than 10%.
+*/
+function getPriceDropAlerts() {
+    console.log("getting price drops");
     $.ajax({
-        url: 'get_alerts/',
-        data: data,
-        dataType: "json",
+        url: 'get_price_drop_alerts/',
         method: "get"
     }).done(function(response) {
         console.log(response);
@@ -91,6 +95,28 @@ function getAlerts(checkInterval) {
                 "£"+drop.price+"</p>"
             );
         }
+    }).fail(function (response) {
+        console.log("-----Fail-------");
+        console.log(response);
+    });
+}
+
+/** Gets any breaking news that have popped up since
+ *  the last time this function was called
+ * @param {integer} checkInterval the number of seconds since the last check
+ */
+function getBreakingNews(checkInterval) {
+    console.log("getting breaking news");
+    var data = {
+        check_interval: checkInterval
+    }
+    $.ajax({
+        url: 'get_breaking_news/',
+        data: data,
+        dataType: "json",
+        method: "get"
+    }).done(function(response) {
+        console.log(response);
         var message = response["breaking-news"];
         if (message.articles.length > 0) {
             outputResponse(name, message, 1000);
