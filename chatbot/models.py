@@ -21,7 +21,7 @@ class Company(models.Model):
         """
             Returns spot price for specified company as a float
         """
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+        if (self.stock_information.retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.spot_price
         else:
             self.stock_information.setData(self.ticker)
@@ -32,7 +32,7 @@ class Company(models.Model):
             Returns difference between current and last spot price for
             specified company as a float
         """
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+        if (self.stock_information.retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.price_difference
         else:
             self.stock_information.setData(self.ticker)
@@ -42,7 +42,7 @@ class Company(models.Model):
             Returns percentage difference between current and last spot
             price for specified company as a string
         """
-        if (retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
+        if (self.stock_information.retrieved < datetime.datetime.now()-datetime.timedelta(seconds=10)):
             return self.stock_information.percent_difference
         else:
             self.stock_information.setData(self.ticker)
