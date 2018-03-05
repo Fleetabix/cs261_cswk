@@ -114,6 +114,9 @@ class Sentence:
 		#Now read through to seperate "qualities" into individual queries.
 		self.queries = []
 		for q in queries:
+			#If there are no qualities asked about...
+			if len(q["qualities"])==0 and len(q["companies"])>=1:
+				q["qualities"] = ["price"]
 			for quality in q["qualities"]:
 				newQuery = {"companies":q["companies"],"areas":q["areas"],"quality":quality,"comparative":q["comparative"],"time":self.time}
 				self.queries.append(newQuery)
