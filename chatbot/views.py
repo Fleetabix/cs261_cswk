@@ -53,7 +53,7 @@ def ask_chatbot(request):
                         company=Company.objects.get(ticker=ticker),
                         trader=trader,
                         hit_count=1
-                    ) 
+                    )
             # for each industry that was requested, incremenet the hit count
             for name in request["areas"]:
                 try:
@@ -65,7 +65,7 @@ def ask_chatbot(request):
                         industry=Industry.objects.get(name=name),
                         trader=trader,
                         hit_count=1
-                    ) 
+                    )
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             data["messages"].append(respond_to_request(request))
@@ -212,7 +212,7 @@ def get_price_drop_alerts(request):
         # if the price has dropped by more than x%, then...
         if t[1] <= -10:
             hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
-            results = Alert.objects.filter(trader=trader, company=t[0]) 
+            results = Alert.objects.filter(trader=trader, company=t[0])
             # if the company has a time less than an hour ago, update the time and
             # add the company to the alerts list
             if len(results) == 0 or results[0].date < hour_ago:
@@ -309,9 +309,9 @@ def get_welcome_briefing(request):
     if len(c_hit_counts) == 0 and len(i_hit_counts) == 0:
         briefing["messages"].append({
             "type": "text",
-            "body": "You appear not to have show interest in any companies " +
+            "body": "You appear not to have shown interest in any companies " +
                     "or industries yet. Once you have, I can give you a brief " +
-                    "summary on they're performance since you last logged in",
+                    "summary on their performance since you last logged in",
             "caption": ""
         })
     else:
@@ -341,14 +341,14 @@ def company_briefing(c_hit_counts, max_companies):
     # returns a max of two companies with a probability proportional to their hit count
     # over the total hit counts for the user
     cs = get_from_weigted_probability(
-            [(c.company, c.hit_count) for c in c_hit_counts], 
+            [(c.company, c.hit_count) for c in c_hit_counts],
             max_companies
         )
     c_msg = ""
     for c in cs:
         c_msg +=    (capName(c.name) + " currently has a price of £" + str(c.getSpotPrice()) + " " +
-                    "with a percentage change of " + 
-                    ("%.2f" % c.getSpotPercentageDifference()) + 
+                    "with a percentage change of " +
+                    ("%.2f" % c.getSpotPercentageDifference()) +
                     "%. ")
     # for the most liked company out of the randomly chosen, get their spot history
     best_company = cs[0]
@@ -374,18 +374,18 @@ def industry_briefing(i_hit_counts, max_industries):
     inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
     price1 = inds[0].getSpotPrice()
     i_msg = ""
-    i_msg +=    ("The " + capName(inds[0].name) + " industry has a current price of £" + 
+    i_msg +=    ("The " + capName(inds[0].name) + " industry has a current price of £" +
                 str(price1) + " " +
-                "with a percentage change of " + 
+                "with a percentage change of " +
                 ("%.2f" % inds[0].getSpotPercentageDifference()) +
                 "%. ")
     if 1 < len(inds):
         price2 = inds[1].getSpotPrice()
-        i_msg +=    (capName(inds[1].name) + 
+        i_msg +=    (capName(inds[1].name) +
                     (" is looking better " if price1 < price2 else "is behind ") +
                     "with a combined stock price of £" + str(price2) +
-                    ", and has a change of " + 
-                    ("%.2f" % inds[1].getSpotPercentageDifference()) + 
+                    ", and has a change of " +
+                    ("%.2f" % inds[1].getSpotPercentageDifference()) +
                     "%.")
     return {
         "type": "text",
@@ -448,7 +448,7 @@ def get_from_weigted_probability(ls, max):
         rnd = randint(0, total_score)
         for j in range(len(ls)):
             rnd -= ls[j][1]
-            # if the random number gets below zero, pop the current item 
+            # if the random number gets below zero, pop the current item
             # from the list and append it to the return list
             if rnd <= 0:
                 rtn_ls.append(ls.pop(j))
