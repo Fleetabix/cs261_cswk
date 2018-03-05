@@ -57,12 +57,14 @@ def stock_price_response(request):
             return nl.turnIntoResponseWithCaption(message, caption)
         #Response for no companies being listed.
         return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
-    elif len(companies) == 1:
+    elif len(companies) == 1 and len(areas)==0:
         message = "Here's " + nl.posessive(companies[0]) + " current price:"
         caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
         caption = nl.printAsSterling(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
     else:
+        for i in areas:
+            companies = union(companies, companiesInIndustry(i))
         return makeBarChartOf(companies, "Current Stock price", getSpotPrice)
 
 def percent_difference_response(request):
@@ -142,7 +144,7 @@ def stock_history_response(request):
         except ValueError:
             return nl.turnIntoResponse("Please enter a more recent date.")
         chart.add_from_df(df, company)
-        l.append(company)
+        l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
     desc += " has changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
     return nl.turnChartIntoChartResponse(chart.toJson(),desc)

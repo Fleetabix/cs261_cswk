@@ -2,7 +2,7 @@
   {
     "id":"price",
     "showName":"stock price",
-    "alias":["stock price", "spot price", "price", "cost"]
+    "alias":["stock price", "spot price", "price", "cost", "stock"]
   },
   {
     "id":"news",
@@ -11,8 +11,8 @@
   },
   {
     "id":"priceDiff",
-    "showName":"spot price difference",
-    "alias":["price difference", "difference", "stock price difference", "spot price difference", "cost difference", "price change"]
+    "showName":"stock price difference",
+    "alias":["price difference", "difference", "stock price difference", "spot price difference", "cost difference", "price change", "change", "stock price change", "spot price change", "cost change"]
   },
   {
     "id":"percentDiff",
@@ -22,7 +22,7 @@
   {
     "id":"stockHist",
     "showName":"stock history",
-    "alias":["stock history", "history"]
+    "alias":["stock history", "history", "stock price history", "spot price history", "cost history", "price history"]
   },
   {
     "id":"joke",
