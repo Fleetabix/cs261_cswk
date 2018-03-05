@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.contrib.auth.models import User
 from chatbot.models import *
 
 def create_industry(name, aliases=[]):
@@ -174,3 +175,15 @@ class Command(BaseCommand):
         create_company('VOD', 'Vodafone Group', [mobi], ['Vodafone'])
         create_company('WPP', 'WPP Group', [medi])
         create_company('WTB', 'Whitbread', [trav], ['Whitbread Plc', 'Whitbread Group'])
+
+        john = User.objects.create_user('johnsmith', email='john@mail.com', password='qwertyuiop')
+        # add to portfolio
+        for ticker in ['RR.', 'LLOY']:
+            john.traderprofile.c_portfolio.add(Company.objects.get(ticker=ticker))
+        john.traderprofile.i_portfolio.add(fina)
+        # add hit counts
+        company_hits = [(10, 'EZJ'), (12, 'BARC'), (27, 'RR.'), (7, 'LLOY'), (3, 'BA.'), (1, 'AAL')]
+        for t in company_hits:
+            c = Company.objects.get(ticker=t[1])
+            CompanyHitCount.objects.create(company=c, trader=john.traderprofile, hit_count=t[0])
+        IndustryHitCount.objects.create(industry=aero, trader=john.traderprofile, hit_count=3)
