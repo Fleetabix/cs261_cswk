@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     // every checkInterval seconds, look for big price drops or
     // any breaking news
-    var checkInterval = 60 * second;
+    var checkInterval = 5 * 60 * second;
     setInterval(function() {
         getAlerts(checkInterval);
     }, checkInterval);
@@ -78,6 +78,7 @@ function getAlerts(checkInterval) {
         dataType: "json",
         method: "get"
     }).done(function(response) {
+        console.log(response);
         var name = response["name"];
         for (key in response["price-drops"]) {
             drop = response["price-drops"][key];
@@ -90,13 +91,8 @@ function getAlerts(checkInterval) {
                 "£"+drop.price+"</p>"
             );
         }
-        /*
-        var delay = 800;
-        for (i in response["messages"]) {
-            var message = response["messages"][i];
-            outputResponse(name, message, delay * i);
-        }
-        */
+        var message = response["breaking-news"];
+        outputResponse(name, message, 1000);
     }).fail(function (response) {
         console.log("-----Fail-------");
         console.log(response);
