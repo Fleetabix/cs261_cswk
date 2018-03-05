@@ -73,6 +73,130 @@ def ask_chatbot(request):
 
 
 @login_required
+def get_entities(request):
+    """
+        Used to get a list of matching entities (at this
+        moment just companies) given a query.
+    """
+    entity_type = request.GET.get('type')
+    query = request.GET.get('query')
+    user = request.user
+    result_set = None
+    # get all companies or industries (depending on the type) that have
+    # aliases like the query but are not in the user's portfolio
+    if entity_type == "industry":
+        result_set = IndustryAlias.objects \
+            .exclude(industry__in=user.traderprofile.i_portfolio.all()) \
+            .filter(alias__contains=query)
+    else:
+        result_set = CompanyAlias.objects \
+            .exclude(company__in=user.traderprofile.c_portfolio.all()) \
+            .filter(alias__contains=query)
+
+    # add all the companies we got to the data object to return
+    data = {}
+    for r in result_set:
+        e = r.industry if (entity_type == "industry") else r.company
+        key = e.id
+        data[e.id] = {
+            "name": e.name
+        }
+        # if we are searching for companies, add the ticker
+        if entity_type == "company":
+            data[e.id]["ticker"] = e.ticker
+    return JsonResponse({"type": entity_type, "data": data})
+
+
+@login_required
+def add_to_portfolio(request):
+    """
+        Given a ticker in the request. Add the relevant company to the
+        user's portfolio.
+    """
+    user = request.user
+    entity_type = request.POST.get("type")
+    if entity_type == "industry":
+        i = Industry.objects.get(id=request.POST.get("id"))
+        user.traderprofile.i_portfolio.add(i)
+    else:
+        c = Company.objects.get(id=request.POST.get("id"))
+        user.traderprofile.c_portfolio.add(c)
+    return JsonResponse({"status": "whooohoo!"})
+
+
+@login_required
+def get_portfolio(request):
+    """
+        Returns all the companies and industries the user has in
+        their portfolio.
+    """
+    data = {}
+    user = request.user
+    include_historical = request.GET.get("historical")
+    # get all the companies in the user's portfolio
+    companies = user.traderprofile.c_portfolio.all()
+    now = datetime.datetime.today()
+    last_week = datetime.timedelta(days=7)
+    for c in companies:
+        data[c.id] = {
+            "type": "company",
+            "ticker": c.ticker,
+            "name": c.name,
+            "price": c.getSpotPrice(),
+            "change": c.getSpotPercentageDifference(),
+        }
+        if include_historical == "true":
+            df = c.getStockHistory(now - last_week, now)
+            chart = Chart()
+            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
+            data[c.id]["historical"] = chart.toJson()
+    # get all the industries in the user's portfolio
+    industries = user.traderprofile.i_portfolio.all()
+    for i in industries:
+        data[i.id] = {
+            "type": "industry",
+            "name": i.name,
+            "price": i.getSpotPrice(),
+            "change": i.getSpotPercentageDifference()
+        }
+        if include_historical == "true":
+            # get the dataframes for each company in the industry
+            dfs = i.getStockHistory(now - last_week, now)
+            #for each data frame, alter the chart by adding the new valus
+            if len(dfs) > 0:
+                chart = Chart()
+                chart.add_from_df(df=dfs[0], label=i.name)
+                for j in range(1, len(dfs)):
+                    df = dfs[j]
+                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                data[i.id]["historical"] = chart.toJson()
+    return JsonResponse(data)
+
+
+@login_required
+def remove_from_portfolio(request):
+    entity_type = request.POST.get("type")
+    id = request.POST.get("id")
+    user = request.user
+    if entity_type == "industry":
+        user.traderprofile.i_portfolio.remove(Industry.objects.get(id=id))
+    else:
+        user.traderprofile.c_portfolio.remove(Company.objects.get(id=id))
+    return JsonResponse({"status": "yehhhhh!"})
+
+def capName(name):
+    exceptions = ['for', 'and']
+    split = name.split(" ")
+    capitalised = ""
+    for s in split:
+        if s in exceptions:
+            capitalised += s + " "
+        else:
+            capitalised += s[:1].upper() + s[1:] + " "
+    return capitalised.strip()
+
+
+@login_required
 def get_price_drop_alerts(request):
     """
         Finds any companies that have a price percentage change
@@ -552,126 +676,3 @@ def extractTickers(results):
     for company in results:
         output.append(company.ticker)
     return output
-
-@login_required
-def get_entities(request):
-    """
-        Used to get a list of matching entities (at this
-        moment just companies) given a query.
-    """
-    entity_type = request.GET.get('type')
-    query = request.GET.get('query')
-    user = request.user
-    result_set = None
-    # get all companies or industries (depending on the type) that have
-    # aliases like the query but are not in the user's portfolio
-    if entity_type == "industry":
-        result_set = IndustryAlias.objects \
-            .exclude(industry__in=user.traderprofile.i_portfolio.all()) \
-            .filter(alias__contains=query)
-    else:
-        result_set = CompanyAlias.objects \
-            .exclude(company__in=user.traderprofile.c_portfolio.all()) \
-            .filter(alias__contains=query)
-
-    # add all the companies we got to the data object to return
-    data = {}
-    for r in result_set:
-        e = r.industry if (entity_type == "industry") else r.company
-        key = e.id
-        data[e.id] = {
-            "name": e.name
-        }
-        # if we are searching for companies, add the ticker
-        if entity_type == "company":
-            data[e.id]["ticker"] = e.ticker
-    return JsonResponse({"type": entity_type, "data": data})
-
-
-@login_required
-def add_to_portfolio(request):
-    """
-        Given a ticker in the request. Add the relevant company to the
-        user's portfolio.
-    """
-    user = request.user
-    entity_type = request.POST.get("type")
-    if entity_type == "industry":
-        i = Industry.objects.get(id=request.POST.get("id"))
-        user.traderprofile.i_portfolio.add(i)
-    else:
-        c = Company.objects.get(id=request.POST.get("id"))
-        user.traderprofile.c_portfolio.add(c)
-    return JsonResponse({"status": "whooohoo!"})
-
-
-@login_required
-def get_portfolio(request):
-    """
-        Returns all the companies and industries the user has in
-        their portfolio.
-    """
-    data = {}
-    user = request.user
-    include_historical = request.GET.get("historical")
-    # get all the companies in the user's portfolio
-    companies = user.traderprofile.c_portfolio.all()
-    now = datetime.datetime.today()
-    last_week = datetime.timedelta(days=7)
-    for c in companies:
-        data[c.id] = {
-            "type": "company",
-            "ticker": c.ticker,
-            "name": c.name,
-            "price": c.getSpotPrice(),
-            "change": c.getSpotPercentageDifference(),
-        }
-        if include_historical == "true":
-            df = c.getStockHistory(now - last_week, now)
-            chart = Chart()
-            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
-            data[c.id]["historical"] = chart.toJson()
-    # get all the industries in the user's portfolio
-    industries = user.traderprofile.i_portfolio.all()
-    for i in industries:
-        data[i.id] = {
-            "type": "industry",
-            "name": i.name,
-            "price": i.getSpotPrice(),
-            "change": i.getSpotPercentageDifference()
-        }
-        if include_historical == "true":
-            # get the dataframes for each company in the industry
-            dfs = i.getStockHistory(now - last_week, now)
-            #for each data frame, alter the chart by adding the new valus
-            if len(dfs) > 0:
-                chart = Chart()
-                chart.add_from_df(df=dfs[0], label=i.name)
-                for j in range(1, len(dfs)):
-                    df = dfs[j]
-                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
-                data[i.id]["historical"] = chart.toJson()
-    return JsonResponse(data)
-
-
-@login_required
-def remove_from_portfolio(request):
-    entity_type = request.POST.get("type")
-    id = request.POST.get("id")
-    user = request.user
-    if entity_type == "industry":
-        user.traderprofile.i_portfolio.remove(Industry.objects.get(id=id))
-    else:
-        user.traderprofile.c_portfolio.remove(Company.objects.get(id=id))
-    return JsonResponse({"status": "yehhhhh!"})
-
-def capName(name):
-    exceptions = ['for', 'and']
-    split = name.split(" ")
-    capitalised = ""
-    for s in split:
-        if s in exceptions:
-            capitalised += s + " "
-        else:
-            capitalised += s[:1].upper() + s[1:] + " "
-    return capitalised.strip()
