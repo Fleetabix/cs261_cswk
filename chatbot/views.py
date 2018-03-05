@@ -57,10 +57,14 @@ def get_alerts(request):
                 appear all the time 
     """
     trader = request.user.traderprofile
-    check_interval = request.GET.get("check_interval")
+    check_interval = int(request.GET.get("check_interval"))
     response = {
         "name": "FLORIN",
-        "breaking-news": [],
+        "breaking-news": {
+            "type": "news",
+            "heading": "Breaking News",
+            "articles": []
+        },
         "price-drops": []
     }
     # find any big price drops
@@ -88,6 +92,33 @@ def get_alerts(request):
                 results[0].save()
 
     # find any breaking news
+    total_hit_counts = \
+        sum([c.hit_count for c in trader.companyhitcount_set.all()]) + \
+        sum([i.hit_count for i in trader.industryhitcount_set.all()])
+    # get all companies the user has shown interest in
+    entities_with_score = list(
+        set().union(
+            [(c.hitcount, c.company) for c in trader.companyhitcount_set.all()],
+            [(i.hitcount, i.company) for i in trader.industryhitcount_set.all()],
+        )
+    )
+    list.sort(entities_with_score, reverse=True)
+    # remove the score and just keep the entities
+    entities = list(map(lambda x: x[1], entities_with_score))
+    for c in trader.c_portfolio.all():
+        if not c in entities:
+            entities.insert(0, c)
+    for i in range(min(5, len(entities))):
+        e = entities[i]
+        last_check = datetime.datetime.now() - datetime.timedelta(seconds=check_interval)
+        for n in e.getNewsFrom(start=last_check, end=datetime.datetime.now(), breaking=True):
+            response["breaking-news"]["articles"].append({
+                "type": "news",
+                "url": n.url,
+                "title": n.headline,
+                "pic_url": n.image,
+                "description": n.date_published
+            })
     return JsonResponse(response)
 
 
