@@ -541,7 +541,7 @@ def percent_difference_response(request):
         caption = nl.printAsPercent(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
     else:
-        return makeBarChartOf(companies, "Recent Percentage Difference", getPercentDiff)
+        return makeBarChartOf(companies, "Recent Percentage Difference", getPercentDiff, lambda x: "%.2f%%" % x)
 
 def price_difference_response(request):
     companies = request["companies"]
@@ -642,14 +642,14 @@ def news_response(request):
         return nl.turnIntoResponse("I'm sorry, I couldn't find any news for "+ nl.makeOrList(companies))
     return nl.turnIntoNews(articles)
 
-def makeBarChartOf(companies, qualName, funct):
+def makeBarChartOf(companies, qualName, funct, print_format=lambda x: nl.printAsSterling(x)):
     data = []
     caption = []
     counter = len(companies)
     for company in companies:
         price = funct(Company.objects.get(ticker = company))
         data.append({"label":company, "data":[price]})
-        caption.append(nl.posessive(company) + " at " + nl.printAsSterling(price))
+        caption.append(nl.posessive(company) + " at " + print_format(price))
     return nl.turnIntoBarChart([qualName],data, nl.makeList(caption))
 
 def getSpotPrice(obj):
