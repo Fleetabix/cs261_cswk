@@ -399,6 +399,7 @@ canvas {
     z-index: 100;
     border: 1px solid black;
     box-shadow: 5px 5px #333;
+    overflow-y: scroll;
 }
 
 @media only screen and (max-width: 768px) {
@@ -411,7 +412,7 @@ canvas {
 }
 
 .popup-body {
-    margin: 3em;
+    margin: 1.5em;
     text-align: center;
 }
 
