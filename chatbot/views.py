@@ -4,9 +4,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 import datetime
+from django.utils import timezone
 import calendar
+from random import randint
 
 from chatbot.models import *
 from chatbot.nl import nl
@@ -29,6 +32,7 @@ def ask_chatbot(request):
         parse the message then return a valid response.
     """
     query = request.POST.get("query")
+    trader = request.user.traderprofile
     data = {
         "name": "FLORIN",
         "messages": []
@@ -38,10 +42,281 @@ def ask_chatbot(request):
         data["messages"].append(nl.genericUnknownResponse())
     else:
         for request in requests:
+            # for each company that was requested, incremenet the hit count
+            for ticker in request["companies"]:
+                try:
+                    hc = CompanyHitCount.objects.get(company__ticker=ticker, trader=trader)
+                    hc.hit_count += 1
+                    hc.save()
+                except ObjectDoesNotExist:
+                    CompanyHitCount.objects.create(
+                        company=Company.objects.get(ticker=ticker),
+                        trader=trader,
+                        hit_count=1
+                    ) 
+            # for each industry that was requested, incremenet the hit count
+            for name in request["areas"]:
+                try:
+                    hc = IndustryHitCount.objects.get(industry__name=name, trader=trader)
+                    hc.hit_count += 1
+                    hc.save()
+                except ObjectDoesNotExist:
+                    IndustryHitCount.objects.create(
+                        industry=Industry.objects.get(name=name),
+                        trader=trader,
+                        hit_count=1
+                    ) 
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             data["messages"].append(respond_to_request(request))
     return JsonResponse(data)
+
+
+@login_required
+def get_alerts(request):
+    """
+        Finds the following alert worthy information and returns it
+        back to the user.
+        - Drops in stock price
+        - Breaking news in portfolio
+        //TODO  not sure how to mark off a breaking news story as read so it doesn't
+                appear all the time 
+    """
+    trader = request.user.traderprofile
+    check_interval = int(request.GET.get("check_interval"))
+    response = {
+        "name": "FLORIN",
+        "breaking-news": {
+            "type": "news",
+            "heading": "Breaking News",
+            "articles": []
+        },
+        "price-drops": []
+    }
+    # find any big price drops
+    perc_change = [(c, c.getSpotPercentageDifference()) for c in Company.objects.all()]
+    for t in perc_change:
+        # if the price has dropped by more than x%, then...
+        if t[1] <= -10:
+            hour_ago = timezone.now() - datetime.timedelta(hours=1)
+            results = Alert.objects.filter(trader=trader, company=t[0]) 
+            # if the company has a time less than an hour ago, update the time and
+            # add the company to the alerts list
+            if len(results) == 0 or results[0].date < hour_ago:
+                response["price-drops"].append({
+                    "ticker": t[0].ticker,
+                    "name": t[0].name,
+                    "price": t[0].getSpotPrice(),
+                    "change": t[1]
+                })
+            # if the alert row for this user and company doesn't exist create it
+            # otherwise alter the current record
+            if len(results) == 0:
+                Alert.objects.create(trader=trader, company=t[0], date=timezone.now())
+            else:
+                results[0].date = timezone.now()
+                results[0].save()
+
+    # find any breaking news
+    total_hit_counts = \
+        sum([c.hit_count for c in trader.companyhitcount_set.all()]) + \
+        sum([i.hit_count for i in trader.industryhitcount_set.all()])
+    # get all companies the user has shown interest in
+    entities_with_score = list(
+        set().union(
+            [(c.hitcount, c.company) for c in trader.companyhitcount_set.all()],
+            [(i.hitcount, i.company) for i in trader.industryhitcount_set.all()],
+        )
+    )
+    list.sort(entities_with_score, reverse=True)
+    # remove the score and just keep the entities
+    entities = list(map(lambda x: x[1], entities_with_score))
+    for c in trader.c_portfolio.all():
+        if not c in entities:
+            entities.insert(0, c)
+    for i in range(min(5, len(entities))):
+        e = entities[i]
+        last_check = datetime.datetime.now() - datetime.timedelta(seconds=check_interval)
+        for n in e.getNewsFrom(start=last_check, end=datetime.datetime.now(), breaking=True):
+            response["breaking-news"]["articles"].append({
+                "type": "news",
+                "url": n.url,
+                "title": n.headline,
+                "pic_url": n.image,
+                "description": n.date_published
+            })
+    return JsonResponse(response)
+
+
+@login_required
+def get_welcome_briefing(request):
+    """
+        Given a time sice the user's last login, this will look at the user's
+        favourite companies and industries and give them information they
+        might find useful and news since they were last logged in.
+    """
+    time_stamp = int(request.GET.get("last_login"))
+    time_since = datetime.datetime.fromtimestamp(time_stamp)
+    user = request.user
+    briefing = {
+        "name": "FLORIN",
+        "messages": []
+    }
+    # get some news from user's favourite companies/industry and print of some
+    # stock prices
+    c_hit_counts = user.traderprofile.companyhitcount_set.order_by("-hit_count")
+    i_hit_counts = user.traderprofile.industryhitcount_set.order_by("-hit_count")
+    if len(c_hit_counts) == 0 and len(i_hit_counts) == 0:
+        briefing["messages"].append({
+            "type": "text",
+            "body": "You appear not to have show interest in any companies " +
+                    "or industries yet. Once you have, I can give you a brief " +
+                    "summary on they're performance since you last logged in",
+            "caption": ""
+        })
+    else:
+        # if there is a company or industry they are interested in, proceed with
+        # with the briefing
+        if len(c_hit_counts) > 0:
+            briefing["messages"].append(company_briefing(c_hit_counts, 2))
+
+        # get a briefing on favourite industries if the user has some
+        if len(i_hit_counts) > 0:
+            briefing["messages"].append(industry_briefing(i_hit_counts, 2))
+
+        # get 3 articles from favourite companies and industries since last login
+        briefing["messages"].append(news_briefing(c_hit_counts, i_hit_counts, time_since, 3))
+
+
+
+    return JsonResponse(briefing)
+
+
+def company_briefing(c_hit_counts, max_companies):
+    """
+        Given the user's company hit counts, get a maximum of max_companies
+        companies, and return a message to display to the user. Assumes
+        the size of c_hit_counts is greater than 0
+    """
+    # returns a max of two companies with a probability proportional to their hit count
+    # over the total hit counts for the user
+    cs = get_from_weigted_probability(
+            [(c.company, c.hit_count) for c in c_hit_counts], 
+            max_companies
+        )
+    c_msg = ""
+    for c in cs:
+        c_msg +=    (capName(c.name) + " currently has a price of £" + str(c.getSpotPrice()) + " " +
+                    "with a percentage change of " + 
+                    ("%.2f" % c.getSpotPercentageDifference()) + 
+                    "%. ")
+    # for the most liked company out of the randomly chosen, get their spot history
+    best_company = cs[0]
+    c_msg += "The chart shows stock history of " + capName(best_company.name) + " for the last week."
+    now = datetime.datetime.now()
+    last_week = now - datetime.timedelta(days=7)
+    chart = Chart()
+    df = best_company.getStockHistory(last_week, now)
+    chart.add_from_df(df=df, label=best_company.ticker +" - "+capName(best_company.name))
+    return {
+        "type": "chart",
+        "description": c_msg,
+        "chart_object": chart.toJson()
+    }
+
+
+def industry_briefing(i_hit_counts, max_industries):
+    """
+        Given a list of industry hit counts and a number of how many industies
+        to include in the briefing, choose some industries based on the
+        number of hitcounts they have, and return a message to be displayed
+    """
+    inds = get_from_weigted_probability([(i.industry, i.hit_count) for i in i_hit_counts], 2)
+    price1 = inds[0].getSpotPrice()
+    i_msg = ""
+    i_msg +=    ("The " + capName(inds[0].name) + " industry has a current price of £" + 
+                str(price1) + " " +
+                "with a percentage change of " + 
+                ("%.2f" % inds[0].getSpotPercentageDifference()) +
+                "%. ")
+    if 1 < len(inds):
+        price2 = inds[1].getSpotPrice()
+        i_msg +=    (capName(inds[1].name) + 
+                    (" is looking better " if price1 < price2 else "is behind ") +
+                    "with a combined stock price of £" + str(price2) +
+                    ", and has a change of " + 
+                    ("%.2f" % inds[1].getSpotPercentageDifference()) + 
+                    "%.")
+    return {
+        "type": "text",
+        "body": i_msg,
+        "caption": ""
+    }
+
+
+def news_briefing(c_hit_counts, i_hit_counts, time_since, max_count):
+    """
+        Given industry and company hit counts, choose max_count of
+        companies/industries, and get one article from each from the
+        given time 'time_since'
+    """
+    # unions two lists of tuples of type (entity, hitcount)
+    favourite_hits = list(set().union(
+        [(c.company, c.hit_count) for c in c_hit_counts],
+        [(i.industry, i.hit_count) for i in i_hit_counts]
+    ))
+    # sort it by descending order of the second element in the tuple
+    sorted(favourite_hits, key=lambda x: -x[1])
+    best_entities = get_from_weigted_probability(favourite_hits, max_count)
+    articles = []
+    for e in best_entities:
+        ns = e.getNewsFrom(time_since, datetime.datetime.now())
+        if len(ns)> 0:
+            articles.append(ns[0])
+    # generate a message with the given articles
+    msg = {}
+    if len(articles) > 0:
+        news_json = []
+        for n in articles:
+            news_json.append({
+                "url": n.url,
+                "title": n.headline,
+                "pic_url": n.image,
+                "description": n.get_str_date()
+            })
+        msg = {
+            "type": "news",
+            "articles": news_json
+        }
+    else:
+        msg = {
+            "type": "text",
+            "body": "There hasn't been any major news since you last logged in."
+        }
+    return msg
+
+
+def get_from_weigted_probability(ls, max):
+    """
+        Takes in a sorted list of tuples (object, score) and returns a maximum of
+        max items such that the probabilty of picking them is proportional
+        to the score of the object over the total score of the list
+    """
+    rtn_ls = []
+    for i in range(max):
+        total_score = sum(map(lambda x: x[1], ls))
+        rnd = randint(0, total_score)
+        for j in range(len(ls)):
+            rnd -= ls[j][1]
+            # if the random number gets below zero, pop the current item 
+            # from the list and append it to the return list
+            if rnd <= 0:
+                rtn_ls.append(ls.pop(j))
+                break
+    # return a list of the first item in the tuples, sorted in descending order by the
+    # second item in the tuple
+    return list(map(lambda x: x[0], sorted(rtn_ls, key=lambda x: -x[1])))
+
 
 def respond_to_request(request):
     """
@@ -352,13 +627,14 @@ def get_portfolio(request):
         if include_historical == "true":
             # get the dataframes for each company in the industry
             dfs = i.getStockHistory(now - last_week, now)
-            chart = Chart()
             #for each data frame, alter the chart by adding the new valus
-            chart.add_from_df(df=dfs[0], label=i.name)
-            for j in range(1, len(dfs)):
-                df = dfs[j]
-                chart.alter_from_df(df=df, rule=lambda x, y: x + y)
-            data[i.id]["historical"] = chart.toJson()
+            if len(dfs) > 0:
+                chart = Chart()
+                chart.add_from_df(df=dfs[0], label=i.name)
+                for j in range(1, len(dfs)):
+                    df = dfs[j]
+                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                data[i.id]["historical"] = chart.toJson()
     return JsonResponse(data)
 
 
@@ -373,82 +649,13 @@ def remove_from_portfolio(request):
         user.traderprofile.c_portfolio.remove(Company.objects.get(id=id))
     return JsonResponse({"status": "yehhhhh!"})
 
-def simple_line_chart(line_name, labels, values):
-    """
-        Creates a simple line graph with 1 line where labels is the
-        x-axis and values is the y axis.
-    """
-    #TODO do this function
-    return  {
-                "type": "line",
-                "data": {
-                    "labels": labels,
-                    "datasets": [
-                        {
-                            "label": line_name,
-                            "data" : values,
-                            "lineTension": 0
-                        }
-                    ]
-                }
-            }
-
-
-def getTextData(query):
-    """
-        test for text response
-    """
-    return  {
-                "name": "FLORIN",
-                "type": "text",
-                "body": "The current spot price of '" + query.split(" ")[0].upper() + "' is",
-                "caption" : "£1,000,000"
-            }
-
-
-def getNewsData():
-    """
-        test for the news response
-    """
-    return  {
-                "name": "FLORIN",
-                "type": "news",
-                "articles": [
-                    {
-                        "title": "Google says its AI can diagnose some eye diseases",
-                        "description": "Uber settles with Google in tech theft lawsuit. Google's sister company Waymo sued Uber over the alleged theft of self-driving technology from it by a former employee. 17:09, UK, Friday 09 February 2018.",
-                        "url": "https://www.google.co.uk/url?sa=t&rct=j&q=&esrc=s&source=newssearch&cd=2&cad=rja&uact=8&ved=0ahUKEwjIv4_GsZnZAhXLKcAKHcZKCJMQqQIIKygAMAE&url=https%3A%2F%2Fnews.sky.com%2Fstory%2Fgoogle-says-its-ai-can-diagnose-some-eye-diseases-11237882&usg=AOvVaw1mAuYxK1tq29DQjK99ywmh",
-                        "pic_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLpMwo-Fv6-An-FR73RDkqfPJH2oUOp9x1jELp3jdy8Kir40yHqWPA-otEadEmVYewxe1Wpic"
-                    },
-                    {
-                        "title": "If you'd invested in: EasyJet and WPP",
-                        "description": "In the first nine months, WPP's like-for-like revenue fell by 0.9% as huge customers cut marketing budgets after questioning the effectiveness of buying online advertisements through media firms, rather than turning to Google.",
-                        "url": "https://www.google.co.uk/url?sa=t&rct=j&q=&esrc=s&source=newssearch&cd=3&cad=rja&uact=8&ved=0ahUKEwioo7zn1pnZAhUFJsAKHYE8CHoQqQIILigAMAI&url=https%3A%2F%2Fmoneyweek.com%2Fif-youd-invested-in-easyjet-and-wpp%2F&usg=AOvVaw2SGlOHd2vVPZVD8ZlDmwOP",
-                        "pic_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZDtEeR1fMbghVy9LkwuVkJLADg9B7hagjaKRODMChHt6AHEeYQ5VzT3aFr0GSZUtNMnQuwwg"
-                    }
-                ]
-            }
-
-
-def getChartData():
-    return  {
-                "name": "FLORIN",
-                "type": "chart",
-                "chart_object": {
-                    "type": "line",
-                    "data": {
-                        "labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
-                        "datasets": [
-                            {
-                                "label": "GOOG",
-                                "data": [800, 1356, 1245, 1846, 2000]
-                            },
-                            {
-                                "label": "AAPL",
-                                "data": [650, 976, 1445, 1646, 2500]
-                            }
-                        ]
-                    }
-                },
-                "description": "Google's spot price over the last week"
-            }
+def capName(name):
+    exceptions = ['for', 'and']
+    split = name.split(" ")
+    capitalised = ""
+    for s in split:
+        if s in exceptions:
+            capitalised += s + " "
+        else:
+            capitalised += s[:1].upper() + s[1:] + " "
+    return capitalised.strip()
