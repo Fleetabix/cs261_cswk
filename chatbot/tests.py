@@ -258,7 +258,7 @@ class NLPTests(TestCase):
         comparatives = ["higher", "highest", "worse"]
         queries = [
             "Is AMZ tock price greater than GOOGL", 
-            "Who has the best percentage change out of HNS and amazon",
+            "Who has the best percentage change out of HMS and amazon",
             "Is google doing worse than amazon?"
             ]
         responses = [nl.getRequests(x) for x in queries]
@@ -413,7 +413,7 @@ class NLPTests(TestCase):
         self.assertSetEqual(set(["GOOGL", "AMZ", "HNS"]), set(r1[0]["companies"]))
         self.assertIn("price", r1[0]["quality"])
         self.assertSetEqual(set(["Mining", "Technology"]), set(r2[0]["areas"]))
-        self.assertIn("%diff", r2[0]["quality"])
+        self.assertIn("percentDiff", r2[0]["quality"])
 
     def test_correct_response_from_nonesense_phrase(self):
         """
