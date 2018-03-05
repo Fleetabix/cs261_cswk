@@ -142,7 +142,7 @@ def stock_history_response(request):
         except ValueError:
             return nl.turnIntoResponse("Please enter a more recent date.")
         chart.add_from_df(df, company)
-        l.append(company)
+        l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
     desc += " has changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
     return nl.turnChartIntoChartResponse(chart.toJson(),desc)
