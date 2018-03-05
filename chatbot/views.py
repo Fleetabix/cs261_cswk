@@ -73,24 +73,13 @@ def ask_chatbot(request):
 
 
 @login_required
-def get_alerts(request):
+def get_price_drop_alerts(request):
     """
-        Finds the following alert worthy information and returns it
-        back to the user.
-        - Drops in stock price
-        - Breaking news in portfolio
-        //TODO  not sure how to mark off a breaking news story as read so it doesn't
-                appear all the time 
+        Finds any companies that have a price percentage change
+        of less than -10% and returns them.
     """
     trader = request.user.traderprofile
-    check_interval = int(request.GET.get("check_interval"))
     response = {
-        "name": "FLORIN",
-        "breaking-news": {
-            "type": "news",
-            "heading": "Breaking News",
-            "articles": []
-        },
         "price-drops": []
     }
     # find any big price drops
@@ -98,7 +87,7 @@ def get_alerts(request):
     for t in perc_change:
         # if the price has dropped by more than x%, then...
         if t[1] <= -10:
-            hour_ago = timezone.now() - datetime.timedelta(hours=1)
+            hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
             results = Alert.objects.filter(trader=trader, company=t[0]) 
             # if the company has a time less than an hour ago, update the time and
             # add the company to the alerts list
@@ -112,15 +101,32 @@ def get_alerts(request):
             # if the alert row for this user and company doesn't exist create it
             # otherwise alter the current record
             if len(results) == 0:
-                Alert.objects.create(trader=trader, company=t[0], date=timezone.now())
+                Alert.objects.create(trader=trader, company=t[0], date=datetime.datetime.now())
             else:
-                results[0].date = timezone.now()
+                results[0].date = datetime.datetime.now()
                 results[0].save()
 
-    # find any breaking news
-    total_hit_counts = \
-        sum([c.hit_count for c in trader.companyhitcount_set.all()]) + \
-        sum([i.hit_count for i in trader.industryhitcount_set.all()])
+    return JsonResponse(response)
+
+
+@login_required
+def get_breaking_news(request):
+    """
+        Given an integer representing the number of
+        seconds old a breaking news story has to be to be included
+        in the response, find at most 5 breaking news stories from
+        the user's favourite companies
+    """
+    trader = request.user.traderprofile
+    check_interval = int(request.GET.get("check_interval"))
+    response = {
+        "name": "FLORIN",
+        "breaking-news": {
+            "type": "news",
+            "heading": "Breaking News",
+            "articles": []
+        }
+    }
     # get all companies the user has shown interest in
     entities_with_score = list(
         set().union(
@@ -128,25 +134,33 @@ def get_alerts(request):
             [(i.hit_count, i.industry) for i in trader.industryhitcount_set.all()],
         )
     )
+    # sort it so that the companies/industries with the highest hit count are first
     sorted(entities_with_score, key=lambda x: -x[0])
     # remove the score and just keep the entities
     entities = list(map(lambda x: x[1], entities_with_score))
+    # add in the portfolio companies if their not in the most searched
     for c in trader.c_portfolio.all():
         if not c in entities:
             entities.insert(0, c)
     # TODO change this as just picking max 5 companies then getting breaking news
     # isn't the best way to do it
-    for i in range(min(5, len(entities))):
+    i = 0
+    while len(response["breaking-news"]) <= 5 and i < len(entities):
         e = entities[i]
         last_check = datetime.datetime.now() - datetime.timedelta(seconds=check_interval)
         for n in e.getNewsFrom(start=last_check, end=datetime.datetime.now(), breaking=True):
-            response["breaking-news"]["articles"].append({
-                "type": "news",
-                "url": n.url,
-                "title": n.headline,
-                "pic_url": n.image,
-                "description": n.date_published
-            })
+            if len(response["breaking-news"] == 5):
+                break
+            else:
+                response["breaking-news"]["articles"].append({
+                    "type": "news",
+                    "url": n.url,
+                    "title": n.headline,
+                    "pic_url": n.image,
+                    "description": n.date_published
+                })
+        i += 1
+
     return JsonResponse(response)
 
 
