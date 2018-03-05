@@ -36,8 +36,7 @@ def getStockInformation(ticker):
 			raise ValueError("Ticker does not exist!")
 
 		stock = [x.text.strip() for x in data.findAll('span')]
-
-		# Retrieved time must account for 15 minute delay
+		
 		retrieved = datetime.datetime.now()
 		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
 	else:
