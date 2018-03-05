@@ -8,7 +8,7 @@ trying to use the data or nlp functions. To install them just use
 ```
 $ pip3 install -r requirments.txt
 ```
-Add any now requirements to the `requirments.txt` file (the version can be obtained by
+Add any new requirements to the `requirements.txt` file (the version can be obtained by
 running `pip3 freeze` and looking for your package)
 
 Lastly, some modules may not install properly on the DCS machines. I have not found

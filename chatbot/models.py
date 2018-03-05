@@ -190,7 +190,7 @@ def create_company(sender, instance, created, **kwargs):
             spot_price=0,
             price_difference=0,
             percent_difference=0,
-            retrieved=datetime.datetime.fromtimestamp(0)
+            retrieved=datetime.datetime.utcfromtimestamp(0)
         )
 
 
