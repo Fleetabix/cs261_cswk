@@ -212,9 +212,9 @@ function outputPortfolio(portfolio) {
                             ((e.type == "industry") ? "" : e.ticker + " ") +
                             fstUp(e.name) +
                             " - £<span class='port-price'>" +
-                            e.price.toFixed(2) + 
+                            e.price + 
                             "</span> (<span class='port-change'>" +
-                            e.change.toFixed(2) + "</span>%)" +
+                            e.change + "</span>%)" +
                         "</h5>" +
                     "</div>" +
                     "<div class='col-3 rm-prt'>" +
