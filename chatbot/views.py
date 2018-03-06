@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import datetime
 import calendar
 from random import randint
+import logging
 
 from chatbot.models import *
 from chatbot.nl import nl
@@ -70,13 +71,18 @@ def ask_chatbot(request):
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
             try:
                 data["messages"].append(respond_to_request(request))
-            except Exception:
+            except Exception as e:
                 data["messages"].append({
                     "name": "FLORIN",
                     "type": "text",
                     "body": "Sorry, something went wrong with your " + request["quality"] + "query",
-                    "caption": ""
+                    "caption": str(e)
                 })
+                print("--------------------- ERROR ---------------------")
+                logging.exception("Error while parsing %s query" % request["quality"])
+                print("------------------ REQUEST OBJ ------------------")
+                print(request)
+                print("-------------------------------------------------")
     return JsonResponse(data)
 
 
