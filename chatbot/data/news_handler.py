@@ -21,7 +21,7 @@ class NewsInformation:
 			"url": self.url,
 			"pic_url": self.image,
 			"description": self.description,
-			"date": get_str_date(self.date_published)
+			"date": self.get_str_date()
 		}
 
 	
