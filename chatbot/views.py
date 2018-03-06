@@ -219,8 +219,8 @@ def get_price_drop_alerts(request):
                 response["price-drops"].append({
                     "ticker": t[0].ticker,
                     "name": t[0].name,
-                    "price": t[0].getSpotPrice(),
-                    "change": t[1]
+                    "price": "%.2f" % t[0].getSpotPrice(),
+                    "change": "%.2f" % t[1]
                 })
             # if the alert row for this user and company doesn't exist create it
             # otherwise alter the current record
