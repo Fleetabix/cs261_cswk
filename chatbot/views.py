@@ -68,7 +68,15 @@ def ask_chatbot(request):
                     )
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
-            data["messages"].append(respond_to_request(request))
+            try:
+                data["messages"].append(respond_to_request(request))
+            except Exception:
+                data["messages"].append({
+                    "name": "FLORIN",
+                    "type": "text",
+                    "body": "Sorry, something went wrong with your " + request["quality"] + "query",
+                    "caption": ""
+                })
     return JsonResponse(data)
 
 
