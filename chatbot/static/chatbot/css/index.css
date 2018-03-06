@@ -251,6 +251,7 @@ a {
     height: 100%;
     width: 100%;
     padding: 10px;
+    overflow-x: hidden;
 }
 
 #messages::-webkit-scrollbar { 
