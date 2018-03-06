@@ -62,10 +62,10 @@ function getBriefing(since) {
         method: "get"
     }).done(function(response) {
         var name = response["name"];
-        var delay = 800;
+        var delay = 400;
         for (i in response["messages"]) {
             var message = response["messages"][i];
-            outputResponse(name, message, delay * (i + 1));
+            outputResponse(name, message, delay * i);
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
