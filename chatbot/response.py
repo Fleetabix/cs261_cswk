@@ -190,7 +190,18 @@ def news_response(request):
         for story in news:
             articles.append(nl.turnIntoArticle(story.headline, str(story.date_published), story.url, story.image))
     if len(articles) == 0:
-        return nl.turnIntoResponse("I'm sorry, I couldn't find any news for "+ nl.makeOrList(companies))
+        if "now" in time:
+            return nl.turnIntoResponse(
+                    "I'm sorry, I couldn't find any news for " +  \
+                    nl.makeOrList(companies) + \
+                    " for this week. You can specify earlier articles in your query if you wish."
+                )
+        else:
+            return nl.turnIntoResponse(
+                    "I'm sorry, I couldn't find any news for " +  \
+                    nl.makeOrList(companies) + \
+                    " from " + nl.printDate(time["start"])
+                )
     return nl.turnIntoNews(articles)
 
 def makeBarChartOf(companies, qualName, funct, print_format=lambda x: nl.printAsSterling(x)):
