@@ -234,7 +234,6 @@ function updatePortfolio(portfolio) {
     for (id in portfolio) {
         var e = portfolio[id];
         if ($("#"+e.type+id).length)  {
-            console.log("updating " + e.name);
             $("#"+e.type+id).find(".port-price").text(e.price);
             $("#"+e.type+id).find(".port-change").text(e.change);
         }
