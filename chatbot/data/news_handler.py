@@ -15,6 +15,15 @@ class NewsInformation:
 	def get_str_date(self, format="%Y-%m-%d | %H:%M:%S"):
 		return datetime.datetime.strftime(self.date_published, format)
 
+	def toJson(self):
+		return {
+			"title": self.headline,
+			"url": self.url,
+			"pic_url": self.image,
+			"description": self.description,
+			"date": get_str_date(self.date_published)
+		}
+
 	
 def getNews(name, keyword = None, breaking = None):
 	"""
