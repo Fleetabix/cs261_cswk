@@ -50,22 +50,21 @@ def stock_price_response(request):
             group = allCompanies()
         return higherLower(comparative, group, "stock price", getSpotPrice, nl.printAsSterling)
     if len(companies) == 0:
+        #Special text response for just one industry:
         if len(areas) == 1:
             message = "Here's the current price of the " + areas[0] + " industry:"
             caption = Industry.objects.get(name = areas[0]).getSpotPrice()
             caption = nl.printAsSterling(caption)
             return nl.turnIntoResponseWithCaption(message, caption)
-        #Response for no companies being listed.
-        return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
+        elif len(areas) == 0:
+            return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the stock price of.")
     elif len(companies) == 1 and len(areas)==0:
         message = "Here's " + nl.posessive(companies[0]) + " current price:"
         caption = Company.objects.get(ticker = companies[0]).getSpotPrice()
         caption = nl.printAsSterling(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
-    else:
-        for i in areas:
-            companies = union(companies, companiesInIndustry(i))
-        return makeBarChartOf(companies, "Current Stock price", getSpotPrice)
+    #If no special conditions are met:
+    return makeBarChartOf(companies, "Current Stock price", getSpotPrice, areas)
 
 def percent_difference_response(request):
     companies = request["companies"]
@@ -92,7 +91,7 @@ def percent_difference_response(request):
         caption = nl.printAsPercent(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
     else:
-        return makeBarChartOf(companies, "Recent Percentage Difference", getPercentDiff, lambda x: "%.2f%%" % x)
+        return makeBarChartOf(companies, "Recent Percentage Difference", getPercentDiff, [], lambda x: "%.2f%%" % x)
 
 def price_difference_response(request):
     companies = request["companies"]
@@ -114,15 +113,16 @@ def price_difference_response(request):
             caption = getPriceDiff(Industry.objects.get(name = areas[0]))
             caption = nl.printAsSterling(caption)
             return nl.turnIntoResponseWithCaption(message, caption)
-        #Response for no companies being listed.
-        return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the price difference of.")
+        elif len(areas) == 0:
+            #Response for no companies or industries being listed.
+            return nl.turnIntoResponse("You'll need to tell me the names of the companies you'd like the price difference of.")
     elif len(companies) == 1:
         message = "Here's " + nl.posessive(companies[0]) + " most recent price difference:"
-        caption = getPriceDiff(Company.objects.get(ticker = companies[0]))
+        caption = getPriceDiff(Company.objects.get(ticker = companies))
         caption = nl.printAsSterling(caption)
         return nl.turnIntoResponseWithCaption(message, caption)
-    else:
-        return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
+    #If no special case is met
+    return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
 
 def stock_history_response(request):
     time = request["time"]
@@ -181,7 +181,7 @@ def news_response(request):
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
     if len(companies) == 0:
-        return nl.turnIntoResponse("Which companies would you like news about?")
+        return nl.turnIntoResponse("You'll need to specify which companies you'd like news about.")
     for company in companies:
         if "now" in time:
             news = Company.objects.get(ticker = company).getNews()
@@ -204,7 +204,7 @@ def news_response(request):
                 )
     return nl.turnIntoNews(articles)
 
-def makeBarChartOf(companies, qualName, funct, print_format=lambda x: nl.printAsSterling(x)):
+def makeBarChartOf(companies, qualName, funct, industries = [], print_format=lambda x: nl.printAsSterling(x)):
     data = []
     caption = []
     counter = len(companies)
@@ -212,6 +212,10 @@ def makeBarChartOf(companies, qualName, funct, print_format=lambda x: nl.printAs
         price = funct(Company.objects.get(ticker = company))
         data.append({"label":company, "data":[price]})
         caption.append(nl.posessive(company) + " at " + print_format(price))
+    for industry in industries:
+        price = funct(Industry.objects.get(name = industry))
+        data.append({"label":industry, "data":[price]})
+        caption.append(nl.posessive(industry) + " at " + print_format(price))
     return nl.turnIntoBarChart([qualName],data, nl.makeList(caption))
 
 def getSpotPrice(obj):
