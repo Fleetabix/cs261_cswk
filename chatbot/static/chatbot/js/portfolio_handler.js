@@ -73,6 +73,12 @@ $(document).ready(function() {
             console.log(data);
         });
     });
+
+    //every 15 seconds, get updated prices and percentage changes for the
+    //portfolio
+    setInterval(function() {
+        getPortfolio(false, updatePortfolio);
+    }, 15 * 1000);
 });
 
 
@@ -173,7 +179,6 @@ function printSearchResults(results) {
  *  @param {function} doSomething a function that uses the portfolio data
  */
 function getPortfolio(historical, doSomething) {
-    $("#portfolios").empty();
     console.log("getting portfolios");
     data = {"historical": historical};
     $.ajax({
@@ -195,6 +200,7 @@ function getPortfolio(historical, doSomething) {
  *  @param {portfolio object} portfolio 
  */
 function outputPortfolio(portfolio) {
+    $("#portfolios").empty();
     for (id in portfolio) {
         // add portfolio items here
         e = portfolio[id];
@@ -205,9 +211,10 @@ function outputPortfolio(portfolio) {
                         "<h5>" + 
                             ((e.type == "industry") ? "" : e.ticker + " ") +
                             fstUp(e.name) +
-                            " - £" +
+                            " - £<span class='port-price'>" +
                             e.price.toFixed(2) + 
-                            " (" + e.change.toFixed(2) + "%)" +
+                            "</span> (<span class='port-change'>" +
+                            e.change.toFixed(2) + "</span>%)" +
                         "</h5>" +
                     "</div>" +
                     "<div class='col-3 rm-prt'>" +
@@ -220,6 +227,17 @@ function outputPortfolio(portfolio) {
             "</div>"
         );
         createChart(e.type+id+"chart", e.historical);
+    }
+}
+
+function updatePortfolio(portfolio) {
+    for (id in portfolio) {
+        var e = portfolio[id];
+        if ($("#"+e.type+id).length)  {
+            console.log("updating " + e.name);
+            $("#"+e.type+id).find(".port-price").text(e.price);
+            $("#"+e.type+id).find(".port-change").text(e.change);
+        }
     }
 }
 

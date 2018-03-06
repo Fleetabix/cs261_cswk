@@ -142,8 +142,8 @@ def get_portfolio(request):
             "type": "company",
             "ticker": c.ticker,
             "name": c.name,
-            "price": c.getSpotPrice(),
-            "change": c.getSpotPercentageDifference(),
+            "price": "%.2f" % c.getSpotPrice(),
+            "change": "%.2f" % c.getSpotPercentageDifference(),
         }
         if include_historical == "true":
             df = c.getStockHistory(now - last_week, now)
@@ -156,8 +156,8 @@ def get_portfolio(request):
         data[i.id] = {
             "type": "industry",
             "name": i.name,
-            "price": i.getSpotPrice(),
-            "change": i.getSpotPercentageDifference()
+            "price": "%.2f" % i.getSpotPrice(),
+            "change": "%.2f" % i.getSpotPercentageDifference()
         }
         if include_historical == "true":
             # get the dataframes for each company in the industry
