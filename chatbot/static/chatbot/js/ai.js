@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     // every checkInterval seconds, look for big price drops or
     // any breaking news
-    var newsCheckInterval = 2 * 60 * second;
+    var newsCheckInterval = 15 * 60 * second;
     setInterval(function() {
         getBreakingNews(newsCheckInterval);
     }, newsCheckInterval);
@@ -86,6 +86,21 @@ function getPriceDropAlerts() {
         var name = response["name"];
         for (key in response["price-drops"]) {
             drop = response["price-drops"][key];
+            // popup for news article
+            if (Object.keys(drop["article"]).length > 0) {
+                var a = drop["article"];
+                popup(
+                    "<a href='"+a.url+"'><h1>"+a.title+"</h1></a>" +
+                    "<div class='row'>" +
+                        "<div class='col-4'><img src='"+a.pic_url+"'></div>" +
+                        "<div class='col-8' style='text-align: left'>" +
+                            "<h4>"+a.date+"</h4>" + 
+                            "<p>"+a.description+"</p>" +
+                        "</div>" +
+                    "</div>"
+                );
+            }
+            // popup for price drop
             popup(
                 "<h1>Price Drop Alert</h1>" +
                 "<h2>"+drop.ticker+" - "+drop.name+"</h2>" +
