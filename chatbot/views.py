@@ -218,13 +218,15 @@ def get_price_drop_alerts(request):
             if len(results) == 0 or results[0].date < hour_ago:
                 now = datetime.datetime.now()
                 yesterday = now - datetime.timedelta(days=1)
-                recent_article = t[0].getNewsFrom(yesterday, now)
+                try:
+                    recent_article = t[0].getNewsFrom(yesterday, now)
+                except RuntimeError:
+                    recent_article = []
                 response["price-drops"].append({
                     "ticker": t[0].ticker,
                     "name": t[0].name,
                     "price": "%.2f" % t[0].getSpotPrice(),
                     "change": "%.2f" % t[1],
-                    "in-portfolio": t[0] in trader.c_portfolio.all(),
                     "article": recent_article[0].toJson() if len(recent_article) > 0 else {}
                 })
             # if the alert row for this user and company doesn't exist create it
