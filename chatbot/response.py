@@ -140,18 +140,18 @@ def volume_response(request):
         return higherLower(comparative, group, "volume", lambda x: x.getVolume(), lambda x: x)
     if len(companies) == 0:
         if len(areas) == 1:
-            message = "Here's the most recent sumed volume of the " + areas[0] + " industry:"
+            message = "Here's the most recent total trading volume of the " + areas[0] + " industry:"
             caption = Industry.objects.get(name = areas[0]).getVolume()
             return nl.turnIntoResponseWithCaption(message, caption)
         elif len(areas) == 0:
             #Response for no companies or industries being listed.
-            return nl.turnIntoResponse("You'll need to tell me the names of the industries you want the volume of.")
+            return nl.turnIntoResponse("You'll need to tell me the names of the industries you want the trading volume of.")
     elif len(companies) == 1:
-        message = "Here's " + nl.posessive(companies[0]) + " most recent volume:"
+        message = "Here's " + nl.posessive(companies[0]) + " most recent trading volume:"
         caption = Company.objects.get(ticker = companies[0]).getVolume()
         return nl.turnIntoResponseWithCaption(message, caption)
     #If no special case is met
-    return makeBarChartOf(companies, "Recent Volume", lambda x: x.getVolume(), print_format=lambda x: str(x))
+    return makeBarChartOf(companies, "Recent Trading Volume", lambda x: x.getVolume(), print_format=lambda x: str(x))
 
 def stock_history_response(request):
     time = request["time"]
@@ -175,7 +175,11 @@ def stock_history_response(request):
         chart.add_from_df(df, company)
         l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
-    desc += " has changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
+    if (len(companies) > 1):
+        desc += " have "
+    else:
+        desc += " has "
+    desc += " changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
     return nl.turnChartIntoChartResponse(chart.toJson(),desc)
 
 def higherLower(comparative, companies, qualName, funct, formatFunct):
