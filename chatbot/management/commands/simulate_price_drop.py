@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for ticker in options['ticker']:
             try:
                 c = Company.objects.get(ticker=ticker)
-            except Poll.DoesNotExist:
+            except Company.DoesNotExist:
                 raise CommandError('Company "%s" does not exist' % ticker)
 
             # set the price drop so that the system will be able to detect it
