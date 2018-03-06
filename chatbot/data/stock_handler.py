@@ -6,10 +6,11 @@ import datetime
 import bs4
 
 class CompanyStock:
-	def __init__(self, spotprice, change, percentchange, retrieve_datetime):
+	def __init__(self, spotprice, change, percentchange, volume, retrieve_datetime):
 		self.spot_price = spotprice
 		self.price_difference = change
 		self.percent_difference = percentchange
+		self.volume = volume
 		self.retrieved = retrieve_datetime
 
 def getStockInformation(ticker): 
@@ -29,16 +30,17 @@ def getStockInformation(ticker):
 	if (response.status_code == 200):
 		# Format webpage to retrieve particular stock information
 		soup = bs4.BeautifulSoup(response.content, "lxml")
-		data = soup.find("div", {"class": "tr darkEven"})
+		data = soup.find_all("div", {"class": "tr darkEven"})
 
 		# Catches cases where the website redirects to homepage due to nonexistent company
 		if data is None:
 			raise ValueError("Ticker does not exist!")
 
-		stock = [x.text.strip() for x in data.findAll('span')]
+		stock = [x.text.strip() for x in data[0].findAll('span')]
+		stock.append(data[1].find('span').text.strip())
 		
 		retrieved = datetime.datetime.now()
-		cs = CompanyStock(stock[0], stock[1], stock[2], retrieved)
+		cs = CompanyStock(stock[0], stock[1], stock[2], stock[3], retrieved)
 	else:
 		raise RuntimeError("Unable to retrieve response from London Stock Exchange website.")
 	return cs

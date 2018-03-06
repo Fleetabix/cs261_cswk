@@ -54,6 +54,18 @@ class Company(models.Model):
             stock_info.save()
             return self.stockinformation.percent_difference
 
+    def getVolume(self):
+        """
+            Returns the trading volume of the company
+        """
+        if (self.stockinformation.retrieved > datetime.datetime.now()-datetime.timedelta(seconds=10)):
+            return self.stockinformation.volume
+        else:
+            stock_info = self.stockinformation
+            stock_info.setData()
+            stock_info.save()
+            return self.stockinformation.volume
+
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified
@@ -128,6 +140,12 @@ class Industry(models.Model):
         else:
             return (total_diff / total_now) * 100
 
+    def getVolume(self):
+        """
+            Returns the combined volume for all the companies in the industry.
+        """
+        return sum([c.getVolume() for c in self.companies.all()])
+
     def getStockHistory(self, start, end):
         """
             Returns a pandas DataFrame for historical prices for specified company between a start and end date,
@@ -190,6 +208,7 @@ def create_company(sender, instance, created, **kwargs):
             spot_price=0,
             price_difference=0,
             percent_difference=0,
+            volume=0,
             retrieved=datetime.datetime.utcfromtimestamp(0)
         )
 
@@ -294,6 +313,7 @@ class StockInformation(models.Model):
     spot_price = models.FloatField()
     price_difference = models.FloatField()
     percent_difference = models.FloatField()
+    volume = models.IntegerField()
     retrieved = models.DateTimeField()
 
     def setData(self):
@@ -301,8 +321,9 @@ class StockInformation(models.Model):
         self.spot_price = float(stock.spot_price.replace(",", ""))
         self.price_difference = float(stock.price_difference.replace(",", ""))
         self.percent_difference = float(stock.percent_difference.replace("%",""))
+        self.volume = int(stock.volume.replace(",", ""))
         self.retrieved = stock.retrieved
 
     def __str__(self):
             return  self.company.name + " - £" + str(self.spot_price) + " - " + \
-                    str(self.price_difference) + "% - " + str(self.retrieved)
+                    str(self.percent_difference) + "% - " + str(self.retrieved)

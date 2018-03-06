@@ -24,6 +24,8 @@ def respond_to_request(request):
         return percent_difference_response(request)
     elif quality == "stockHist":
         return stock_history_response(request)
+    elif quality == "volume":
+        return volume_response(request)
     elif quality == "joke":
         if len(request["companies"]) == 0 and  len(request["areas"]) == 0:
             return nl.turnIntoResponse("To get to the other side.")
@@ -123,6 +125,33 @@ def price_difference_response(request):
         return nl.turnIntoResponseWithCaption(message, caption)
     #If no special case is met
     return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
+
+def volume_response(request):
+    companies = request["companies"]
+    areas = request["areas"]
+    comparative = request["comparative"]
+    time = request["time"]
+    if comparative is not None:
+        group = companies
+        for i in areas:
+            group = union(group,companiesInIndustry(i))
+        if len(group) == 0:
+            group = allCompanies()
+        return higherLower(comparative, group, "volume", lambda x: x.getVolume(), lambda x: x)
+    if len(companies) == 0:
+        if len(areas) == 1:
+            message = "Here's the most recent sumed volume of the " + areas[0] + " industry:"
+            caption = Industry.objects.get(name = areas[0]).getVolume()
+            return nl.turnIntoResponseWithCaption(message, caption)
+        elif len(areas) == 0:
+            #Response for no companies or industries being listed.
+            return nl.turnIntoResponse("You'll need to tell me the names of the industries you want the volume of.")
+    elif len(companies) == 1:
+        message = "Here's " + nl.posessive(companies[0]) + " most recent volume:"
+        caption = Company.objects.get(ticker = companies[0]).getVolume()
+        return nl.turnIntoResponseWithCaption(message, caption)
+    #If no special case is met
+    return makeBarChartOf(companies, "Recent Volume", lambda x: x.getVolume(), print_format=lambda x: str(x))
 
 def stock_history_response(request):
     time = request["time"]
