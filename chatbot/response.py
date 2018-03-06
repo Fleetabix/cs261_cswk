@@ -217,7 +217,7 @@ def news_response(request):
         else:
             news = Company.objects.get(ticker = company).getNewsFrom(time["start"], time["end"])
         for story in news:
-            articles.append(nl.turnIntoArticle(story.headline, str(story.date_published), story.url, story.image))
+            articles.append(story.toJson())
     if len(articles) == 0:
         if "now" in time:
             return nl.turnIntoResponse(
