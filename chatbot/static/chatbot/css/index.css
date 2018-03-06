@@ -251,27 +251,6 @@ a {
     height: 100%;
     width: 100%;
     padding: 10px;
-    overflow-x: hidden;
-}
-
-#messages::-webkit-scrollbar { 
-    display: none; 
-}
-
-#portfolio-tab::-webkit-scrollbar {
-    display: none;
-}
-
-#portfolios::-webkit-scrollbar {
-    display: none;
-}
-
-.popup::-webkit-scrollbar > * {
-    display: none;
-}
-
-#search-results::-webkit-scrollbar > * {
-    display: none;
 }
 
 /*
@@ -290,6 +269,7 @@ a {
     height: 85%;
     text-align: center;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #message-input {
