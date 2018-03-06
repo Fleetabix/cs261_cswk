@@ -63,7 +63,7 @@ a {
     display: inline-block;
     position: relative;
     top: 4px;
-    margin-left: 5px;
+    margin-left: 0;
     margin-bottom: 0;
 }
 
@@ -72,6 +72,7 @@ a {
     color: var(--header-fg-colour);
     border: none;
     font-size: 1.5em;
+    padding-left: 0;
 }
 
 /*
@@ -254,6 +255,22 @@ a {
 
 #messages::-webkit-scrollbar { 
     display: none; 
+}
+
+#portfolio-tab::-webkit-scrollbar {
+    display: none;
+}
+
+#portfolios::-webkit-scrollbar {
+    display: none;
+}
+
+.popup::-webkit-scrollbar > * {
+    display: none;
+}
+
+#search-results::-webkit-scrollbar > * {
+    display: none;
 }
 
 /*

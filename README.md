@@ -1,20 +1,19 @@
 # cs261_cswk
 Financial Trader Chatbot
 
-## Dependencies
+## Installation
 
-For the chatbot to function properly, you need to install some python packages before
-trying to use the data or nlp functions. To install them just use
+To install this project please make sure your python is on version 3 or above. To setup the
+project correctly run 
 ```
-$ pip3 install -r requirments.txt
+$ ./setup_project.sh
 ```
-Add any new requirements to the `requirements.txt` file (the version can be obtained by
-running `pip3 freeze` and looking for your package)
+if on macOS or linux. If you're on windows use
+```
+$ ./setup_project_win.sh
+```
 
-Lastly, some modules may not install properly on the DCS machines. I have not found
-a way to fix this, so just run and test the chatbot on your own laptops.
-
-## Helpful commands
+## Running the Project
 
 When using the manage.py script, make sure it's running on python 3. Using just 'python'
 can work, but if it doesn't use 'python3' to specify your version.
@@ -24,15 +23,22 @@ To start the server so you can view the website
 $ python manage.py runserver 
 ```
 
+Once the server is running, visit the chatbot by going to _localhost:8000/_
+
+## Helpful commands
+
 When modifying the chatbot database models, you might need to run the following to apply the changes
 ```
-# to create migrations for the database
-$ python manage.py makemigrations
-# to apply the changes to the database
-$ python manage.py migrate
+$ ./rebuild_database.sh
 ```
 
-Once the server is running, visit the chatbot by going to _localhost:8000/chatbot_
+## Populating the Database
+
+The database can now be populated using a script from the command line. To alter this script go to `chatbot/management/populate_db.py'. To run this script enter the following and execute
+the following commands
+```
+$ python3 manage.py populate_db
+```
 
 ## Testing
 Testing is done via unit tests, there are two test modules; DataTests and NLPTests. All tests can be run using
@@ -45,20 +51,6 @@ You can also run an individual test class or test using the following respective
 ```
 $ python -W "ignore" manage.py test chatbot.tests.NLPTests
 $ python -W "ignore" manage.py test chatbot.tests.NLPTests.test_can_identify....
-```
-
-## Database Issues
-Destroy and rebuild the database using the following command. You should do this if ot's giving you errors such as some column doesn't exist
-```
-$ ./rebuild_database.sh
-```
-
-## Populating the Database
-
-The database can now be populated using a script from the command line. To alter this script go to `chatbot/management/populate_db.py'. To run this script enter the following and execute
-the following commands
-```
-$ python3 manage.py populate_db
 ```
 
 ## Creating users
