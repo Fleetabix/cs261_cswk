@@ -71,7 +71,7 @@ then simply add a user by pressing '+ Add' on the user link. Not sure if it will
 There is also a test user with credentials
 - username: 'johnsmith'
 - password: 'qwertyuiop'
-that you could use for the website
+that you could use for the website.
 
 ## Project structure
 
