@@ -160,10 +160,13 @@ def get_portfolio(request):
             "change": "%.2f" % c.getSpotPercentageDifference(),
         }
         if include_historical == "true":
-            df = c.getStockHistory(now - last_week, now)
-            chart = Chart()
-            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
-            data[c.id]["historical"] = chart.toJson()
+            try:
+                df = c.getStockHistory(now - last_week, now)
+                chart = Chart()
+                chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
+                data[c.id]["historical"] = chart.toJson()
+            except Exception:
+                data[c.id]["historical-error"] = True
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
@@ -175,15 +178,18 @@ def get_portfolio(request):
         }
         if include_historical == "true":
             # get the dataframes for each company in the industry
-            dfs = i.getStockHistory(now - last_week, now)
-            #for each data frame, alter the chart by adding the new valus
-            if len(dfs) > 0:
-                chart = Chart()
-                chart.add_from_df(df=dfs[0], label=i.name)
-                for j in range(1, len(dfs)):
-                    df = dfs[j]
-                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
-                data[i.id]["historical"] = chart.toJson()
+            try:
+                dfs = i.getStockHistory(now - last_week, now)
+                #for each data frame, alter the chart by adding the new valus
+                if len(dfs) > 0:
+                    chart = Chart()
+                    chart.add_from_df(df=dfs[0], label=i.name)
+                    for j in range(1, len(dfs)):
+                        df = dfs[j]
+                        chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                    data[i.id]["historical"] = chart.toJson()
+            except Exception:
+                data[i.id]["historical-error"] = True
     return JsonResponse(data)
 
 
