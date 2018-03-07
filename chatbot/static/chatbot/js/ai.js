@@ -51,7 +51,7 @@ function getBriefing(since) {
         type: "text",
         body: "Welcome back! Here is your up to date briefing...",
         caption: ""
-    }, 400);
+    }, 300);
     var data = {
         last_login: since
     }
@@ -65,7 +65,7 @@ function getBriefing(since) {
         var delay = 400;
         for (i in response["messages"]) {
             var message = response["messages"][i];
-            outputResponse(name, message, delay * i);
+            outputResponse(name, message, delay * (i + 1));
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
