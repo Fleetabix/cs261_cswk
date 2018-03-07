@@ -76,7 +76,7 @@ def ask_chatbot(request):
                     "name": "FLORIN",
                     "type": "text",
                     "body": "Sorry, something went wrong with your " + request["quality"] + "query",
-                    "caption": str(e)
+                    "caption": str(e) if len(str(e)) < 30 else ''
                 })
                 print("--------------------- ERROR ---------------------")
                 logging.exception("Error while parsing %s query" % request["quality"])
