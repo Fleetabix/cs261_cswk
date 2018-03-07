@@ -12,7 +12,7 @@
   {
     "id":"lower",
     "showName":"lower",
-    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than"]
+    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than", "worse"]
   },
   {
     "id":"lowest",

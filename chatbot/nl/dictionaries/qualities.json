@@ -12,7 +12,7 @@
   {
     "id":"priceDiff",
     "showName":"stock price difference",
-    "alias":["price difference", "difference", "stock price difference", "spot price difference", "cost difference", "price change", "change", "stock price change", "spot price change", "cost change"]
+    "alias":["price difference", "difference", "stock price difference", "spot price difference", "cost difference", "price change", "change", "stock price change", "spot price change", "cost change", "rising", "falling", "rise", "fall"]
   },
   {
     "id":"percentDiff",

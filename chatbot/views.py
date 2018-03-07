@@ -309,7 +309,7 @@ def get_breaking_news(request):
         e = entities[i]
         last_check = datetime.datetime.now() - datetime.timedelta(seconds=check_interval)
         for n in e.getNewsFrom(start=last_check, end=datetime.datetime.now(), breaking=True):
-            if len(response["breaking-news"] == 5):
+            if len(response["breaking-news"]) == 5:
                 break
             else:
                 response["breaking-news"]["articles"].append({
@@ -492,5 +492,3 @@ def get_from_weigted_probability(ls, max):
     # return a list of the first item in the tuples, sorted in descending order by the
     # second item in the tuple
     return list(map(lambda x: x[0], sorted(rtn_ls, key=lambda x: -x[1])))
-
-
