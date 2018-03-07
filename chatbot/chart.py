@@ -64,7 +64,7 @@ class Chart:
         self.datasets.append(chart_data)
 
 
-    def alter_from_df(self, df, set_loc=0, rule=lambda x, y: x):
+    def alter_from_sh(self, hists, set_loc=0, rule=lambda x, y: x):
         """
             Gets the data from the given DataFrame and 
             alters the ChartData object at index 'set_loc' in the datasets list.
@@ -73,14 +73,14 @@ class Chart:
             This does not alter the labels of the chart, as it assumes the dates in
             the dataframe are consistent with the current labels.
         """
-        rows = [df.iloc[i] for i in range(len(df))]
-        # get the closing prices for each row
-        new_values = [r.Close for r in rows]
+        # get the closing prices for each day
+        new_values = [h.close_price for h in hists]
         # make sure there's a chart data object in the datasets
         zipped = list(zip_longest(new_values, self.datasets[set_loc].data, fillvalue=0))
         # write the new values to the chart data in datasets[0] using
         # the rule lambda to decide what to do with the new and old values
         self.datasets[set_loc].data = [rule(t[0], t[1]) for t in zipped]
+
 
     def toJson(self):
         """
