@@ -53,7 +53,13 @@ def respond_to_request(request):
                 for ticker in all_comps:
                     c = Company.objects.get(ticker=ticker)
                     chart.add_from_sh(ticker, c.getStockHistory(now - dw, now))
-                desc = higherLower(request["comparative"], all_comps, "price difference", getPriceDiff, lambda x: nl.printAsSterling(x))
+                desc = higherLower(
+                    request["comparative"], 
+                    all_comps,
+                    "percentage difference",
+                    getPercentDiff, 
+                    lambda x: nl.printAsPercent(x)
+                )
                 return nl.turnChartIntoChartResponse(chart.toJson(), desc["body"])    
             else:
                 request["quality"] = "price"
