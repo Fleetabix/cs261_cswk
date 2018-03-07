@@ -179,7 +179,9 @@ function printSearchResults(results) {
  *  @param {function} doSomething a function that uses the portfolio data
  */
 function getPortfolio(historical, doSomething) {
-    console.log("getting portfolios");
+    if (historical) {
+        console.log("getting portfolios");
+    }
     data = {"historical": historical};
     $.ajax({
         url: 'get_portfolio/',

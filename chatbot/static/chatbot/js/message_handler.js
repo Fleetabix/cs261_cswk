@@ -83,6 +83,9 @@ function outputMessage(name, message) {
             if (message.heading != undefined) {
                 messageBox += "<h4>"+message.heading+"</h4>";
             }
+            if (message.explanation != undefined) {
+                messageBox += "<p>"+message.explanation+"</p>";
+            }
             messageBox += "<p>Brought to you by News API</p>";
             messageBox += "</div>";
             for (articleKey in message.articles) {
@@ -90,6 +93,7 @@ function outputMessage(name, message) {
                 messageBox += "<div class='row news-holder'>";
                 messageBox += "<div class='col-9'>";
                 messageBox += "<a href='" + article.url + "' target='_blank'><h5>" + article.title + "</h5></a>";
+                messageBox += "<h6>"+article.date+"</h6>";
                 messageBox += "<p>"+article.description+"</p>";
                 messageBox += "</div>";
                 messageBox += "<div class='col-sm-3 news-img-holder'>";
