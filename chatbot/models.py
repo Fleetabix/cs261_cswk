@@ -80,21 +80,29 @@ class Company(models.Model):
             .order_by("date") 
         # check if the range of dates stored is sufficient for the query
         # i.e. check if the greatest date = start and the smallest = end
+        gaps = []
         if len(stock_hist) == 0:
-            df = sh.getHistoricalStockInformation(self.ticker, start, end)
-            self.addHistFromDf(df)
+            gaps = [(start, end)]
         else:
             earliest_in_range = stock_hist[0].date
             latest_in_range = stock_hist[len(stock_hist) - 1].date
             #if our records don't go far enough back
-            if start.date() != earliest_in_range:
-                df = sh.getHistoricalStockInformation(self.ticker, start, earliest_in_range)
-                self.addHistFromDf(df)
+            if start.date() < earliest_in_range:
+                gaps.append((start, earliest_in_range))
+            # check for any gaps in the stored data
+            for i in range(len(stock_hist) - 1):
+                d = stock_hist[i].date
+                d1 = stock_hist[i + 1].date
+                if 1 < (d1 - d).days:
+                    gaps.append((d, d1))
             # if our records aren't up to date enough
-            if end.date() != latest_in_range:
-                df = sh.getHistoricalStockInformation(self.ticker, latest_in_range, end)
-                self.addHistFromDf(df)
+            if end.date() > latest_in_range:
+                gaps.append((earliest_in_range, end))
             # return the list of stock history models
+        # fill in the gaps in our stock history
+        for g in gaps:
+            df = sh.getHistoricalStockInformation(self.ticker, g[0], g[1])
+            self.addHistFromDf(df)
         return self.historicalinformation_set.filter(
                 date__gte=start.date(),
                 date__lte=end.date()) \
