@@ -90,10 +90,10 @@ function getPriceDropAlerts() {
             if (Object.keys(drop["article"]).length > 0) {
                 var a = drop["article"];
                 popup(
-                    "<a href='"+a.url+"'><h1>"+a.title+"</h1></a>" +
-                    "<div class='row'>" +
-                        "<div class='col-4'><img src='"+a.pic_url+"'></div>" +
-                        "<div class='col-8' style='text-align: left'>" +
+                    "<a href='"+a.url+"'><h3>"+a.title+"</h3></a>" +
+                    "<div style='margin-top: 10px' class='row'>" +
+                        "<div class='col-sm-4'><img style='max-width: 100%; margin-bottom: 20px;' src='"+a.pic_url+"'></div>" +
+                        "<div class='col-sm-8' style='text-align: left'>" +
                             "<h4>"+a.date+"</h4>" + 
                             "<p>"+a.description+"</p>" +
                         "</div>" +
