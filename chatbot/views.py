@@ -164,12 +164,15 @@ def get_portfolio(request):
         }
         if include_historical == "true":
             try:
-                df = c.getStockHistory(now - last_week, now)
+                hist = c.getStockHistory(now - last_week, now)
                 chart = Chart()
-                chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
+                chart.add_from_sh(label=c.ticker + " - " + c.name, hists=hist)
                 data[c.id]["historical"] = chart.toJson()
             except Exception:
                 data[c.id]["historical-error"] = True
+                print("--------------------- ERROR ---------------------")
+                logging.exception("Error while getting %s history" % c.name)
+                print("-------------------------------------------------")
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
@@ -182,17 +185,20 @@ def get_portfolio(request):
         if include_historical == "true":
             # get the dataframes for each company in the industry
             try:
-                dfs = i.getStockHistory(now - last_week, now)
-                #for each data frame, alter the chart by adding the new valus
-                if len(dfs) > 0:
+                hists = i.getStockHistory(now - last_week, now)
+                #for each stock history, alter the chart by adding the new valus
+                if len(hists) > 0:
                     chart = Chart()
-                    chart.add_from_df(df=dfs[0], label=i.name)
-                    for j in range(1, len(dfs)):
-                        df = dfs[j]
-                        chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                    chart.add_from_sh(label=i.name, hists=hists[0])
+                    for j in range(1, len(hists)):
+                        hist = hists[j]
+                        chart.alter_from_sh(hist, rule=lambda x, y: x + y)
                     data[i.id]["historical"] = chart.toJson()
             except Exception:
                 data[i.id]["historical-error"] = True
+                print("--------------------- ERROR ---------------------")
+                logging.exception("Error while getting %s history" % i.name)
+                print("-------------------------------------------------")
     return JsonResponse(data)
 
 
