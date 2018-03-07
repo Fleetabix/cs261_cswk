@@ -9,9 +9,11 @@ from django.core.exceptions import ObjectDoesNotExist
 import datetime
 import calendar
 from random import randint
+import logging
 
 from chatbot.models import *
 from chatbot.nl import nl
+from chatbot.nl import sentence as sc
 from chatbot.chart import Chart
 from chatbot.response import *
 
@@ -68,7 +70,22 @@ def ask_chatbot(request):
                     )
             if request["quality"] == "joke":
                 data["messages"].append(nl.turnIntoResponse("Why did the chicken cross the road?"))
-            data["messages"].append(respond_to_request(request))
+            try:
+                data["messages"].append(respond_to_request(request))
+            except Exception as e:
+                data["messages"].append({
+                    "name": "FLORIN",
+                    "type": "text",
+                    "body": "Sorry, something went wrong with your " + 
+                                sc.getShowName(request["quality"], 'qualities') + 
+                                " query.",
+                    "caption": str(e) if len(str(e)) < 30 else ''
+                })
+                print("--------------------- ERROR ---------------------")
+                logging.exception("Error while parsing %s query" % request["quality"])
+                print("------------------ REQUEST OBJ ------------------")
+                print(request)
+                print("-------------------------------------------------")
     return JsonResponse(data)
 
 
@@ -146,10 +163,13 @@ def get_portfolio(request):
             "change": "%.2f" % c.getSpotPercentageDifference(),
         }
         if include_historical == "true":
-            df = c.getStockHistory(now - last_week, now)
-            chart = Chart()
-            chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
-            data[c.id]["historical"] = chart.toJson()
+            try:
+                df = c.getStockHistory(now - last_week, now)
+                chart = Chart()
+                chart.add_from_df(df=df, label=c.ticker + " - " + c.name)
+                data[c.id]["historical"] = chart.toJson()
+            except Exception:
+                data[c.id]["historical-error"] = True
     # get all the industries in the user's portfolio
     industries = user.traderprofile.i_portfolio.all()
     for i in industries:
@@ -161,15 +181,18 @@ def get_portfolio(request):
         }
         if include_historical == "true":
             # get the dataframes for each company in the industry
-            dfs = i.getStockHistory(now - last_week, now)
-            #for each data frame, alter the chart by adding the new valus
-            if len(dfs) > 0:
-                chart = Chart()
-                chart.add_from_df(df=dfs[0], label=i.name)
-                for j in range(1, len(dfs)):
-                    df = dfs[j]
-                    chart.alter_from_df(df=df, rule=lambda x, y: x + y)
-                data[i.id]["historical"] = chart.toJson()
+            try:
+                dfs = i.getStockHistory(now - last_week, now)
+                #for each data frame, alter the chart by adding the new valus
+                if len(dfs) > 0:
+                    chart = Chart()
+                    chart.add_from_df(df=dfs[0], label=i.name)
+                    for j in range(1, len(dfs)):
+                        df = dfs[j]
+                        chart.alter_from_df(df=df, rule=lambda x, y: x + y)
+                    data[i.id]["historical"] = chart.toJson()
+            except Exception:
+                data[i.id]["historical-error"] = True
     return JsonResponse(data)
 
 
@@ -216,11 +239,18 @@ def get_price_drop_alerts(request):
             # if the company has a time less than an hour ago, update the time and
             # add the company to the alerts list
             if len(results) == 0 or results[0].date < hour_ago:
+                now = datetime.datetime.now()
+                yesterday = now - datetime.timedelta(days=1)
+                try:
+                    recent_article = t[0].getNewsFrom(yesterday, now)
+                except RuntimeError:
+                    recent_article = []
                 response["price-drops"].append({
                     "ticker": t[0].ticker,
                     "name": t[0].name,
                     "price": "%.2f" % t[0].getSpotPrice(),
-                    "change": "%.2f" % t[1]
+                    "change": "%.2f" % t[1],
+                    "article": recent_article[0].toJson() if len(recent_article) > 0 else {}
                 })
             # if the alert row for this user and company doesn't exist create it
             # otherwise alter the current record

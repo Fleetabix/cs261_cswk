@@ -253,26 +253,6 @@ a {
     padding: 10px;
 }
 
-#messages::-webkit-scrollbar { 
-    display: none; 
-}
-
-#portfolio-tab::-webkit-scrollbar {
-    display: none;
-}
-
-#portfolios::-webkit-scrollbar {
-    display: none;
-}
-
-.popup::-webkit-scrollbar > * {
-    display: none;
-}
-
-#search-results::-webkit-scrollbar > * {
-    display: none;
-}
-
 /*
     If on a desktop, change the width to 68% so that the message
     board can be inline with the open portfolio tab.
@@ -289,6 +269,7 @@ a {
     height: 85%;
     text-align: center;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #message-input {

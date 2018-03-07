@@ -40,7 +40,8 @@ def getStockInformation(ticker):
 		stock.append(data[1].find('span').text.strip())
 		
 		retrieved = datetime.datetime.now()
-		cs = CompanyStock(stock[0], stock[1], stock[2], stock[3], retrieved)
+		# when markets are shut volume is nothing
+		cs = CompanyStock(stock[0], stock[1], stock[2], '0' if stock[3] == '' else stock[3], retrieved)
 	else:
 		raise RuntimeError("Unable to retrieve response from London Stock Exchange website.")
 	return cs

@@ -179,7 +179,9 @@ function printSearchResults(results) {
  *  @param {function} doSomething a function that uses the portfolio data
  */
 function getPortfolio(historical, doSomething) {
-    console.log("getting portfolios");
+    if (historical) {
+        console.log("getting portfolios");
+    }
     data = {"historical": historical};
     $.ajax({
         url: 'get_portfolio/',
@@ -226,7 +228,18 @@ function outputPortfolio(portfolio) {
                 "<canvas id='" + e.type+id + "chart'></canvas>" +
             "</div>"
         );
-        createChart(e.type+id+"chart", e.historical);
+        if (e["historical-error"]) {
+            var canvas = document.getElementById(e.type+id+"chart");
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Sorry, there was an error", canvas.width/2, canvas.height/2); 
+            ctx.fillText("getting your data.", canvas.width/2, canvas.height/2 + 20); 
+
+        } else {
+            createChart(e.type+id+"chart", e.historical);
+        }
     }
 }
 
