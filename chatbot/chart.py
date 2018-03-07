@@ -49,21 +49,17 @@ class Chart:
         """
         self.datasets.append(chart_data)
 
-    def add_from_df(self, df, label):
+    def add_from_sh(self, label, hists):
         """
-            Get the data from a DataFrame, create a new ChartData object
-            and append it to the list of datasets.
+            Adds a new ChartData object to the list of datasets
+            from the stock history list
         """
-        rows = [df.iloc[i] for i in range(len(df))]
-        # for each row in the data frame, get the date then
-        # convert it to a weekday name and get the first three letters
-        dates = [r.name for r in rows]
+        dates = [h.date for h in hists]
         if len(dates) < 6:
             self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
         else:
             self.labels = [x.day for x in dates]
-        # get the closing prices for each row
-        new_values = [r.Close for r in rows]
+        new_values = [h.close_price for h in hists]
         chart_data= ChartData(label=label, data=new_values)
         self.datasets.append(chart_data)
 
