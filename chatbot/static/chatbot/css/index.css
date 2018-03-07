@@ -63,7 +63,7 @@ a {
     display: inline-block;
     position: relative;
     top: 4px;
-    margin-left: 5px;
+    margin-left: 0;
     margin-bottom: 0;
 }
 
@@ -72,6 +72,7 @@ a {
     color: var(--header-fg-colour);
     border: none;
     font-size: 1.5em;
+    padding-left: 0;
 }
 
 /*
@@ -252,10 +253,6 @@ a {
     padding: 10px;
 }
 
-#messages::-webkit-scrollbar { 
-    display: none; 
-}
-
 /*
     If on a desktop, change the width to 68% so that the message
     board can be inline with the open portfolio tab.
@@ -272,6 +269,7 @@ a {
     height: 85%;
     text-align: center;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #message-input {

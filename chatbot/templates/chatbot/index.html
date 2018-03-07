@@ -5,13 +5,19 @@
 {% block head %}
 <title>FLORIN</title>
 <link rel="stylesheet" type="text/css" href="{% static 'chatbot/css/index.css' %}" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" sizes=”114×114″ href="{% static 'chatbot/img/logo-114x114.ico' %}" />
+<link rel="apple-touch-icon" sizes=”72x72″ href="{% static 'chatbot/img/logo-72x72.ico' %}" />
+<link rel="apple-touch-icon" href="{% static 'chatbot/img/logo.ico' %}" />
+<link rel="shortcut icon" href="{%  static 'chatbot/img/favicon.ico' %}">
 {% endblock head %} 
 
 
 
 {% block header %}
-<div id="header" class="row justify-content-between">
-    <div id="menu-box" class="col-9">
+<div id="header" class="row">
+    <div id="menu-box" class="col-8">
         <button id="desktop-portfolio-btn" class="portfolio-btn">
             <span id="desktop-chevron" class="fa fa-chevron-left"></span>
         </button>
@@ -20,7 +26,7 @@
         </button>
         <h1>FLORIN</h1>
     </div>
-    <div id="user-dropdown" class="col-3">
+    <div id="user-dropdown" class="col-4">
         <div class="dropdown">
             <button id="drp-btn" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">

@@ -63,13 +63,13 @@ class DataTests(TestCase):
             Can you get the spot price of a company over a period of
             time? Make sure the list is of the right type etc.
         """
-        df = self.aa.getStockHistory(self.now - self.delta_week, self.now)
-        self.assertIsNot(df, None)
+        hist = self.aa.getStockHistory(self.now - self.delta_week, self.now)
+        self.assertIsNot(hist, None)
         # there should be 5 entries (as markets are not open on the weekends)
-        self.assertEqual(len(df), 5)
+        self.assertEqual(len(hist), 5)
         # check all dates in the dataframe are within 7 days of today
-        for date in [df.iloc[i].name for i in range(len(df))]:
-            self.assertLessEqual((self.now - date).days, 7)
+        for h in hist:
+            self.assertLessEqual((self.now.date() - h.date).days, 7)
 
     def test_get_company_spot_price_for_the_future(self):
         """

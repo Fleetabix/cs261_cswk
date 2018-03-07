@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     // every checkInterval seconds, look for big price drops or
     // any breaking news
-    var newsCheckInterval = 2 * 60 * second;
+    var newsCheckInterval = 15 * 60 * second;
     setInterval(function() {
         getBreakingNews(newsCheckInterval);
     }, newsCheckInterval);
@@ -62,10 +62,10 @@ function getBriefing(since) {
         method: "get"
     }).done(function(response) {
         var name = response["name"];
-        var delay = 800;
+        var delay = 400;
         for (i in response["messages"]) {
             var message = response["messages"][i];
-            outputResponse(name, message, delay * (i + 1));
+            outputResponse(name, message, delay * i);
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
@@ -86,6 +86,21 @@ function getPriceDropAlerts() {
         var name = response["name"];
         for (key in response["price-drops"]) {
             drop = response["price-drops"][key];
+            // popup for news article
+            if (Object.keys(drop["article"]).length > 0) {
+                var a = drop["article"];
+                popup(
+                    "<a href='"+a.url+"'><h3>"+a.title+"</h3></a>" +
+                    "<div style='margin-top: 10px' class='row'>" +
+                        "<div class='col-sm-4'><img style='max-width: 100%; margin-bottom: 20px;' src='"+a.pic_url+"'></div>" +
+                        "<div class='col-sm-8' style='text-align: left'>" +
+                            "<h4>"+a.date+"</h4>" + 
+                            "<p>"+a.description+"</p>" +
+                        "</div>" +
+                    "</div>"
+                );
+            }
+            // popup for price drop
             popup(
                 "<h1>Price Drop Alert</h1>" +
                 "<h2>"+drop.ticker+" - "+drop.name+"</h2>" +

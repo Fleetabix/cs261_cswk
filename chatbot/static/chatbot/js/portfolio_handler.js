@@ -13,7 +13,6 @@ $(document).ready(function() {
     // when the user types in a new character update the
     // search
     $("#searchbox").keyup(function() {
-        $("#search-results").empty();
         var query = $(this).val();
         // make sure that there's something to look for
         if (query.trim() != "") {
@@ -74,6 +73,12 @@ $(document).ready(function() {
             console.log(data);
         });
     });
+
+    //every 15 seconds, get updated prices and percentage changes for the
+    //portfolio
+    setInterval(function() {
+        getPortfolio(false, updatePortfolio);
+    }, 15 * 1000);
 });
 
 
@@ -96,6 +101,7 @@ function getSearchResults(type, query) {
         method: "get"
     }).done(function (response) {
         // if there was a result, print it. otherwise say sorry.
+        $("#search-results").empty();
         if (Object.keys(response.data).length > 0) {
             printSearchResults(response);
         } else {
@@ -147,7 +153,6 @@ function addToPortfolio(id, type, result) {
 function printSearchResults(results) {
     var resultsString = "";
     var data = results.data;
-    console.log(results)
     for (id in data) {
         var info = data[id];
         resultsString += 
@@ -174,8 +179,9 @@ function printSearchResults(results) {
  *  @param {function} doSomething a function that uses the portfolio data
  */
 function getPortfolio(historical, doSomething) {
-    $("#portfolios").empty();
-    console.log("getting portfolios");
+    if (historical) {
+        console.log("getting portfolios");
+    }
     data = {"historical": historical};
     $.ajax({
         url: 'get_portfolio/',
@@ -196,7 +202,7 @@ function getPortfolio(historical, doSomething) {
  *  @param {portfolio object} portfolio 
  */
 function outputPortfolio(portfolio) {
-    console.log(portfolio);
+    $("#portfolios").empty();
     for (id in portfolio) {
         // add portfolio items here
         e = portfolio[id];
@@ -207,9 +213,10 @@ function outputPortfolio(portfolio) {
                         "<h5>" + 
                             ((e.type == "industry") ? "" : e.ticker + " ") +
                             fstUp(e.name) +
-                            " - £" +
-                            e.price.toFixed(2) + 
-                            " (" + e.change.toFixed(2) + "%)" +
+                            " - £<span class='port-price'>" +
+                            e.price + 
+                            "</span> (<span class='port-change'>" +
+                            e.change + "</span>%)" +
                         "</h5>" +
                     "</div>" +
                     "<div class='col-3 rm-prt'>" +
@@ -221,7 +228,28 @@ function outputPortfolio(portfolio) {
                 "<canvas id='" + e.type+id + "chart'></canvas>" +
             "</div>"
         );
-        createChart(e.type+id+"chart", e.historical);
+        if (e["historical-error"]) {
+            var canvas = document.getElementById(e.type+id+"chart");
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Sorry, there was an error", canvas.width/2, canvas.height/2); 
+            ctx.fillText("getting your data.", canvas.width/2, canvas.height/2 + 20); 
+
+        } else {
+            createChart(e.type+id+"chart", e.historical);
+        }
+    }
+}
+
+function updatePortfolio(portfolio) {
+    for (id in portfolio) {
+        var e = portfolio[id];
+        if ($("#"+e.type+id).length)  {
+            $("#"+e.type+id).find(".port-price").text(e.price);
+            $("#"+e.type+id).find(".port-change").text(e.change);
+        }
     }
 }
 

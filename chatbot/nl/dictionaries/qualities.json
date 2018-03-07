@@ -25,6 +25,11 @@
     "alias":["stock history", "history", "stock price history", "spot price history", "cost history", "price history"]
   },
   {
+    "id": "volume",
+    "showName": "volume",
+    "alias":["volume"]
+  },
+  {
     "id":"joke",
     "showName":"joke",
     "alias":["joke"]

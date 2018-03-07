@@ -25,6 +25,8 @@ def respond_to_request(request):
         return percent_difference_response(request)
     elif quality == "stockHist":
         return stock_history_response(request)
+    elif quality == "volume":
+        return volume_response(request)
     elif quality == "joke":
         if len(request["companies"]) == 0 and  len(request["areas"]) == 0:
             return nl.turnIntoResponse("To get to the other side.")
@@ -125,6 +127,33 @@ def price_difference_response(request):
     #If no special case is met
     return makeBarChartOf(companies, "Recent Price Difference", getPriceDiff)
 
+def volume_response(request):
+    companies = request["companies"]
+    areas = request["areas"]
+    comparative = request["comparative"]
+    time = request["time"]
+    if comparative is not None:
+        group = companies
+        for i in areas:
+            group = union(group,companiesInIndustry(i))
+        if len(group) == 0:
+            group = allCompanies()
+        return higherLower(comparative, group, "volume", lambda x: x.getVolume(), lambda x: x)
+    if len(companies) == 0:
+        if len(areas) == 1:
+            message = "Here's the most recent total trading volume of the " + areas[0] + " industry:"
+            caption = Industry.objects.get(name = areas[0]).getVolume()
+            return nl.turnIntoResponseWithCaption(message, caption)
+        elif len(areas) == 0:
+            #Response for no companies or industries being listed.
+            return nl.turnIntoResponse("You'll need to tell me the names of the industries you want the trading volume of.")
+    elif len(companies) == 1:
+        message = "Here's " + nl.posessive(companies[0]) + " most recent trading volume:"
+        caption = Company.objects.get(ticker = companies[0]).getVolume()
+        return nl.turnIntoResponseWithCaption(message, caption)
+    #If no special case is met
+    return makeBarChartOf(companies, "Recent Trading Volume", lambda x: x.getVolume(), print_format=lambda x: str(x))
+
 def stock_history_response(request):
     time = request["time"]
     start = time["start"]
@@ -141,13 +170,17 @@ def stock_history_response(request):
     l = []
     for company in companies:
         try:
-            df = Company.objects.get(ticker = company).getStockHistory(start, end)
+            hist = Company.objects.get(ticker = company).getStockHistory(start, end)
         except ValueError:
             return nl.turnIntoResponse("Please enter a more recent date.")
-        chart.add_from_df(df, company)
+        chart.add_from_sh(company, hist)
         l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
-    desc += " has changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
+    if (len(companies) > 1):
+        desc += " have "
+    else:
+        desc += " has "
+    desc += " changed between " + nl.printDate(start) + " and " + nl.printDate(end) + "."
     return nl.turnChartIntoChartResponse(chart.toJson(),desc)
 
 def higherLower(comparative, companies, qualName, funct, formatFunct):
@@ -192,11 +225,22 @@ def news_response(request):
             news = Company.objects.get(ticker = company).getNewsFrom(time["start"], time["end"])
         for story in news:
             score = sentiment.getSentiment(story.description)["compound"]
-            articles.append(nl.turnIntoArticle(story.headline + str(score), str(story.date_published), story.url, story.image))
+            articles.append(story.toJson())
             sentimentScore+=score
             analysed += 1
     if len(articles) == 0:
-        return nl.turnIntoResponse("I'm sorry, I couldn't find any news for "+ nl.makeOrList(companies))
+       if "now" in time:
+            return nl.turnIntoResponse(
+                    "I'm sorry, I couldn't find any news for " +  \
+                    nl.makeOrList(companies) + \
+                    " for this week. You can specify earlier articles in your query if you wish."
+                )
+        else:
+            return nl.turnIntoResponse(
+                    "I'm sorry, I couldn't find any news for " +  \
+                    nl.makeOrList(companies) + \
+                    " from " + nl.printDate(time["start"])
+                )
     resp = nl.turnIntoNews(articles)
     if analysed>0:
         sentimentScore = sentimentScore/analysed
@@ -208,6 +252,7 @@ def news_response(request):
 
     resp["heading"] += " | " + str(sentimentScore)
     return resp
+
 
 def makeBarChartOf(companies, qualName, funct, industries = [], print_format=lambda x: nl.printAsSterling(x)):
     data = []
