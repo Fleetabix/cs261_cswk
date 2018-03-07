@@ -36,6 +36,28 @@ def respond_to_request(request):
                 companies = union(companies, companiesInIndustry(i))
             return nl.turnIntoResponse("To buy stock in " + nl.makeList(companies) + ".")
     else:
+        print(request)
+        if 0 < len(request["areas"]) + len(request["companies"]):
+            # get all the companies refered to in the query
+            all_comps = []
+            for name in request["areas"]:
+                comps = Industry.objects.get(name=name).companies.all()
+                for c in comps:
+                    all_comps.append(c.ticker)
+            for ticker in request["companies"]:
+                all_comps.append(ticker)
+            if request["comparative"] is not None:
+                chart = Chart()
+                now = datetime.datetime.now()
+                dw = datetime.timedelta(days=7)
+                for ticker in all_comps:
+                    c = Company.objects.get(ticker=ticker)
+                    chart.add_from_sh(ticker, c.getStockHistory(now - dw, now))
+                desc = higherLower(request["comparative"], all_comps, "price difference", getPriceDiff, lambda x: nl.printAsSterling(x))
+                return nl.turnChartIntoChartResponse(chart.toJson(), desc["body"])    
+            else:
+                request["quality"] = "price"
+                return stock_price_response(request)
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
 def stock_price_response(request):

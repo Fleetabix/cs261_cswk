@@ -76,9 +76,7 @@ def ask_chatbot(request):
                 data["messages"].append({
                     "name": "FLORIN",
                     "type": "text",
-                    "body": "Sorry, something went wrong with your " + 
-                                sc.getShowName(request["quality"], 'qualities') + 
-                                " query.",
+                    "body": "Sorry, something went wrong with your " + " query.",
                     "caption": str(e) if len(str(e)) < 30 else ''
                 })
                 print("--------------------- ERROR ---------------------")

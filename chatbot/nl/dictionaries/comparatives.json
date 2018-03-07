@@ -2,7 +2,7 @@
   {
     "id":"higher",
     "showName":"higher",
-    "alias":["higher", "more", "more than", "greater", "greater than", "larger", "larger than", "better"]
+    "alias":["higher", "more", "more than", "greater", "greater than", "larger", "larger than", "better", "rising"]
   },
   {
     "id":"highest",
@@ -12,7 +12,7 @@
   {
     "id":"lower",
     "showName":"lower",
-    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than", "worse"]
+    "alias":["lower", "less", "less than", "smaller", "smaller than", "fewer", "fewer than", "worse", "falling"]
   },
   {
     "id":"lowest",
