@@ -218,11 +218,12 @@ def higherLower(comparative, companies, qualName, funct, formatFunct):
     bestPrice = -1
     higher = (comparative == "higher" or comparative == "highest")
     for company in companies:
-        price = funct(Company.objects.get(ticker = company))
+        c = Company.objects.get(ticker = company)
+        price = funct(c)
         if (price>bestPrice and higher) or (price<bestPrice and (not higher)) or bestPrice == -1:
             bestPrice = price
             bestName = company
-        companySet.append(company)
+        companySet.append(c.name + " ("+company+")")
     caption+=nl.makeList(companySet)
     if len(companies)>=100:
         caption = "Out of all companies"
