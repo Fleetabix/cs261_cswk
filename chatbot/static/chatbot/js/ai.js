@@ -24,7 +24,11 @@ $(document).ready(function() {
             lastOnline != undefined &&
             minInterval <= Math.round(Date.now() / 1000) - lastOnline
         ) {
-        getBriefing((lastOnline == undefined) ? 0 : lastOnline);
+        if (forceBriefing == "true") {
+            getBriefing((lastOnline == undefined) ? 0 : lastOnline - 3 * 24 * 60 * 60);
+        } else {
+            getBriefing((lastOnline == undefined) ? 0 : lastOnline);
+        }
     }
 
     // every checkInterval seconds, look for big price drops or
