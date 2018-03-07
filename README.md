@@ -68,6 +68,11 @@ go to _localhost:8000/admin_ and sign in with
 
 then simply add a user by pressing '+ Add' on the user link. Not sure if it will be important in the future, but when registering a user, add them to the 'Chatbot Users' group.
 
+There is also a test user with credentials
+- username: 'johnsmith'
+- password: 'qwertyuiop'
+that you could use for the website
+
 ## Project structure
 
 - website/ (the base website code, we do not need to edit this, just add the chatbot app in the settings)
