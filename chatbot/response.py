@@ -169,10 +169,10 @@ def stock_history_response(request):
     l = []
     for company in companies:
         try:
-            df = Company.objects.get(ticker = company).getStockHistory(start, end)
+            hist = Company.objects.get(ticker = company).getStockHistory(start, end)
         except ValueError:
             return nl.turnIntoResponse("Please enter a more recent date.")
-        chart.add_from_df(df, company)
+        chart.add_from_sh(company, hist)
         l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
     if (len(companies) > 1):
