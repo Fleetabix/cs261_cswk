@@ -6,7 +6,7 @@ from chatbot.nl import nl
 import datetime
 import monthdelta
 
-# Create your tests here. All test methods names should 
+# Create your tests here. All test methods names should
 # start with the word 'test'
 
 class DataTests(TestCase):
@@ -40,7 +40,7 @@ class DataTests(TestCase):
         """
             Just check if a companies spot price can be retrieved
             and is in a valid format
-        """        
+        """
         price = self.aa.getSpotPrice()
         # checks price is not none (none is falsey)
         self.assertTrue(price)
@@ -60,16 +60,16 @@ class DataTests(TestCase):
 
     def test_get_company_spot_price_over_time(self):
         """
-            Can you get the spot price of a company over a period of 
+            Can you get the spot price of a company over a period of
             time? Make sure the list is of the right type etc.
         """
-        df = self.aa.getStockHistory(self.now - self.delta_week, self.now)
-        self.assertIsNot(df, None)
+        hist = self.aa.getStockHistory(self.now - self.delta_week, self.now)
+        self.assertIsNot(hist, None)
         # there should be 5 entries (as markets are not open on the weekends)
-        self.assertEqual(len(df), 5)
+        self.assertEqual(len(hist), 5)
         # check all dates in the dataframe are within 7 days of today
-        for date in [df.iloc[i].name for i in range(len(df))]:
-            self.assertLessEqual((self.now - date).days, 7)
+        for h in hist:
+            self.assertLessEqual((self.now.date() - h.date).days, 7)
 
     def test_get_company_spot_price_for_the_future(self):
         """
@@ -160,14 +160,14 @@ class NLPTests(TestCase):
         """
         ticker = "AMZ"
         queries = [
-            "what is the price of $", 
+            "what is the price of $",
             "get me % change of $ blah",
             "$ blah sjh dsjjjh news change"
             ]
         responses = [nl.getRequests(x.replace("$", ticker)) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(ticker in r["companies"])
 
     def test_can_identify_multiple_tickers(self):
@@ -176,14 +176,14 @@ class NLPTests(TestCase):
             of them.
         """
         queries = [
-            "what is the price of AMZ and GOOGL", 
+            "what is the price of AMZ and GOOGL",
             "get me % change of HNS & AMZ blah",
             "Is GOOGL doing as well as AMZ and HNS on stock price this week?"
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(len(r["companies"]) > 1)
 
     def test_can_identify_company_name(self):
@@ -193,14 +193,14 @@ class NLPTests(TestCase):
         """
         ticker = "GOOGL"
         queries = [
-            "what is the price of google", 
+            "what is the price of google",
             "get me % change of Google blah",
             "Google blah sjh dsjjjh news change"
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(ticker in r["companies"])
 
     def test_can_identify_multiple_company_names(self):
@@ -209,14 +209,14 @@ class NLPTests(TestCase):
             it can identify it.
         """
         queries = [
-            "what is the price of amazon and google", 
+            "what is the price of amazon and google",
             "get me % change of Hanson & Amazon blah",
             "Is Google doing as well as Amazon and Hanson on stock price this week?"
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(len(r["companies"]) > 1)
 
     def test_can_identify_company_alias(self):
@@ -225,28 +225,28 @@ class NLPTests(TestCase):
         """
         ticker = "GOOGL"
         queries = [
-            "what is the price of alphabet", 
+            "what is the price of alphabet",
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(ticker in r["companies"])
-        
+
     def test_can_identify_multiple_company_aliases(self):
         """
             Tests to see if multiple companies can be obtained with their aliases
         """
         #TODO find out why second query fails
         queries = [
-            "what is the price of amz and alphabet", 
+            "what is the price of amz and alphabet",
             "What is the % change of PLC, google and amz",
             "Is google doing as well as amazon and hanson plc on stock price this week?"
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for r in rq: 
+            for r in rq:
                 self.assertTrue(len(r["companies"]) > 1)
 
     def test_can_identify_comparative_in_query(self):
@@ -257,14 +257,14 @@ class NLPTests(TestCase):
         """
         comparatives = ["higher", "highest", "worse"]
         queries = [
-            "Is AMZ tock price greater than GOOGL", 
+            "Is AMZ tock price greater than GOOGL",
             "Who has the best percentage change out of HMS and amazon",
             "Is google doing worse than amazon?"
             ]
         responses = [nl.getRequests(x) for x in queries]
         self.assertIsNot(responses, None)
         for rq in responses:
-            for i in range(len(rq)): 
+            for i in range(len(rq)):
                 self.assertIsNot(rq[i]["comparative"], None)
                 self.assertTrue(comparatives[i] in rq[i]["comparative"])
 
@@ -326,14 +326,14 @@ class NLPTests(TestCase):
 
     def test_can_identify_relative_time_phrase(self):
         """
-            Here test for things such as 'last week', 'today', 
+            Here test for things such as 'last week', 'today',
             'this month' etc.
-            
+
         """
         start_times = [
             datetime.datetime.now() - datetime.timedelta(days=7),
             datetime.datetime.now() - monthdelta.monthdelta(1) - datetime.timedelta(days=1),
-            datetime.datetime.now() 
+            datetime.datetime.now()
                 - datetime.timedelta(days=datetime.datetime.now().weekday())
                 + datetime.timedelta(days=4, weeks=-1)
         ]
@@ -368,7 +368,7 @@ class NLPTests(TestCase):
             self.assertIsNot(r, None)
             self.assertTrue((ticker in r[0]["companies"]) or (industry in r[0]["areas"]))
             self.assertIn("price", r[0]["quality"])
-            
+
     def test_can_identify_news_query(self):
         """
             Can it identify the user asking for the news of a

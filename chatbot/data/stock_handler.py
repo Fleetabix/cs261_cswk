@@ -53,7 +53,10 @@ def getHistoricalStockInformation(ticker, start, end):
 		Returns a pandas DataFrame with High, Low, Open and Close spot prices for each day
 		between start and end dates.
 	"""
-
+	if not isinstance(start, datetime.datetime):
+		start = datetime.datetime.combine(start, datetime.time.min)
+	if not isinstance(end, datetime.datetime):
+		end = datetime.datetime.combine(end, datetime.time.min)
 	# Check whether dates are valid
 	if datetime.datetime.now() < end:
 		raise ValueError("This date range goes into the future!")

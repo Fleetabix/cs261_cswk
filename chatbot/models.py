@@ -66,13 +66,67 @@ class Company(models.Model):
             stock_info.save()
             return self.stockinformation.volume
 
+
     def getStockHistory(self, start, end):
         """
-            Returns a pandas DataFrame for historical prices for specified
-            company between a start and end date, will include the high and
-            low for that day and opening price
+            Returns a list of stock history models for this company
+            that includes every day's information from the start date to the
+            end date. If the stock history for the range stored is not adequate
+            for the range specified, get more data to fill in the gaps.
         """
-        return sh.getHistoricalStockInformation(self.ticker, start, end)
+        stock_hist = self.historicalinformation_set.filter(
+                date__gte=start.date(),
+                date__lte=end.date()) \
+            .order_by("date") 
+        # check if the range of dates stored is sufficient for the query
+        # i.e. check if the greatest date = start and the smallest = end
+        gaps = []
+        if len(stock_hist) == 0:
+            gaps = [(start, end)]
+        else:
+            earliest_in_range = stock_hist[0].date
+            latest_in_range = stock_hist[len(stock_hist) - 1].date
+            #if our records don't go far enough back
+            if start.date() < earliest_in_range:
+                gaps.append((start, earliest_in_range))
+            # check for any gaps in the stored data
+            for i in range(len(stock_hist) - 1):
+                d = stock_hist[i].date
+                d1 = stock_hist[i + 1].date
+                if 1 < (d1 - d).days:
+                    gaps.append((d, d1))
+            # if our records aren't up to date enough
+            if end.date() > latest_in_range:
+                gaps.append((earliest_in_range, end))
+            # return the list of stock history models
+        # fill in the gaps in our stock history
+        for g in gaps:
+            df = sh.getHistoricalStockInformation(self.ticker, g[0], g[1])
+            self.addHistFromDf(df)
+        return self.historicalinformation_set.filter(
+                date__gte=start.date(),
+                date__lte=end.date()) \
+            .order_by("date") 
+
+
+    def addHistFromDf(self, df):
+        """
+            Given a pandas DataFrame, create new stock history objects
+            for each date given if we don't already have it stored
+        """
+        for i in range(len(df)):
+            r = df.iloc[i]
+            date = r.name
+            if len(self.historicalinformation_set.filter(date=date)) == 0:
+                HistoricalInformation.objects.create(
+                    company=self,
+                    open_price=float(r.Open),
+                    close_price=float(r.Close),
+                    high=float(r.High),
+                    low=float(r.Low),
+                    volume=int(r.Volume),
+                    date=date)
+
 
     def getNews(self, keyword=None, breaking=None):
         """
@@ -327,3 +381,20 @@ class StockInformation(models.Model):
     def __str__(self):
             return  self.company.name + " - £" + str(self.spot_price) + " - " + \
                     str(self.percent_difference) + "% - " + str(self.retrieved)
+
+
+class HistoricalInformation(models.Model):
+    """
+        A model that will store historical stock information by day.
+    """
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    open_price = models.FloatField()
+    close_price = models.FloatField()
+    high = models.FloatField()
+    low = models.FloatField()
+    volume = models.IntegerField()
+    date = models.DateField()
+
+    def __str__(self):
+        return str(self.company) + "(" + str(self.date) + ")"
+

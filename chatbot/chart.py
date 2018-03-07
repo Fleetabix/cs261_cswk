@@ -49,26 +49,22 @@ class Chart:
         """
         self.datasets.append(chart_data)
 
-    def add_from_df(self, df, label):
+    def add_from_sh(self, label, hists):
         """
-            Get the data from a DataFrame, create a new ChartData object
-            and append it to the list of datasets.
+            Adds a new ChartData object to the list of datasets
+            from the stock history list
         """
-        rows = [df.iloc[i] for i in range(len(df))]
-        # for each row in the data frame, get the date then
-        # convert it to a weekday name and get the first three letters
-        dates = [r.name for r in rows]
+        dates = [h.date for h in hists]
         if len(dates) < 6:
             self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
         else:
             self.labels = [x.day for x in dates]
-        # get the closing prices for each row
-        new_values = [r.Close for r in rows]
+        new_values = [h.close_price for h in hists]
         chart_data= ChartData(label=label, data=new_values)
         self.datasets.append(chart_data)
 
 
-    def alter_from_df(self, df, set_loc=0, rule=lambda x, y: x):
+    def alter_from_sh(self, hists, set_loc=0, rule=lambda x, y: x):
         """
             Gets the data from the given DataFrame and 
             alters the ChartData object at index 'set_loc' in the datasets list.
@@ -77,14 +73,14 @@ class Chart:
             This does not alter the labels of the chart, as it assumes the dates in
             the dataframe are consistent with the current labels.
         """
-        rows = [df.iloc[i] for i in range(len(df))]
-        # get the closing prices for each row
-        new_values = [r.Close for r in rows]
+        # get the closing prices for each day
+        new_values = [h.close_price for h in hists]
         # make sure there's a chart data object in the datasets
         zipped = list(zip_longest(new_values, self.datasets[set_loc].data, fillvalue=0))
         # write the new values to the chart data in datasets[0] using
         # the rule lambda to decide what to do with the new and old values
         self.datasets[set_loc].data = [rule(t[0], t[1]) for t in zipped]
+
 
     def toJson(self):
         """

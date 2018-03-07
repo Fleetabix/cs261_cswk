@@ -6,6 +6,7 @@ from random import randint
 from chatbot.models import *
 from chatbot.nl import nl
 from chatbot.chart import Chart
+from chatbot.nl import sentiment
 
 def respond_to_request(request):
     """
@@ -169,10 +170,10 @@ def stock_history_response(request):
     l = []
     for company in companies:
         try:
-            df = Company.objects.get(ticker = company).getStockHistory(start, end)
+            hist = Company.objects.get(ticker = company).getStockHistory(start, end)
         except ValueError:
             return nl.turnIntoResponse("Please enter a more recent date.")
-        chart.add_from_df(df, company)
+        chart.add_from_sh(company, hist)
         l.append(Company.objects.get(ticker=company).name + " (" + company + ")")
     desc += nl.makeList(l)
     if (len(companies) > 1):
@@ -211,6 +212,8 @@ def news_response(request):
     time = request["time"]
     companies = request["companies"]
     articles = []
+    sentimentScore = 0
+    analysed = 0
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
     if len(companies) == 0:
@@ -221,9 +224,12 @@ def news_response(request):
         else:
             news = Company.objects.get(ticker = company).getNewsFrom(time["start"], time["end"])
         for story in news:
+            score = sentiment.getSentiment(story.description)["compound"]
             articles.append(story.toJson())
+            sentimentScore+=score
+            analysed += 1
     if len(articles) == 0:
-        if "now" in time:
+       if "now" in time:
             return nl.turnIntoResponse(
                     "I'm sorry, I couldn't find any news for " +  \
                     nl.makeOrList(companies) + \
@@ -235,7 +241,18 @@ def news_response(request):
                     nl.makeOrList(companies) + \
                     " from " + nl.printDate(time["start"])
                 )
-    return nl.turnIntoNews(articles)
+    resp = nl.turnIntoNews(articles)
+    if analysed>0:
+        sentimentScore = sentimentScore/analysed
+    resp["heading"] = "Here's the news I found:"
+    if sentimentScore>0.2:
+        resp["heading"] = "It seems the news is pretty positive."
+    elif sentimentScore<-0.2:
+        resp["heading"] = "It seems the news is pretty negative."
+
+    resp["heading"] += " | " + str(sentimentScore)
+    return resp
+
 
 def makeBarChartOf(companies, qualName, funct, industries = [], print_format=lambda x: nl.printAsSterling(x)):
     data = []
