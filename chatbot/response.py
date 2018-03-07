@@ -6,6 +6,7 @@ from random import randint
 from chatbot.models import *
 from chatbot.nl import nl
 from chatbot.chart import Chart
+from chatbot.nl import sentiment
 
 def respond_to_request(request):
     """
@@ -178,6 +179,8 @@ def news_response(request):
     time = request["time"]
     companies = request["companies"]
     articles = []
+    sentimentScore = 0
+    analysed = 0
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
     if len(companies) == 0:
@@ -188,10 +191,23 @@ def news_response(request):
         else:
             news = Company.objects.get(ticker = company).getNewsFrom(time["start"], time["end"])
         for story in news:
-            articles.append(nl.turnIntoArticle(story.headline, str(story.date_published), story.url, story.image))
+            score = sentiment.getSentiment(story.description)["compound"]
+            articles.append(nl.turnIntoArticle(story.headline + str(score), str(story.date_published), story.url, story.image))
+            sentimentScore+=score
+            analysed += 1
     if len(articles) == 0:
         return nl.turnIntoResponse("I'm sorry, I couldn't find any news for "+ nl.makeOrList(companies))
-    return nl.turnIntoNews(articles)
+    resp = nl.turnIntoNews(articles)
+    if analysed>0:
+        sentimentScore = sentimentScore/analysed
+    resp["heading"] = "Here's the news I found:"
+    if sentimentScore>0.2:
+        resp["heading"] = "It seems the news is pretty positive."
+    elif sentimentScore<-0.2:
+        resp["heading"] = "It seems the news is pretty negative."
+
+    resp["heading"] += " | " + str(sentimentScore)
+    return resp
 
 def makeBarChartOf(companies, qualName, funct, industries = [], print_format=lambda x: nl.printAsSterling(x)):
     data = []
