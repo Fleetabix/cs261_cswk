@@ -13,6 +13,7 @@ import logging
 
 from chatbot.models import *
 from chatbot.nl import nl
+from chatbot.nl import sentence as sc
 from chatbot.chart import Chart
 from chatbot.response import *
 
@@ -75,7 +76,9 @@ def ask_chatbot(request):
                 data["messages"].append({
                     "name": "FLORIN",
                     "type": "text",
-                    "body": "Sorry, something went wrong with your " + request["quality"] + "query",
+                    "body": "Sorry, something went wrong with your " + 
+                                sc.getShowName(request["quality"], 'qualities') + 
+                                " query.",
                     "caption": str(e) if len(str(e)) < 30 else ''
                 })
                 print("--------------------- ERROR ---------------------")
