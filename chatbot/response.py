@@ -189,7 +189,7 @@ def stock_history_response(request):
     if end > datetime.datetime.now():
         return nl.turnIntoResponse("Please provide a range of dates in the past.")
     if start == end:
-        return nl.turnIntoResponse("Please provide a range of dates.")
+        start = end - datetime.timedelta(days=7)
     companies = request["companies"]
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
