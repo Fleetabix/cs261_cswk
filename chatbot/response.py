@@ -1,4 +1,4 @@
-import datetime
+#import datetime
 from django.utils import timezone
 import calendar
 from random import randint
@@ -229,7 +229,7 @@ def news_response(request):
             sentimentScore+=score
             analysed += 1
     if len(articles) == 0:
-       if "now" in time:
+        if "now" in time:
             return nl.turnIntoResponse(
                     "I'm sorry, I couldn't find any news for " +  \
                     nl.makeOrList(companies) + \
@@ -250,7 +250,7 @@ def news_response(request):
     elif sentimentScore<-0.2:
         resp["heading"] = "It seems the news is pretty negative."
 
-    resp["heading"] += " | " + str(sentimentScore)
+    
     return resp
 
 
