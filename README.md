@@ -22,8 +22,13 @@ To start the server so you can view the website
 ```
 $ python manage.py runserver 
 ```
+or if you want to access this project on different devices on the same local network use
+```
+$ python manage.py runserver 0.0.0.0:8000
+```
 
-Once the server is running, visit the chatbot by going to _localhost:8000/_
+Once the server is running, visit the chatbot by going to _localhost:8000/_ if on the same
+machine of _(local_ip_of_computer):8000_ if trying to access it on another device.
 
 ## Helpful commands
 
@@ -39,6 +44,7 @@ the following commands
 ```
 $ python3 manage.py populate_db
 ```
+Note: This command is run during `./rebuild_database.sh` so you do not need to execute this afterwards.
 
 ## Testing
 Testing is done via unit tests, there are two test modules; DataTests and NLPTests. All tests can be run using
