@@ -310,13 +310,7 @@ def get_breaking_news(request):
             if len(response["breaking-news"]) == 5:
                 break
             else:
-                response["breaking-news"]["articles"].append({
-                    "type": "news",
-                    "url": n.url,
-                    "title": n.headline,
-                    "pic_url": n.image,
-                    "description": n.date_published
-                })
+                response["breaking-news"]["articles"].append(n.toJson())
         i += 1
 
     return JsonResponse(response)

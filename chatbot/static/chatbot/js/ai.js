@@ -138,7 +138,7 @@ function getBreakingNews(checkInterval) {
         console.log(response);
         var message = response["breaking-news"];
         if (message.articles.length > 0) {
-            outputResponse(name, message, 1000);
+            outputResponse(response["name"], message, 1000);
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
