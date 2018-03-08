@@ -84,7 +84,6 @@ function getPriceDropAlerts() {
     console.log("getting price drops");
     $.ajax({
         url: 'get_price_drop_alerts/',
-        dataType: "json",
         method: "get"
     }).done(function(response) {
         console.log(response);
