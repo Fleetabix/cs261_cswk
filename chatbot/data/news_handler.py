@@ -31,22 +31,31 @@ def getNews(name, keyword = None, breaking = None):
 	"""
 	news = list()
 	search_query = ""
+
+	# Check optional parameters
 	if keyword is not None:
+		# Add topic to search query
 		search_query = name+" "+keyword
 		search_query = search_query.replace('&', ' and ').replace('/',' or ').replace(' ', '%20')
 	else:
 		search_query = name.replace('&', ' and ').replace('/',' or ').replace(' ', '%20')
 
 	if breaking:
+		# If breaking use the breaking part of the NewsAPI
 		url =  'https://newsapi.org/v2/top-headlines?q='+search_query+'&language=en&apiKey=d9c204a671844e58b110128b0b806c1f'
 	else:
 		url = 'https://newsapi.org/v2/everything?q='+search_query+'&language=en&apiKey=d9c204a671844e58b110128b0b806c1f'
 
+	# Retrieve HTML 
 	response = requests.get(url)
 
 	if (response.status_code ==  200):
+		# Load json page in readable format
 		json_data = json.loads(response.text)
+
+		# Iterate through articles
 		for stories in json_data["articles"]:
+			# Add all articles
 			news.append(NewsInformation(stories["url"], stories["title"], stories["urlToImage"], stories["description"], stories["publishedAt"]))
 	else:
 		raise RuntimeError("Unable to retrieve response from NewsAPI.")
