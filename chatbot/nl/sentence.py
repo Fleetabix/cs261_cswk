@@ -1,5 +1,6 @@
 import nltk
 from chatbot.nl import dict, timePhrase
+from chatbot.models import CompanyAlias, IndustryAlias
 import string
 
 class Sentence:
@@ -135,6 +136,8 @@ class Sentence:
 			for i in range(0,len(tokens)-length+1): #Every group of length length.
 				name = tokensToSentence(tokens[i:i+length]) #Find the potential name
 				actualName = getIDAndDictionary(name, dictionaries)
+				if actualName == None: #If nothing was found try find a close match:
+					actualName = tryCorrectSpelling(name)
 				if actualName != None: #If name is an alias:
 					#Perform this on the words before the found word
 					firstHalf = self.findFromDictionaries(dictNames, tokens[:i])
@@ -208,3 +211,47 @@ def tokensToSentence(tokens):
 			sentence += spaceChar + word #Add with a space character.
 		spaceChar = " " #After the first word, we want spaces again.
 	return sentence
+
+def tryCorrectSpelling(word):
+	"""
+		Checks the word against all aliases and returns the closest matched
+		aliases if it is of an edit distance less than 3
+	"""
+	invalid_words = ["and", "it", "is", "from", "on", "the", "of", "for"] + \
+					["price", "history", "volume", "change", "stock", "difference"] + \
+					["week", "since", "from", "news", "give", "show", "get", "me"]
+	# make sure the current word does not contain a word in the above list
+	# this should speed up things nicely
+	if list(filter(lambda x: x in invalid_words, word.split(" "))) != []:
+		return None
+	edit_d = []
+	# for each alias in both companies and industries, if the difference in length is
+	# less than or equal to two, compute the edit distance
+	for a in CompanyAlias.objects.all():
+		dist = getLazyEditDistance(word, a.alias)
+		if 0 <= dist:
+			edit_d.append(("companies", a.company.ticker, dist))
+	for a in IndustryAlias.objects.all():
+		dist = getLazyEditDistance(word, a.alias)
+		if 0 <= dist:
+			edit_d.append(("areas", a.industry.name, dist))
+	# find the best match
+	if edit_d != []:
+		best_match = min(edit_d, key=lambda x: x[2])
+		if best_match[2] <= 2:	
+			return {'dictionary': best_match[0], 'id': best_match[1], 'typed': word}
+	return None
+
+def getLazyEditDistance(word, alias):
+	"""
+		Given two words, it only performs an edit distance if the difference
+		in the length of two strings is less than two (as if it is not, the
+		edit distance will never be less than two) and only returns it if
+		the edit distance is lass than two.
+		If either of the above fails it returns -1.
+	"""
+	if abs(len(word) - len(alias)) <= 2:
+		distance = nltk.edit_distance(alias.lower(), word.lower(), substitution_cost=2)
+		if distance <= 2:
+			return distance 
+	return -1
