@@ -76,9 +76,7 @@ def ask_chatbot(request):
                 data["messages"].append({
                     "name": "FLORIN",
                     "type": "text",
-                    "body": "Sorry, something went wrong with your " + 
-                                sc.getShowName(request["quality"], 'qualities') + 
-                                " query.",
+                    "body": "Sorry, something went wrong with your " + " query.",
                     "caption": str(e) if len(str(e)) < 30 else ''
                 })
                 print("--------------------- ERROR ---------------------")
@@ -312,13 +310,7 @@ def get_breaking_news(request):
             if len(response["breaking-news"]) == 5:
                 break
             else:
-                response["breaking-news"]["articles"].append({
-                    "type": "news",
-                    "url": n.url,
-                    "title": n.headline,
-                    "pic_url": n.image,
-                    "description": n.date_published
-                })
+                response["breaking-news"]["articles"].append(n.toJson())
         i += 1
 
     return JsonResponse(response)
@@ -388,17 +380,27 @@ def company_briefing(c_hit_counts, max_companies):
                     "%. ")
     # for the most liked company out of the randomly chosen, get their spot history
     best_company = cs[0]
-    c_msg += "The chart shows stock history of " + capName(best_company.name) + " for the last week."
     now = datetime.datetime.now()
     last_week = now - datetime.timedelta(days=7)
-    chart = Chart()
-    df = best_company.getStockHistory(last_week, now)
-    chart.add_from_df(df=df, label=best_company.ticker +" - "+capName(best_company.name))
-    return {
-        "type": "chart",
-        "description": c_msg,
-        "chart_object": chart.toJson()
-    }
+    try:
+        chart = Chart()
+        hist = best_company.getStockHistory(last_week, now)
+        chart.add_from_sh(label=best_company.ticker +" - "+capName(best_company.name), hists=hist)
+        c_msg += "The chart shows stock history of " + capName(best_company.name) + " for the last week."
+        return {
+            "type": "chart",
+            "description": c_msg,
+            "chart_object": chart.toJson()
+        }
+    except Exception:
+        print("--------------------- ERROR ---------------------")
+        logging.exception("Error while getting %s history" % best_company.name)
+        print("-------------------------------------------------")
+        return {
+            "type": "text",
+            "body": c_msg,
+            "caption": ""
+        }
 
 
 def industry_briefing(i_hit_counts, max_industries):
@@ -418,7 +420,7 @@ def industry_briefing(i_hit_counts, max_industries):
     if 1 < len(inds):
         price2 = inds[1].getSpotPrice()
         i_msg +=    (capName(inds[1].name) +
-                    (" is looking better " if price1 < price2 else "is behind ") +
+                    (" is looking better " if price1 < price2 else " is behind ") +
                     "with a combined stock price of £" + str(price2) +
                     ", and has a change of " +
                     ("%.2f" % inds[1].getSpotPercentageDifference()) +
@@ -445,21 +447,22 @@ def news_briefing(c_hit_counts, i_hit_counts, time_since, max_count):
     sorted(favourite_hits, key=lambda x: -x[1])
     best_entities = get_from_weigted_probability(favourite_hits, max_count)
     articles = []
-    for e in best_entities:
-        ns = e.getNewsFrom(time_since, datetime.datetime.now())
-        if len(ns)> 0:
-            articles.append(ns[0])
+    try:
+        for e in best_entities:
+            ns = e.getNewsFrom(time_since, datetime.datetime.now())
+            if len(ns)> 0:
+                articles.append(ns[0])
+    except Exception:
+        print("--------------------- ERROR ---------------------")
+        logging.exception("Error while getting news")
+        print("-------------------------------------------------")
+
     # generate a message with the given articles
     msg = {}
     if len(articles) > 0:
         news_json = []
         for n in articles:
-            news_json.append({
-                "url": n.url,
-                "title": n.headline,
-                "pic_url": n.image,
-                "description": n.get_str_date()
-            })
+            news_json.append(n.toJson())
         msg = {
             "type": "news",
             "articles": news_json

@@ -24,7 +24,11 @@ $(document).ready(function() {
             lastOnline != undefined &&
             minInterval <= Math.round(Date.now() / 1000) - lastOnline
         ) {
-        getBriefing((lastOnline == undefined) ? 0 : lastOnline);
+        if (forceBriefing == "true") {
+            getBriefing((lastOnline == undefined) ? 0 : lastOnline - 3 * 24 * 60 * 60);
+        } else {
+            getBriefing((lastOnline == undefined) ? 0 : lastOnline);
+        }
     }
 
     // every checkInterval seconds, look for big price drops or
@@ -51,7 +55,7 @@ function getBriefing(since) {
         type: "text",
         body: "Welcome back! Here is your up to date briefing...",
         caption: ""
-    }, 400);
+    }, 300);
     var data = {
         last_login: since
     }
@@ -65,7 +69,7 @@ function getBriefing(since) {
         var delay = 400;
         for (i in response["messages"]) {
             var message = response["messages"][i];
-            outputResponse(name, message, delay * i);
+            outputResponse(name, message, delay * (i + 1));
         }
     }).fail(function (response) {
         console.log("-----Fail-------");
@@ -80,6 +84,7 @@ function getPriceDropAlerts() {
     console.log("getting price drops");
     $.ajax({
         url: 'get_price_drop_alerts/',
+        dataType: "json",
         method: "get"
     }).done(function(response) {
         console.log(response);
@@ -134,7 +139,7 @@ function getBreakingNews(checkInterval) {
         console.log(response);
         var message = response["breaking-news"];
         if (message.articles.length > 0) {
-            outputResponse(name, message, 1000);
+            outputResponse(response["name"], message, 1000);
         }
     }).fail(function (response) {
         console.log("-----Fail-------");

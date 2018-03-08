@@ -134,6 +134,29 @@ function getNextChartID() {
 function createChart(chartId, chartObject) {
     var ctx = document.getElementById(chartId).getContext('2d');
     var dataSets = chartObject.data.datasets;
+    // check if it's a line chart and if so prepend a £ to all values
+    if (chartObject.type == "line") {
+        chartObject["options"] = {
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        return "£" + tooltipItems.yLabel.toString();
+                    }
+                }
+            },
+            scales: {
+                yAxes: [
+                    {
+                        ticks: {
+                            callback: function(label, index, labels) {
+                                return "£"+label;
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
     for (key in dataSets) {
         var dataset = dataSets[key];
         var colour = getRandomColor();
