@@ -219,10 +219,15 @@ def tryCorrectSpelling(word):
 	"""
 	invalid_words = ["and", "it", "is", "from", "on", "the", "of", "for"] + \
 					["price", "history", "volume", "change", "stock", "difference"] + \
-					["week", "since", "from", "news", "give", "show", "get", "me"]
+					["week", "since", "from", "news", "give", "show", "get", "me", "ago"] + \
+					["jan", "feb", "mar", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"] + \
+					["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+	
 	# make sure the current word does not contain a word in the above list
 	# this should speed up things nicely
-	if list(filter(lambda x: x in invalid_words, word.split(" "))) != []:
+	invalid_intersect = list(filter(lambda x: x in invalid_words, word.split(" ")))
+	not_alpha = list(filter(lambda x: not x.isalpha(), word))
+	if invalid_intersect != [] or not_alpha != []:
 		return None
 	edit_d = []
 	# for each alias in both companies and industries, if the difference in length is
