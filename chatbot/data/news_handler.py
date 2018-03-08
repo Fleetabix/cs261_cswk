@@ -26,7 +26,8 @@ class NewsInformation:
 	
 def getNews(name, keyword = None, breaking = None):
 	"""
-		can be used for both industry and company
+		Function to retrieve news, optional parameters allow for specific topics or
+		breaking news to be added.
 	"""
 	news = list()
 	search_query = ""
