@@ -76,9 +76,7 @@ def ask_chatbot(request):
                 data["messages"].append({
                     "name": "FLORIN",
                     "type": "text",
-                    "body": "Sorry, something went wrong with your " + 
-                                sc.getShowName(request["quality"], 'qualities') + 
-                                " query.",
+                    "body": "Sorry, something went wrong with your " + " query.",
                     "caption": str(e) if len(str(e)) < 30 else ''
                 })
                 print("--------------------- ERROR ---------------------")
@@ -312,13 +310,7 @@ def get_breaking_news(request):
             if len(response["breaking-news"]) == 5:
                 break
             else:
-                response["breaking-news"]["articles"].append({
-                    "type": "news",
-                    "url": n.url,
-                    "title": n.headline,
-                    "pic_url": n.image,
-                    "description": n.date_published
-                })
+                response["breaking-news"]["articles"].append(n.toJson())
         i += 1
 
     return JsonResponse(response)
@@ -393,7 +385,7 @@ def company_briefing(c_hit_counts, max_companies):
     try:
         chart = Chart()
         hist = best_company.getStockHistory(last_week, now)
-        chart.add_from_sh(label=best_company.ticker +" - "+capName(best_company.name), hist=hist)
+        chart.add_from_sh(label=best_company.ticker +" - "+capName(best_company.name), hists=hist)
         c_msg += "The chart shows stock history of " + capName(best_company.name) + " for the last week."
         return {
             "type": "chart",
@@ -470,12 +462,7 @@ def news_briefing(c_hit_counts, i_hit_counts, time_since, max_count):
     if len(articles) > 0:
         news_json = []
         for n in articles:
-            news_json.append({
-                "url": n.url,
-                "title": n.headline,
-                "pic_url": n.image,
-                "description": n.get_str_date()
-            })
+            news_json.append(n.toJson())
         msg = {
             "type": "news",
             "articles": news_json

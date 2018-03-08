@@ -36,6 +36,34 @@ def respond_to_request(request):
                 companies = union(companies, companiesInIndustry(i))
             return nl.turnIntoResponse("To buy stock in " + nl.makeList(companies) + ".")
     else:
+        print(request)
+        if 0 < len(request["areas"]) + len(request["companies"]):
+            # get all the companies refered to in the query
+            all_comps = []
+            for name in request["areas"]:
+                comps = Industry.objects.get(name=name).companies.all()
+                for c in comps:
+                    all_comps.append(c.ticker)
+            for ticker in request["companies"]:
+                all_comps.append(ticker)
+            if request["comparative"] is not None:
+                chart = Chart()
+                now = datetime.datetime.now()
+                dw = datetime.timedelta(days=7)
+                for ticker in all_comps:
+                    c = Company.objects.get(ticker=ticker)
+                    chart.add_from_sh(ticker, c.getStockHistory(now - dw, now))
+                desc = higherLower(
+                    request["comparative"], 
+                    all_comps,
+                    "percentage difference",
+                    getPercentDiff, 
+                    lambda x: nl.printAsPercent(x)
+                )
+                return nl.turnChartIntoChartResponse(chart.toJson(), desc["body"])    
+            else:
+                request["quality"] = "price"
+                return stock_price_response(request)
         return nl.turnIntoResponse("ERROR: Cannot respond about " + quality)
 
 def stock_price_response(request):
@@ -161,7 +189,7 @@ def stock_history_response(request):
     if end > datetime.datetime.now():
         return nl.turnIntoResponse("Please provide a range of dates in the past.")
     if start == end:
-        return nl.turnIntoResponse("Please provide a range of dates.")
+        start = end - datetime.timedelta(days=7)
     companies = request["companies"]
     for industry in request["areas"]:
         companies = union(companies, companiesInIndustry(industry))
@@ -190,11 +218,12 @@ def higherLower(comparative, companies, qualName, funct, formatFunct):
     bestPrice = -1
     higher = (comparative == "higher" or comparative == "highest")
     for company in companies:
-        price = funct(Company.objects.get(ticker = company))
+        c = Company.objects.get(ticker = company)
+        price = funct(c)
         if (price>bestPrice and higher) or (price<bestPrice and (not higher)) or bestPrice == -1:
             bestPrice = price
             bestName = company
-        companySet.append(company)
+        companySet.append(c.name + " ("+company+")")
     caption+=nl.makeList(companySet)
     if len(companies)>=100:
         caption = "Out of all companies"

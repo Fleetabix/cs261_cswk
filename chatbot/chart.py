@@ -55,7 +55,7 @@ class Chart:
             from the stock history list
         """
         dates = [h.date for h in hists]
-        if len(dates) < 6:
+        if len(dates) <= 6:
             self.labels = [calendar.day_name[x.weekday()][:3] for x in dates]
         else:
             self.labels = [x.day for x in dates]
