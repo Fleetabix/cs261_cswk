@@ -65,7 +65,7 @@ class Command(BaseCommand):
         reit = create_industry(name = 'real estate investment trusts', aliases=['real estate'])
         soft = create_industry(name = 'software & computer services', aliases=['software', 'computer services'])
         supp = create_industry(name = 'support services')
-        tech = create_industry(name = 'technology hardware & equipment', aliases=['hardware', ['technical equipment']])
+        tech = create_industry(name = 'technology hardware & equipment', aliases=['hardware', 'technical equipment'])
         toba = create_industry(name = 'tobacco')
         trav = create_industry(name = 'travel & leisure', aliases=['travel', 'leisure'])
 
@@ -132,7 +132,7 @@ class Command(BaseCommand):
         create_company('MDC', 'Mediclinic International', [heal])
         create_company('MKS', 'Marks & Spencer Group', [genr], ['Marks and Spencer', 'Marks & Spencer', 'M & S', 'M and S'])
         create_company('MNDI', 'Mondi', [fore])
-        create_company('MRW', 'Morrison Supermarkets', [fdre], ['Morrison', ['Morrisons']])
+        create_company('MRW', 'Morrison Supermarkets', [fdre], ['Morrison', 'Morrisons'])
         create_company('NG.', 'National Grid', [util])
         create_company('NMC', 'NMC Health', [heal])
         create_company('NXT', 'Next', [genr])
