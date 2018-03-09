@@ -221,7 +221,8 @@ def tryCorrectSpelling(word):
 					["price", "history", "volume", "change", "stock", "difference"] + \
 					["week", "since", "from", "news", "give", "show", "get", "me", "ago"] + \
 					["jan", "feb", "mar", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"] + \
-					["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+					["mon", "tue", "wed", "thu", "fri", "sat", "sun"] + \
+					["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 	
 	# make sure the current word does not contain a word in the above list
 	# this should speed up things nicely
