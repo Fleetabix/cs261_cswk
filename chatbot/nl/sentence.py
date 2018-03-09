@@ -217,7 +217,7 @@ def tryCorrectSpelling(word):
 		Checks the word against all aliases and returns the closest matched
 		aliases if it is of an edit distance less than 3
 	"""
-	invalid_words = ["and", "it", "is", "from", "on", "the", "of", "for"] + \
+	invalid_words = ["and", "it", "is", "from", "on", "the", "of", "in", "for"] + \
 					["price", "history", "volume", "change", "stock", "difference"] + \
 					["week", "since", "from", "news", "give", "show", "get", "me", "ago"] + \
 					["jan", "feb", "mar", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"] + \
