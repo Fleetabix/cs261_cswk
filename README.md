@@ -1,4 +1,4 @@
-# cs261_cswk
+# FLORIN
 Financial Trader Chatbot
 
 ## Setup
